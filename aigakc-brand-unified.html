@@ -140,9 +140,9 @@ body{font-family:'DM Mono',monospace;background:var(--ink);color:var(--white);ov
 .p-panel::before{
   content:'';position:absolute;inset:0;opacity:0;transition:opacity .5s;
 }
-.p-community::before{background:radial-gradient(circle at 50% 60%,rgba(0,168,120,.15),transparent 70%);}
-.p-inclusivity::before{background:radial-gradient(circle at 50% 60%,rgba(0,47,167,.15),transparent 70%);}
-.p-vibrance::before{background:radial-gradient(circle at 50% 60%,rgba(229,0,125,.2),transparent 70%);}
+.p-engage::before{background:radial-gradient(circle at 50% 60%,rgba(255,107,53,.18),transparent 70%);}
+.p-inspire::before{background:radial-gradient(circle at 50% 60%,rgba(139,92,246,.18),transparent 70%);}
+.p-energize::before{background:radial-gradient(circle at 50% 60%,rgba(229,0,125,.2),transparent 70%);}
 .p-panel:hover::before{opacity:1;}
 .p-canvas{position:absolute;top:0;left:0;right:0;height:55%;pointer-events:none;}
 .p-num{
@@ -841,6 +841,83 @@ textarea.ti:focus{border-color:var(--mag);}
 .tex-overlay .sm{font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.25;margin-top:4px;}
 
 /* ════════════════════════════════════════
+   GRADIENT COLOR PICKER
+════════════════════════════════════════ */
+.grad-color-section{
+  margin-top:10px;display:flex;flex-direction:column;gap:7px;
+}
+.grad-slots{
+  display:flex;align-items:center;gap:6px;
+}
+.grad-slot{
+  flex:1;display:flex;align-items:center;gap:7px;
+  padding:5px 7px;border:1.5px solid rgba(255,255,255,.08);
+  cursor:pointer;transition:border-color .12s;
+}
+.grad-slot:hover{border-color:rgba(255,255,255,.22);}
+.grad-slot.active{border-color:var(--mag);}
+.grad-slot-swatch{
+  width:22px;height:22px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.12);
+}
+.grad-slot-info{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.grad-slot-label{
+  font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);
+}
+.grad-slot-hex{
+  font-family:'DM Mono',monospace;font-size:9px;
+  color:rgba(255,255,255,.65);letter-spacing:.04em;text-transform:uppercase;
+}
+.grad-slot-arrow{
+  font-size:11px;color:rgba(255,255,255,.18);flex-shrink:0;
+}
+
+/* Palette row */
+.grad-palette-row{
+  display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+  padding:5px 0;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+.grad-pal-label{
+  font-size:7px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);margin-right:2px;flex-shrink:0;
+}
+.grad-pal-dot{
+  width:18px;height:18px;cursor:pointer;flex-shrink:0;
+  border:1.5px solid transparent;transition:border-color .1s,transform .1s;
+}
+.grad-pal-dot:hover{border-color:rgba(255,255,255,.5);transform:scale(1.15);}
+.grad-pal-dot.applied{border-color:#fff;}
+
+/* Custom hex row */
+.grad-custom-row{
+  display:flex;align-items:center;gap:6px;
+  border-top:1px solid rgba(255,255,255,.05);
+  padding-top:6px;
+}
+.grad-hex-input{
+  flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;
+  padding:4px 7px;outline:none;transition:border-color .15s;
+  text-transform:uppercase;
+}
+.grad-hex-input:focus{border-color:var(--mag);}
+.grad-pick-btn{
+  width:26px;height:26px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;transition:border-color .1s;flex-shrink:0;padding:0;
+}
+.grad-pick-btn:hover{border-color:var(--mag);}
+
+/* Live preview strip */
+.grad-preview-strip{
+  height:12px;transition:background .2s;
+  border:1px solid rgba(255,255,255,.06);
+}
+
+/* ════════════════════════════════════════
    OKLCH SHADE PANEL
 ════════════════════════════════════════ */
 #oklch-panel{
@@ -997,30 +1074,30 @@ footer{
 <section id="hero" style="margin-top:var(--nav-h);">
   <canvas id="hero-canvas"></canvas>
 
-  <div class="p-panel p-community" onclick="toast('Community — We build up our local design community and help every member flourish.')">
+  <div class="p-panel p-engage" onclick="toast('Engage — Every connection we make strengthens the fabric of KC design.')">
     <span class="p-num">01</span>
-    <canvas class="p-canvas" id="pc-community"></canvas>
-    <div class="p-word" style="color:#00a878;">Community</div>
+    <canvas class="p-canvas" id="pc-engage"></canvas>
+    <div class="p-word" style="color:#ff6b35;">Engage</div>
     <div class="p-line"></div>
-    <p class="p-desc">We build up our local design community and help every member flourish — connecting nodes, strengthening networks.</p>
+    <p class="p-desc">Every touchpoint — every event, conversation, and collaboration — draws us closer. We show up for each other.</p>
     <div class="p-dot"></div>
   </div>
 
-  <div class="p-panel p-inclusivity" onclick="toast('Inclusivity — Creativity is for everyone. Every background, every skill level is welcome here.')">
+  <div class="p-panel p-inspire" onclick="toast('Inspire — We are the spark that sets Kansas City designers alight.')">
     <span class="p-num">02</span>
-    <canvas class="p-canvas" id="pc-inclusivity"></canvas>
-    <div class="p-word" style="color:#4a9fff;">Inclusivity</div>
+    <canvas class="p-canvas" id="pc-inspire"></canvas>
+    <div class="p-word" style="color:#8b5cf6;">Inspire</div>
     <div class="p-line"></div>
-    <p class="p-desc">Creativity is for everyone. Every background, every skill level, every story is welcome here. The table is always bigger.</p>
+    <p class="p-desc">We are the spark — the idea that didn't exist until someone in this room said it out loud. Creativity radiates outward.</p>
     <div class="p-dot"></div>
   </div>
 
-  <div class="p-panel p-vibrance" onclick="toast('Vibrance — We spark ideas, ignite collaboration, and power networking in KC.')">
+  <div class="p-panel p-energize" onclick="toast('Energize — Kansas City design is alive. The energy is the medium.')">
     <span class="p-num">03</span>
-    <canvas class="p-canvas" id="pc-vibrance"></canvas>
-    <div class="p-word" style="color:#e5007d;">Vibrance</div>
+    <canvas class="p-canvas" id="pc-energize"></canvas>
+    <div class="p-word" style="color:#e5007d;">Energize</div>
     <div class="p-line"></div>
-    <p class="p-desc">We spark ideas, ignite collaboration, and power networking. Energy is the medium. Kansas City design is alive.</p>
+    <p class="p-desc">We generate momentum — for careers, for studios, for the city. Kansas City design is alive and we are its pulse.</p>
     <div class="p-dot"></div>
   </div>
 
@@ -1266,11 +1343,44 @@ footer{
               <div class="bg-opt" data-g="sunset" onclick="setGrad(this,'sunset')"><span class="sw" style="background:linear-gradient(180deg,#ffb347,#e5007d,#002fa7);"></span>Sunset</div>
               <div class="bg-opt" data-g="glow-corner" onclick="setGrad(this,'glow-corner')"><span class="sw" style="background:radial-gradient(circle at 0% 100%,#e5007d 0%,transparent 60%);"></span>Corner Glow</div>
             </div>
-            <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
-              <span class="cg-title" style="margin-bottom:0;width:32px;flex-shrink:0;">C1</span>
-              <input type="color" class="cust-color" value="#e5007d" id="gradC1" oninput="T.gradC1=this.value;typo_render();" style="width:28px;height:22px;">
-              <span class="cg-title" style="margin-bottom:0;width:32px;flex-shrink:0;">C2</span>
-              <input type="color" class="cust-color" value="#002fa7" id="gradC2" oninput="T.gradC2=this.value;typo_render();" style="width:28px;height:22px;">
+            <div class="grad-color-section">
+              <!-- Slot row -->
+              <div class="grad-slots">
+                <div class="grad-slot active" id="gradSlot1" onclick="selectGradSlot(1)" title="Select C1 to edit">
+                  <div class="grad-slot-swatch" id="gradSlot1Swatch" style="background:#e5007d;"></div>
+                  <div class="grad-slot-info">
+                    <span class="grad-slot-label">C1</span>
+                    <span class="grad-slot-hex" id="gradSlot1Hex">#E5007D</span>
+                  </div>
+                </div>
+                <div class="grad-slot-arrow">→</div>
+                <div class="grad-slot" id="gradSlot2" onclick="selectGradSlot(2)" title="Select C2 to edit">
+                  <div class="grad-slot-swatch" id="gradSlot2Swatch" style="background:#002fa7;"></div>
+                  <div class="grad-slot-info">
+                    <span class="grad-slot-label">C2</span>
+                    <span class="grad-slot-hex" id="gradSlot2Hex">#002FA7</span>
+                  </div>
+                </div>
+                <input type="color" id="gradC1" value="#e5007d" style="display:none;" oninput="applyGradColorInput(1,this.value)">
+                <input type="color" id="gradC2" value="#002fa7" style="display:none;" oninput="applyGradColorInput(2,this.value)">
+              </div>
+
+              <!-- Palette swatches for gradient -->
+              <div class="grad-palette-row" id="gradPaletteRow">
+                <span class="grad-pal-label">Palette</span>
+                <!-- injected by updateGradPaletteSwatches -->
+              </div>
+
+              <!-- Custom color input -->
+              <div class="grad-custom-row">
+                <span class="grad-pal-label">Custom</span>
+                <input type="text" class="grad-hex-input" id="gradHexInput" maxlength="7" placeholder="#000000"
+                  oninput="applyGradHexInput(this.value)">
+                <button class="grad-pick-btn" onclick="openGradColorPicker()" title="Open color picker">⬛</button>
+              </div>
+
+              <!-- Live preview strip -->
+              <div class="grad-preview-strip" id="gradPreviewStrip"></div>
             </div>
             <div class="sl-row" style="margin-top:8px;">
               <span class="sl-label">Angle</span>
@@ -2271,7 +2381,7 @@ function setBGTex(el){
 }
 function setGrad(el,v){
   document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');T.grad=v;typo_render();
+  el.classList.add('active');T.grad=v;updateGradPreviewStrip();typo_render();
 }
 function setGrainStyle(el,v){
   document.querySelectorAll('#grainStyleOpts .bg-opt').forEach(e=>e.classList.remove('active'));
@@ -2370,6 +2480,7 @@ function typo_reset(){
     defLayer('kc.aiga.org','rgba(255,255,255,0.4)',16,50,89,'DM Mono'),
   ];
   syncLayerUI();typo_render();toast('All layers reset');
+  syncGradSlotsFromState();
 }
 function typo_download(){
   const c=document.getElementById('typeCanvas');
@@ -2514,38 +2625,222 @@ window.addEventListener('paletteChange',()=>{if(TX.color==='primary'||TX.bg==='p
 ════════════════════════════════════════════ */
 function initHeroCanvas(){
   const canvas=document.getElementById('hero-canvas');
-  const ctx=canvas.getContext('2d');let W,H,pts=[];
-  function resize(){W=canvas.offsetWidth;H=canvas.offsetHeight;canvas.width=W;canvas.height=H;pts=Array.from({length:Math.floor(W*H/12000)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.8+.8}));}
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=canvas.offsetWidth;H=canvas.offsetHeight;canvas.width=W;canvas.height=H;}
   resize();window.addEventListener('resize',resize);
-  (function tick(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;});
-    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(229,0,125,${(1-d/110)*.1})`;ctx.lineWidth=.7;ctx.stroke();}}
-    pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(229,0,125,0.2)';ctx.fill();});
+
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    t+=0.003;
+
+    // Large drifting aurora blobs — gradient mesh feel
+    const blobs=[
+      {cx:W*(.18+Math.sin(t*.28)*.07),cy:H*(.44+Math.cos(t*.23)*.1),r:W*.38,rgb:[229,0,125],a:.055},
+      {cx:W*(.82+Math.cos(t*.21)*.05),cy:H*(.38+Math.sin(t*.26)*.09),r:W*.3,rgb:[0,47,167],a:.045},
+      {cx:W*(.5+Math.sin(t*.17)*.04), cy:H*(.6+Math.cos(t*.19)*.07), r:W*.24,rgb:[139,92,246],a:.04},
+    ];
+    blobs.forEach(b=>{
+      const g=ctx.createRadialGradient(b.cx,b.cy,0,b.cx,b.cy,b.r);
+      const[r,gr,bl]=b.rgb;
+      g.addColorStop(0,`rgba(${r},${gr},${bl},${b.a*3.5})`);
+      g.addColorStop(.45,`rgba(${r},${gr},${bl},${b.a})`);
+      g.addColorStop(1,`rgba(${r},${gr},${bl},0)`);
+      drawSmoothBlob(ctx,b.cx,b.cy,b.r,b.r*.82,8,t,b.a*120);
+      ctx.fillStyle=g;ctx.fill();
+    });
+
+    // Subtle flowing breath lines
+    for(let i=0;i<4;i++){
+      const by=H*(.18+i*.2);
+      ctx.beginPath();ctx.moveTo(0,by);
+      for(let x=0;x<=W;x+=5){
+        const y=by+Math.sin(x/W*Math.PI*4.5+t*1.1+i*.8)*16+Math.sin(x/W*Math.PI*8+t*.7+i*1.5)*6;
+        ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=`rgba(229,0,125,${.016-i*.002})`;ctx.lineWidth=.7;ctx.stroke();
+    }
     requestAnimationFrame(tick);
   })();
 }
+
+// ── shared smooth-blob utility ──
+function drawSmoothBlob(ctx,cx,cy,rx,ry,n,t,phase){
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const a=(i/n)*Math.PI*2;
+    const noise=Math.sin(a*2.1+t*.9+phase*.01)*0.17+Math.sin(a*3.4-t*.6+phase*.013)*0.09+Math.sin(a*5.7+t*.4)*0.04;
+    pts.push({x:cx+Math.cos(a)*rx*(1+noise),y:cy+Math.sin(a)*ry*(1+noise)});
+  }
+  ctx.beginPath();
+  for(let i=0;i<pts.length;i++){
+    const p1=pts[i],p2=pts[(i+1)%pts.length];
+    if(i===0){const p0=pts[pts.length-1];ctx.moveTo((p0.x+p1.x)/2,(p0.y+p1.y)/2);}
+    ctx.quadraticCurveTo(p1.x,p1.y,(p1.x+p2.x)/2,(p1.y+p2.y)/2);
+  }
+  ctx.closePath();
+}
+
 function initPrincipleCanvas(id,type){
   const c=document.getElementById(id);if(!c)return;
-  const ctx=c.getContext('2d');let f=0;
+  const ctx=c.getContext('2d');let t=0;
   function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
   resize();window.addEventListener('resize',resize);
-  (function tick(){const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);f++;
-    if(type==='community'){
-      const n=8,r=Math.min(W,H)*.35,pts=Array.from({length:n},(_,i)=>{const a=(i/n)*Math.PI*2+f*.005;return{x:W/2+Math.cos(a)*(r+Math.sin(f*.02+i)*12),y:H/2+Math.sin(a)*(r+Math.sin(f*.02+i)*12)};});
-      pts.forEach(p=>{const d=Math.hypot(p.x-W/2,p.y-H/2);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(W/2,H/2);ctx.strokeStyle=`rgba(0,168,120,${.28*(1-d/(r+20))})`;ctx.lineWidth=.8;ctx.stroke();});
-      pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='rgba(0,168,120,0.7)';ctx.fill();});
-      ctx.beginPath();ctx.arc(W/2,H/2,5+Math.sin(f*.05)*2,0,Math.PI*2);ctx.fillStyle='#00a878';ctx.fill();
-    }else if(type==='inclusivity'){
-      ['#e5007d','#e55800','#d4af37','#00a878','#002fa7','#8b00d4'].forEach((col,i)=>{
-        const a=(i/6)*Math.PI*2+f*.007,cr=Math.min(W,H)*.28+Math.sin(f*.018+i)*5;
-        const{r,g,b}=hexToRgb(col);
-        ctx.beginPath();ctx.arc(W/2+Math.cos(a)*cr*.3,H/2+Math.sin(a)*cr*.3,cr,0,Math.PI*2);
-        ctx.fillStyle=`rgba(${r},${g},${b},0.055)`;ctx.fill();
-        ctx.strokeStyle=`rgba(${r},${g},${b},0.32)`;ctx.lineWidth=1;ctx.stroke();
+
+  (function tick(){
+    const W=c.width,H=c.height;
+    ctx.clearRect(0,0,W,H);
+    t+=0.007;
+
+    if(type==='engage'){
+      /* ── ENGAGE ──
+         Three organic blob-bodies drifting toward a shared warmth.
+         Mesh gradient: coral → amber → magenta.
+         Connection threads weave between them like reaching hands. */
+
+      // Warm ambient glow
+      const bg=ctx.createRadialGradient(W*.5,H*.55,0,W*.5,H*.55,W*.75);
+      bg.addColorStop(0,'rgba(255,107,53,.09)');bg.addColorStop(.6,'rgba(229,0,125,.04)');bg.addColorStop(1,'rgba(255,107,53,0)');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+      // Three gathering bodies
+      const bodies=[
+        {bx:.28+Math.sin(t*.38)*.04, by:.42+Math.cos(t*.32)*.06, rx:.21, ry:.24, rgb:[255,107,53], phase:0},
+        {bx:.72+Math.cos(t*.35)*.04, by:.37+Math.sin(t*.40)*.05, rx:.18, ry:.21, rgb:[229,0,125],  phase:2.1},
+        {bx:.5 +Math.sin(t*.29)*.03, by:.59+Math.cos(t*.27)*.06, rx:.16, ry:.19, rgb:[245,158,11], phase:4.2},
+      ];
+      bodies.forEach(b=>{
+        const cx=b.bx*W,cy=b.by*H,rx=b.rx*Math.min(W,H),ry=b.ry*Math.min(W,H);
+        const[r,g,bl]=b.rgb;
+        // Outer soft halo
+        const halo=ctx.createRadialGradient(cx,cy,rx*.2,cx,cy,rx*1.6);
+        halo.addColorStop(0,`rgba(${r},${g},${bl},.13)`);halo.addColorStop(1,`rgba(${r},${g},${bl},0)`);
+        drawSmoothBlob(ctx,cx,cy,rx*1.5,ry*1.5,6,t,b.phase+1);ctx.fillStyle=halo;ctx.fill();
+        // Core blob
+        const core=ctx.createRadialGradient(cx-rx*.2,cy-ry*.2,0,cx,cy,rx*1.05);
+        core.addColorStop(0,`rgba(${r},${g},${bl},.28)`);core.addColorStop(.5,`rgba(${r},${g},${bl},.14)`);core.addColorStop(1,`rgba(${r},${g},${bl},0)`);
+        drawSmoothBlob(ctx,cx,cy,rx,ry,7,t,b.phase);ctx.fillStyle=core;ctx.fill();
+        // Inner highlight
+        const hi=ctx.createRadialGradient(cx-rx*.28,cy-ry*.3,0,cx,cy,rx*.55);
+        hi.addColorStop(0,'rgba(255,255,255,.1)');hi.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.fillStyle=hi;ctx.fill();
       });
-      ctx.beginPath();ctx.arc(W/2,H/2,8+Math.sin(f*.08)*2,0,Math.PI*2);ctx.fillStyle='rgba(229,0,125,0.75)';ctx.fill();
+
+      // Connection threads — organic bezier arcs
+      [[0,1],[1,2],[0,2]].forEach(([ai,bi])=>{
+        const a=bodies[ai],b=bodies[bi];
+        const x1=a.bx*W,y1=a.by*H,x2=b.bx*W,y2=b.by*H;
+        const mx=(x1+x2)/2+Math.sin(t*.9+ai+bi)*14;
+        const my=(y1+y2)/2+Math.cos(t*.7+ai)*10;
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);
+        ctx.strokeStyle='rgba(229,0,125,.1)';ctx.lineWidth=.8;ctx.stroke();
+      });
+
+    }else if(type==='inspire'){
+      /* ── INSPIRE ──
+         Organic bloom radiating from a living core.
+         Layered petal forms, gradient-filled, breathing in and out.
+         Colors: violet → indigo → magenta. */
+
+      // Background nebula
+      const bg=ctx.createRadialGradient(W*.5,H*.44,0,W*.5,H*.5,W*.7);
+      bg.addColorStop(0,'rgba(139,92,246,.1)');bg.addColorStop(.45,'rgba(99,102,241,.05)');bg.addColorStop(1,'rgba(139,92,246,0)');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+      const cx=W*.5+Math.sin(t*.18)*W*.02;
+      const cy=H*.45+Math.cos(t*.16)*H*.025;
+
+      // Three petal layers, each rotating and breathing at different rhythms
+      [{n:5,baseR:.29,speed:.12,phase:0,   ca:[229,0,125],  cb:[139,92,246]},
+       {n:8,baseR:.22,speed:-.08,phase:.8, ca:[139,92,246], cb:[99,102,241]},
+       {n:12,baseR:.14,speed:.18,phase:1.6,ca:[99,102,241], cb:[229,0,125]},
+      ].forEach((layer,li)=>{
+        const breathe=1+Math.sin(t*.75+li*.6)*.1;
+        for(let i=0;i<layer.n;i++){
+          const a=(i/layer.n)*Math.PI*2+t*layer.speed+layer.phase;
+          const petalLen=Math.min(W,H)*layer.baseR*breathe*(1+Math.sin(t*1.1+i*.7+li)*.09);
+          const petalW=petalLen*.38+Math.sin(t*.8+i)*.02*petalLen;
+          const tipX=cx+Math.cos(a)*petalLen,tipY=cy+Math.sin(a)*petalLen;
+          const spread=.42+Math.sin(t*.5+i)*.06;
+          const lx=cx+Math.cos(a+spread)*petalW*.75,ly=cy+Math.sin(a+spread)*petalW*.75;
+          const rx=cx+Math.cos(a-spread)*petalW*.75,ry2=cy+Math.sin(a-spread)*petalW*.75;
+          const cLen=petalLen*.52;
+          const c1x=cx+Math.cos(a+.18)*cLen,c1y=cy+Math.sin(a+.18)*cLen;
+          const c2x=cx+Math.cos(a-.18)*cLen,c2y=cy+Math.sin(a-.18)*cLen;
+
+          ctx.beginPath();
+          ctx.moveTo(cx,cy);
+          ctx.bezierCurveTo(lx,ly,c1x,c1y,tipX,tipY);
+          ctx.bezierCurveTo(c2x,c2y,rx,ry2,cx,cy);
+          ctx.closePath();
+
+          const alpha=(.13-li*.03)*(1+Math.sin(t*.9+i)*.18);
+          const pg=ctx.createLinearGradient(cx,cy,tipX,tipY);
+          const[r1,g1,b1]=layer.ca,[r2,g2,b2]=layer.cb;
+          pg.addColorStop(0,`rgba(${r1},${g1},${b1},${alpha*1.8})`);
+          pg.addColorStop(.5,`rgba(${r2},${g2},${b2},${alpha*1.1})`);
+          pg.addColorStop(1,`rgba(${r2},${g2},${b2},${alpha*.25})`);
+          ctx.fillStyle=pg;ctx.fill();
+        }
+      });
+
+      // Living core — radiant white-hot center
+      const coreR=Math.min(W,H)*(.038+Math.sin(t*1.5)*.008);
+      const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR*4.5);
+      cg.addColorStop(0,'rgba(255,255,255,.4)');cg.addColorStop(.2,'rgba(229,0,125,.25)');
+      cg.addColorStop(.6,'rgba(139,92,246,.1)');cg.addColorStop(1,'rgba(139,92,246,0)');
+      ctx.beginPath();ctx.arc(cx,cy,coreR*4.5,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+      ctx.beginPath();ctx.arc(cx,cy,coreR,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.55)';ctx.fill();
+
     }else{
-      const n=12;for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2+f*.01,len=Math.min(W,H)*(.22+Math.sin(f*.035+i*.7)*.1);ctx.beginPath();ctx.moveTo(W/2+Math.cos(a)*7,H/2+Math.sin(a)*7);ctx.lineTo(W/2+Math.cos(a)*len,H/2+Math.sin(a)*len);ctx.strokeStyle=i%3===0?'rgba(229,0,125,0.75)':'rgba(255,255,255,0.1)';ctx.lineWidth=i%3===0?1.5:.7;ctx.stroke();}
-      const p=Math.sin(f*.055)*3.5+10;ctx.beginPath();ctx.arc(W/2,H/2,p,0,Math.PI*2);ctx.fillStyle='#e5007d';ctx.fill();
+      /* ── ENERGIZE ──
+         Fluid chromatic ribbons sweeping across the canvas.
+         Kinetic sine-arcs with gradient strokes and glowing sparks.
+         Colors: magenta → coral → violet — pure forward motion. */
+
+      // Background pulse
+      const bg=ctx.createRadialGradient(W*.5,H*.35,0,W*.5,H*.5,W*.65);
+      bg.addColorStop(0,'rgba(229,0,125,.08)');bg.addColorStop(.5,'rgba(229,0,125,.03)');bg.addColorStop(1,'rgba(229,0,125,0)');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+      // Five flowing ribbon arcs
+      const ribbons=[
+        {by:.24,f:2.7,amp:.17,ph:0,   rgb:[229,0,125],  w:3.8},
+        {by:.38,f:2.0,amp:.13,ph:1.3, rgb:[255,107,53], w:2.8},
+        {by:.52,f:3.4,amp:.09,ph:2.6, rgb:[139,92,246], w:2.2},
+        {by:.65,f:1.7,amp:.15,ph:.7,  rgb:[229,0,125],  w:1.6},
+        {by:.3, f:4.2,amp:.07,ph:3.2, rgb:[245,200,50], w:1.0},
+      ];
+
+      ribbons.forEach((rib,ri)=>{
+        const[r,g,bl]=rib.rgb;
+        const spd=1.1+ri*.22;
+        const baseY=rib.by*H;
+
+        ctx.beginPath();
+        for(let xi=0;xi<=W;xi+=3){
+          const y=baseY+Math.sin(xi/W*Math.PI*rib.f+t*spd+rib.ph)*rib.amp*H+Math.sin(xi/W*Math.PI*(rib.f*1.6)+t*(spd*.55)+rib.ph*1.4)*rib.amp*H*.28;
+          xi===0?ctx.moveTo(xi,y):ctx.lineTo(xi,y);
+        }
+        const sg=ctx.createLinearGradient(0,0,W,0);
+        const alpha=.32-ri*.04;
+        sg.addColorStop(0,`rgba(${r},${g},${bl},0)`);sg.addColorStop(.12,`rgba(${r},${g},${bl},${alpha})`);
+        sg.addColorStop(.5,`rgba(${r},${g},${bl},${alpha*1.3})`);sg.addColorStop(.88,`rgba(${r},${g},${bl},${alpha*.7})`);
+        sg.addColorStop(1,`rgba(${r},${g},${bl},0)`);
+        ctx.strokeStyle=sg;ctx.lineWidth=rib.w*(1+Math.sin(t*.85+ri)*.12);ctx.lineCap='round';ctx.stroke();
+      });
+
+      // Travelling spark glows along ribbons
+      for(let i=0;i<7;i++){
+        const rib=ribbons[i%ribbons.length];
+        const prog=((t*.38+i*.143)%1);
+        const x=prog*W;
+        const y=rib.by*H+Math.sin(x/W*Math.PI*rib.f+t*1.1+rib.ph)*rib.amp*H;
+        const[r,g,bl]=rib.rgb;
+        const sg=ctx.createRadialGradient(x,y,0,x,y,16);
+        sg.addColorStop(0,'rgba(255,255,255,.65)');sg.addColorStop(.25,`rgba(${r},${g},${bl},.4)`);sg.addColorStop(1,`rgba(${r},${g},${bl},0)`);
+        ctx.beginPath();ctx.arc(x,y,16,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+      }
     }
     requestAnimationFrame(tick);
   })();
@@ -3216,6 +3511,9 @@ function applyTemplate(id) {
   const gaEl = document.getElementById('gradAngle'); if(gaEl){ gaEl.value = T.gradAngle; document.getElementById('gradAngleVal').textContent = T.gradAngle + '°'; }
   const gopEl = document.getElementById('gradOpacity'); if(gopEl){ gopEl.value = T.gradOpacity; document.getElementById('gradOpacityVal').textContent = T.gradOpacity + '%'; }
 
+  // Sync gradient slot UI
+  syncGradSlotsFromState();
+
   // Sync grain UI
   const grAmtEl = document.getElementById('grainAmount'); if(grAmtEl){ grAmtEl.value = T.grain; document.getElementById('grainVal').textContent = T.grain + '%'; }
   const grSzEl = document.getElementById('grainSize'); if(grSzEl){ grSzEl.value = T.grainSize; document.getElementById('grainSizeVal').textContent = T.grainSize + '×'; }
@@ -3279,9 +3577,9 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 ════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded',()=>{
   initHeroCanvas();
-  initPrincipleCanvas('pc-community','community');
-  initPrincipleCanvas('pc-inclusivity','inclusivity');
-  initPrincipleCanvas('pc-vibrance','vibrance');
+  initPrincipleCanvas('pc-engage','engage');
+  initPrincipleCanvas('pc-inspire','inspire');
+  initPrincipleCanvas('pc-energize','energize');
 
   buildLayerPane('l1');buildLayerPane('l2');buildLayerPane('l3');
   buildTplCards();
@@ -3292,6 +3590,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   typo_fitCanvas();typo_render();
   generatePalette();
+  updateGradPaletteSwatches();
   genVector();
   setTimeout(renderTexture,120);
 
@@ -3885,6 +4184,130 @@ function pushShadeToPlayground(hex) {
   PALETTE.primary = hex;
   updatePlaygroundPaletteSwatches();
   toast(`${hex.toUpperCase()} pushed to Typography Playground`);
+}
+
+/* ════════════════════════════════════════════
+   GRADIENT COLOR PICKER
+════════════════════════════════════════════ */
+let _activeGradSlot = 1; // which slot (1 or 2) is selected for editing
+
+function selectGradSlot(n) {
+  _activeGradSlot = n;
+  document.getElementById('gradSlot1').classList.toggle('active', n === 1);
+  document.getElementById('gradSlot2').classList.toggle('active', n === 2);
+  // Sync the hex input to the active slot's current color
+  const hex = n === 1 ? T.gradC1 : T.gradC2;
+  const hexInput = document.getElementById('gradHexInput');
+  if (hexInput) hexInput.value = hex.toUpperCase();
+  // Highlight any applied palette dot
+  updateGradPaletteApplied();
+}
+
+function applyGradColor(hex) {
+  if (_activeGradSlot === 1) {
+    T.gradC1 = hex;
+    document.getElementById('gradSlot1Swatch').style.background = hex;
+    document.getElementById('gradSlot1Hex').textContent = hex.toUpperCase();
+    document.getElementById('gradC1').value = hex;
+  } else {
+    T.gradC2 = hex;
+    document.getElementById('gradSlot2Swatch').style.background = hex;
+    document.getElementById('gradSlot2Hex').textContent = hex.toUpperCase();
+    document.getElementById('gradC2').value = hex;
+  }
+  const hexInput = document.getElementById('gradHexInput');
+  if (hexInput) hexInput.value = hex.toUpperCase();
+  updateGradPreviewStrip();
+  updateGradPaletteApplied();
+  typo_render();
+}
+
+function applyGradColorInput(slot, hex) {
+  // Called by the hidden native color input
+  if (slot === 1) { T.gradC1 = hex; document.getElementById('gradSlot1Swatch').style.background = hex; document.getElementById('gradSlot1Hex').textContent = hex.toUpperCase(); }
+  else { T.gradC2 = hex; document.getElementById('gradSlot2Swatch').style.background = hex; document.getElementById('gradSlot2Hex').textContent = hex.toUpperCase(); }
+  updateGradPreviewStrip();
+  typo_render();
+}
+
+function applyGradHexInput(val) {
+  if (/^#[0-9A-Fa-f]{6}$/.test(val)) applyGradColor(val);
+}
+
+function openGradColorPicker() {
+  const picker = document.getElementById(_activeGradSlot === 1 ? 'gradC1' : 'gradC2');
+  if (picker) picker.click();
+}
+
+function updateGradPreviewStrip() {
+  const strip = document.getElementById('gradPreviewStrip');
+  if (!strip) return;
+  if (T.grad === 'none' || T.grad === 'vignette') {
+    strip.style.background = `linear-gradient(90deg,${T.gradC1},${T.gradC2})`;
+  } else if (T.grad === 'split') {
+    strip.style.background = `linear-gradient(90deg,${T.gradC1} 50%,${T.gradC2} 50%)`;
+  } else if (T.grad === 'radial') {
+    strip.style.background = `radial-gradient(circle,${T.gradC1},${T.gradC2})`;
+  } else {
+    const angle = T.gradAngle ?? 135;
+    strip.style.background = `linear-gradient(${angle}deg,${T.gradC1},${T.gradC2})`;
+  }
+}
+
+function updateGradPaletteApplied() {
+  const activeHex = (_activeGradSlot === 1 ? T.gradC1 : T.gradC2).toLowerCase();
+  document.querySelectorAll('#gradPaletteRow .grad-pal-dot').forEach(dot => {
+    dot.classList.toggle('applied', dot.dataset.c.toLowerCase() === activeHex);
+  });
+}
+
+function updateGradPaletteSwatches() {
+  const row = document.getElementById('gradPaletteRow');
+  if (!row) return;
+  const colors = [
+    { c: PALETTE.magenta, n: 'Mag' },
+    { c: PALETTE.primary, n: 'Pri' },
+    { c: PALETTE.deep,    n: 'Deep' },
+    { c: PALETTE.dark,    n: 'Dark' },
+    { c: PALETTE.surface, n: 'Surf' },
+    { c: PALETTE.h1,      n: 'H1' },
+    { c: PALETTE.h2,      n: 'H2' },
+    { c: '#080808',       n: 'Ink' },
+    { c: '#f4f1ea',       n: 'Paper' },
+    { c: '#ffffff',       n: 'White' },
+  ];
+  row.innerHTML = `<span class="grad-pal-label">Palette</span>`;
+  colors.forEach(({ c, n }) => {
+    const d = document.createElement('div');
+    d.className = 'grad-pal-dot';
+    d.style.background = c;
+    d.dataset.c = c;
+    d.title = `${n} — ${c}`;
+    d.onclick = () => applyGradColor(c);
+    row.appendChild(d);
+  });
+  updateGradPreviewStrip();
+  updateGradPaletteApplied();
+}
+
+// Sync when palette changes
+window.addEventListener('paletteChange', () => updateGradPaletteSwatches());
+
+// Also sync gradient slot UI when a template applies new colors
+const _origApplyGradColor = applyGradColor;
+function syncGradSlotsFromState() {
+  const s1 = document.getElementById('gradSlot1Swatch');
+  const s2 = document.getElementById('gradSlot2Swatch');
+  const h1 = document.getElementById('gradSlot1Hex');
+  const h2 = document.getElementById('gradSlot2Hex');
+  if (s1) s1.style.background = T.gradC1;
+  if (s2) s2.style.background = T.gradC2;
+  if (h1) h1.textContent = T.gradC1.toUpperCase();
+  if (h2) h2.textContent = T.gradC2.toUpperCase();
+  const gc1 = document.getElementById('gradC1'); if (gc1) gc1.value = T.gradC1;
+  const gc2 = document.getElementById('gradC2'); if (gc2) gc2.value = T.gradC2;
+  updateGradPreviewStrip();
+  updateGradPaletteApplied();
 }
 
 </script>
