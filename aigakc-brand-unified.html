@@ -1,0 +1,4198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIGA KC — The Living Brand System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════ */
+:root {
+  --ink:    #080808;
+  --ink2:   #101010;
+  --ink3:   #181818;
+  --ink4:   #202020;
+  --ink5:   #2a2a2a;
+  --paper:  #f4f1ea;
+  --paper2: #ede9e0;
+  --white:  #ffffff;
+  --mag:    #e5007d;
+  --mag-lo: rgba(229,0,125,0.15);
+  --mag-hi: rgba(229,0,125,0.4);
+  --border: rgba(255,255,255,0.07);
+  --ease:   cubic-bezier(0.16,1,0.3,1);
+  --nav-h:  52px;
+  --panel-w: 288px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:13px;}
+body{font-family:'DM Mono',monospace;background:var(--ink);color:var(--white);overflow-x:hidden;}
+::selection{background:var(--mag);color:#fff;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--ink);}
+::-webkit-scrollbar-thumb{background:var(--ink5);}
+::-webkit-scrollbar-thumb:hover{background:var(--mag);}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:var(--nav-h);
+  background:rgba(8,8,8,0.96);
+  backdrop-filter:blur(16px);
+  border-bottom:1.5px solid var(--mag-hi);
+  display:flex;align-items:center;
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:17px;letter-spacing:0.14em;
+  padding:0 24px;border-right:1px solid var(--border);
+  height:100%;display:flex;align-items:center;gap:10px;white-space:nowrap;
+}
+.nav-logo .tag{
+  background:var(--mag);color:#fff;
+  font-family:'DM Mono',monospace;font-size:8px;
+  letter-spacing:0.2em;padding:2px 8px;text-transform:uppercase;
+}
+.nav-links{display:flex;gap:0;list-style:none;padding:0 8px;}
+.nav-links a{
+  display:flex;align-items:center;height:var(--nav-h);
+  padding:0 16px;
+  color:rgba(255,255,255,0.35);
+  text-decoration:none;font-size:9px;
+  letter-spacing:0.18em;text-transform:uppercase;
+  transition:color 0.15s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:16px;right:16px;height:1.5px;
+  background:var(--mag);transform:scaleX(0);transition:transform 0.2s var(--ease);
+}
+.nav-links a:hover{color:rgba(255,255,255,0.7);}
+.nav-links a.active{color:#fff;}
+.nav-links a.active::after{transform:scaleX(1);}
+.nav-spacer{flex:1;}
+.nav-version{
+  font-size:9px;letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(255,255,255,0.2);padding:0 20px;
+  border-left:1px solid var(--border);height:100%;display:flex;align-items:center;
+}
+
+/* ════════════════════════════════════════
+   SHARED SECTION SHELL
+════════════════════════════════════════ */
+.section{
+  padding:88px 64px;
+  border-bottom:1.5px solid var(--border);
+  position:relative;
+}
+.section.light{background:var(--paper);color:var(--ink);}
+.eyebrow{
+  display:flex;align-items:center;gap:12px;
+  font-size:9px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--mag);margin-bottom:36px;
+}
+.eyebrow::before{content:'';display:block;width:24px;height:1.5px;background:var(--mag);}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(40px,5.5vw,72px);
+  line-height:.93;letter-spacing:.02em;margin-bottom:14px;
+}
+.sec-lead{
+  font-size:11px;line-height:1.85;
+  color:rgba(255,255,255,0.4);
+  max-width:500px;margin-bottom:56px;
+}
+.section.light .sec-lead{color:rgba(0,0,0,0.45);}
+
+/* corner marks */
+.cm{position:absolute;width:14px;height:14px;
+    border-color:currentColor;border-style:solid;border-width:0;}
+.cm.tl{top:0;left:0;border-top-width:1.5px;border-left-width:1.5px;}
+.cm.tr{top:0;right:0;border-top-width:1.5px;border-right-width:1.5px;}
+.cm.bl{bottom:0;left:0;border-bottom-width:1.5px;border-left-width:1.5px;}
+.cm.br{bottom:0;right:0;border-bottom-width:1.5px;border-right-width:1.5px;}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+#hero{
+  margin-top:var(--nav-h);
+  min-height:calc(100vh - var(--nav-h));
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:1fr auto;
+  position:relative;overflow:hidden;
+}
+#hero-canvas{position:absolute;inset:0;pointer-events:none;z-index:0;}
+
+.p-panel{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:56px 44px;
+  border-right:1px solid rgba(255,255,255,0.04);
+  overflow:hidden;cursor:pointer;
+  transition:background .4s;
+}
+.p-panel:last-child{border-right:none;}
+.p-panel::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .5s;
+}
+.p-community::before{background:radial-gradient(circle at 50% 60%,rgba(0,168,120,.15),transparent 70%);}
+.p-inclusivity::before{background:radial-gradient(circle at 50% 60%,rgba(0,47,167,.15),transparent 70%);}
+.p-vibrance::before{background:radial-gradient(circle at 50% 60%,rgba(229,0,125,.2),transparent 70%);}
+.p-panel:hover::before{opacity:1;}
+.p-canvas{position:absolute;top:0;left:0;right:0;height:55%;pointer-events:none;}
+.p-num{
+  font-family:'Bebas Neue',sans-serif;font-size:100px;line-height:1;
+  color:rgba(255,255,255,.04);position:absolute;top:16px;left:32px;
+  pointer-events:none;transition:color .4s;
+}
+.p-panel:hover .p-num{color:rgba(255,255,255,.07);}
+.p-word{font-family:'Bebas Neue',sans-serif;font-size:46px;line-height:1;letter-spacing:.03em;margin-bottom:12px;}
+.p-line{width:28px;height:1.5px;background:var(--mag);margin-bottom:12px;transition:width .4s var(--ease);}
+.p-panel:hover .p-line{width:56px;}
+.p-desc{font-size:10px;line-height:1.8;color:rgba(255,255,255,.38);max-width:200px;transition:color .3s;}
+.p-panel:hover .p-desc{color:rgba(255,255,255,.6);}
+.p-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--mag);
+  position:absolute;bottom:48px;right:36px;transition:transform .4s var(--ease);
+}
+.p-panel:hover .p-dot{transform:scale(2.5);}
+
+.hero-bar{
+  grid-column:1/-1;z-index:1;
+  background:rgba(229,0,125,.06);
+  border-top:1px solid rgba(229,0,125,.18);
+  padding:14px 44px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);
+}
+.pulse-row{display:flex;align-items:center;gap:7px;color:var(--mag);}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--mag);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.55);}}
+
+/* ════════════════════════════════════════
+   GEN CARD SHELL
+════════════════════════════════════════ */
+.gen-card{
+  background:var(--ink2);
+  border:1.5px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.gen-card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 22px;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+.gen-card-title{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;
+  display:flex;align-items:center;gap:10px;
+}
+.gtag{
+  font-family:'DM Mono',monospace;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 8px;border:1.5px solid var(--mag);color:var(--mag);
+}
+.gen-body{padding:24px;}
+
+/* ════════════════════════════════════════
+   SHARED FORM CONTROLS
+════════════════════════════════════════ */
+.ctrl-label{
+  display:block;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(255,255,255,.3);
+  margin-bottom:7px;
+}
+.section.light .ctrl-label{color:rgba(0,0,0,.4);}
+.seg{display:flex;gap:3px;flex-wrap:wrap;}
+.seg-btn{
+  padding:5px 10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:all .12s;
+}
+.seg-btn:hover{border-color:rgba(255,255,255,.2);color:#fff;}
+.seg-btn.active{border-color:var(--mag);color:#fff;background:rgba(229,0,125,.08);}
+
+.sl-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.sl-row:last-child{margin-bottom:0;}
+.sl-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);
+  width:70px;flex-shrink:0;text-transform:uppercase;}
+.sl-wrap{flex:1;}
+input[type="range"]{
+  -webkit-appearance:none;width:100%;height:2px;
+  background:rgba(255,255,255,.1);outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:11px;height:11px;
+  background:var(--mag);cursor:pointer;border:2px solid var(--ink2);
+}
+input[type="range"]:focus::-webkit-slider-thumb{background:#fff;}
+.sl-val{font-size:9px;color:rgba(255,255,255,.3);width:34px;text-align:right;flex-shrink:0;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:9px 18px;font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;transition:all .15s;border:1.5px solid;
+  white-space:nowrap;gap:6px;
+}
+.btn-primary{background:var(--mag);border-color:var(--mag);color:#fff;}
+.btn-primary:hover{background:#c8006d;border-color:#c8006d;}
+.btn-ghost{background:transparent;border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+.btn-ghost:hover{border-color:#fff;color:#fff;}
+.btn-sm{padding:6px 13px;font-size:8px;}
+
+/* ════════════════════════════════════════
+   PALETTE BRIDGE STRIP
+════════════════════════════════════════ */
+.palette-strip{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 14px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--border);
+  border-radius:0;
+}
+.ps-label{font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-right:4px;white-space:nowrap;}
+.ps-swatch{
+  width:22px;height:22px;cursor:pointer;flex-shrink:0;
+  border:2px solid transparent;transition:border-color .12s,transform .12s;
+  position:relative;
+}
+.ps-swatch:hover{border-color:rgba(255,255,255,.5);transform:scale(1.2);}
+.ps-swatch.active{border-color:#fff;}
+.ps-swatch[title]:hover::after{
+  content:attr(title);
+  position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+  background:var(--ink3);color:#fff;font-size:8px;letter-spacing:.1em;
+  padding:3px 7px;white-space:nowrap;pointer-events:none;z-index:10;
+}
+
+/* ════════════════════════════════════════
+   COLOR GENERATOR SECTION
+════════════════════════════════════════ */
+#color-section{background:var(--ink);}
+.color-gen-grid{display:grid;grid-template-columns:300px 1fr;gap:20px;}
+.color-controls{display:flex;flex-direction:column;gap:16px;}
+.color-input-row{display:flex;gap:10px;align-items:center;}
+#colorPicker{
+  width:48px;height:48px;border:1px solid rgba(255,255,255,.15);
+  background:transparent;cursor:pointer;padding:3px;flex-shrink:0;
+}
+#colorHex{
+  flex:1;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);color:#fff;
+  font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.1em;
+  padding:10px 14px;text-transform:uppercase;outline:none;transition:border-color .2s;
+}
+#colorHex:focus{border-color:var(--mag);}
+.harm-row{display:flex;gap:3px;}
+.harm-btn{
+  flex:1;padding:8px 6px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:all .12s;
+}
+.harm-btn:hover,.harm-btn.active{border-color:var(--mag);color:#fff;background:rgba(229,0,125,.08);}
+
+.compat-block{padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);}
+.compat-bar-track{height:3px;background:rgba(255,255,255,.08);position:relative;overflow:hidden;margin:7px 0 5px;}
+.compat-bar-fill{height:100%;background:var(--mag);transition:width .5s var(--ease),background .3s;width:100%;}
+.compat-score{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.05em;}
+
+.palette-out{display:flex;flex-direction:column;gap:14px;}
+.swatch-row{display:flex;gap:3px;height:64px;}
+.p-swatch{
+  flex:1;position:relative;cursor:pointer;
+  transition:flex .25s var(--ease);overflow:hidden;
+}
+.p-swatch:hover{flex:1.8;}
+.p-swatch-inner{
+  position:absolute;inset:0;display:flex;
+  flex-direction:column;justify-content:flex-end;padding:7px;
+}
+.p-swatch-hex{font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  opacity:0;transition:opacity .15s;font-weight:500;}
+.p-swatch:hover .p-swatch-hex{opacity:1;}
+.p-swatch-name{font-size:8px;letter-spacing:.1em;text-transform:uppercase;opacity:.45;}
+
+.preview-card{
+  border:1.5px solid rgba(255,255,255,.08);
+  overflow:hidden;position:relative;
+  min-height:220px;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:24px;
+  transition:background .35s;
+}
+.preview-card .cm{color:rgba(229,0,125,.4);}
+.pc-bar{position:absolute;top:0;left:0;right:0;height:3px;}
+.pc-kc{
+  position:absolute;top:18px;right:18px;
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--mag);
+  font-family:'Bebas Neue',sans-serif;font-size:10px;
+  letter-spacing:.1em;color:var(--mag);
+}
+.pc-tag{font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px;
+  display:flex;align-items:center;gap:8px;color:var(--mag);}
+.pc-tag::before{content:'';display:block;width:12px;height:1px;background:currentColor;}
+.pc-headline{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;
+  letter-spacing:.02em;margin-bottom:6px;}
+.pc-sub{font-size:10px;opacity:.45;letter-spacing:.07em;}
+
+.css-box{
+  background:rgba(0,0,0,.3);border:1px solid var(--border);
+  padding:14px 16px;font-size:10px;line-height:1.9;
+  color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;
+  letter-spacing:.04em;position:relative;
+}
+.copy-btn{
+  position:absolute;top:10px;right:10px;
+  padding:4px 12px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.15em;
+  text-transform:uppercase;cursor:pointer;transition:all .15s;
+}
+.copy-btn:hover{border-color:var(--mag);color:#fff;}
+.copy-btn.ok{border-color:#00a878;color:#00a878;}
+
+.push-palette-btn{
+  width:100%;padding:10px;text-align:center;
+  background:rgba(229,0,125,.08);
+  border:1.5px solid rgba(229,0,125,.25);
+  color:var(--mag);font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;
+}
+.push-palette-btn:hover{background:rgba(229,0,125,.15);border-color:var(--mag);}
+
+/* ════════════════════════════════════════
+   TYPE PLAYGROUND SECTION
+════════════════════════════════════════ */
+#type-section{
+  padding:0;border-bottom:1.5px solid var(--border);
+}
+.type-section-header{
+  padding:56px 64px 40px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+.type-section-header-left{}
+.type-section-actions{display:flex;gap:8px;padding-bottom:2px;}
+
+/* The playground tool itself */
+#type-tool{
+  display:grid;grid-template-columns:var(--panel-w) 1fr 180px;
+  height:calc(100vh - var(--nav-h));
+  position:sticky;top:var(--nav-h);
+  background:var(--ink);
+}
+
+/* Tool topbar */
+#type-tb{
+  grid-column:1/-1;grid-row:1;
+  height:40px;
+  background:var(--ink2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;
+  overflow:hidden;flex-shrink:0;
+}
+/* redefine grid with topbar */
+#type-tool{
+  display:grid;
+  grid-template-columns:var(--panel-w) 1fr 180px;
+  grid-template-rows:40px 1fr;
+  height:calc(100vh - var(--nav-h));
+  position:sticky;top:var(--nav-h);
+  background:var(--ink);
+}
+#type-tb{grid-column:1/-1;grid-row:1;}
+#type-panel{
+  grid-column:1;grid-row:2;
+  background:var(--ink2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;
+}
+#type-canvas-area{
+  grid-column:2;grid-row:2;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:var(--ink);position:relative;overflow:hidden;
+}
+#type-canvas-area::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;
+}
+#type-rpanel{
+  grid-column:3;grid-row:2;
+  background:var(--ink2);
+  border-left:1px solid var(--border);
+  overflow-y:auto;
+}
+
+/* Palette sync strip inside type tool */
+#palette-sync-strip{
+  grid-column:1/-1;
+  /* inside the topbar */
+  display:none;
+  align-items:center;
+  padding:0 12px;gap:8px;
+  border-left:1px solid var(--border);
+  height:100%;flex:1;overflow-x:auto;
+}
+#palette-sync-strip.visible{display:flex;}
+
+/* tb elements */
+.tb-sep{width:1px;height:100%;background:var(--border);flex-shrink:0;}
+.tb-item{
+  display:flex;align-items:center;gap:6px;
+  padding:0 14px;height:100%;
+  border-right:1px solid var(--border);
+  flex-shrink:0;
+}
+.tb-label{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.28);white-space:nowrap;}
+.tb-select{
+  background:var(--ink3);border:1px solid rgba(255,255,255,.1);color:#fff;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;
+  padding:4px 7px;cursor:pointer;outline:none;height:26px;
+}
+.tb-select:focus{border-color:var(--mag);}
+.tb-btn{
+  height:26px;padding:0 12px;
+  background:var(--ink4);border:1px solid rgba(255,255,255,.09);
+  color:rgba(255,255,255,.5);font-family:'DM Mono',monospace;
+  font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;transition:all .12s;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--mag);color:#fff;}
+.tb-btn.mag{background:var(--mag);border-color:var(--mag);color:#fff;}
+.tb-btn.mag:hover{background:#c8006d;}
+.tb-toggle{display:flex;height:26px;border:1px solid rgba(255,255,255,.09);overflow:hidden;}
+.tb-toggle button{
+  padding:0 10px;background:transparent;border:none;
+  color:rgba(255,255,255,.3);font-family:'DM Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;transition:all .12s;
+  border-right:1px solid rgba(255,255,255,.07);
+}
+.tb-toggle button:last-child{border-right:none;}
+.tb-toggle button.active{background:var(--mag);color:#fff;}
+.tb-toggle button:hover:not(.active){color:#fff;background:rgba(255,255,255,.05);}
+.tb-spacer{flex:1;}
+
+/* ── Panel mode tabs (BG / Layers) ── */
+#panel-mode-tabs{
+  display:flex;flex-shrink:0;border-bottom:1px solid var(--border);
+}
+.panel-mode-tab{
+  flex:1;height:34px;display:flex;align-items:center;justify-content:center;gap:5px;
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;background:transparent;border:none;color:rgba(255,255,255,.28);
+  border-bottom:2px solid transparent;transition:all .12s;
+}
+.panel-mode-tab:hover{color:rgba(255,255,255,.6);}
+.panel-mode-tab.active{color:#fff;border-bottom-color:rgba(255,255,255,.3);}
+.panel-mode-tab.active.mode-layers{border-bottom-color:var(--mag);}
+.l-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ── Layer stack ── */
+#layer-stack{
+  flex-shrink:0;border-bottom:1px solid var(--border);
+  background:rgba(0,0,0,.18);
+}
+.layer-row{
+  display:flex;align-items:center;gap:0;
+  height:44px;border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;transition:background .1s;position:relative;
+}
+.layer-row:last-child{border-bottom:none;}
+.layer-row:hover{background:rgba(255,255,255,.03);}
+.layer-row.active-layer{background:rgba(255,255,255,.055);}
+.layer-row.active-layer::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+}
+.layer-row[data-lid="l1"].active-layer::before{background:#e5007d;}
+.layer-row[data-lid="l2"].active-layer::before{background:#4a9fff;}
+.layer-row[data-lid="l3"].active-layer::before{background:#00c896;}
+
+/* Eye toggle — dedicated click zone */
+.layer-eye{
+  width:36px;height:100%;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;font-size:13px;
+  transition:opacity .12s;z-index:2;
+}
+.layer-eye:hover{background:rgba(255,255,255,.05);}
+.layer-row.layer-hidden .layer-eye{opacity:.28;}
+.layer-row.layer-hidden .layer-body{opacity:.3;}
+
+/* Layer body — click to edit */
+.layer-body{
+  flex:1;min-width:0;padding:0 6px 0 2px;
+  display:flex;flex-direction:column;gap:2px;pointer-events:none;
+}
+.layer-body-top{
+  display:flex;align-items:center;gap:6px;
+}
+.layer-name-badge{
+  font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.32);flex-shrink:0;
+}
+.layer-text-preview{
+  font-size:9px;color:rgba(255,255,255,.6);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;
+}
+.layer-body-meta{
+  display:flex;align-items:center;gap:6px;
+}
+.layer-font-badge{
+  font-size:7px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);
+}
+.layer-op-bar{
+  height:2px;flex:1;background:rgba(255,255,255,.06);
+  position:relative;overflow:hidden;
+}
+.layer-op-bar-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:var(--mag);opacity:.6;transition:width .15s;
+}
+
+/* Solo button */
+.layer-solo{
+  width:28px;height:100%;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;font-size:9px;
+  color:rgba(255,255,255,.15);transition:all .1s;letter-spacing:.06em;
+}
+.layer-solo:hover{color:rgba(255,255,255,.7);background:rgba(255,255,255,.04);}
+.layer-solo.soloed{color:var(--mag);}
+
+/* Add/clear strip */
+#layer-stack-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 8px;border-top:1px solid rgba(255,255,255,.04);
+}
+.lsf-btn{
+  font-size:7px;letter-spacing:.15em;text-transform:uppercase;
+  background:none;border:none;color:rgba(255,255,255,.25);
+  cursor:pointer;padding:3px 6px;font-family:'DM Mono',monospace;
+  transition:color .12s;
+}
+.lsf-btn:hover{color:rgba(255,255,255,.7);}
+.lsf-btn.mag:hover{color:var(--mag);}
+.lsf-count{
+  font-size:7px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.15);
+}
+
+/* Old layer-tab kept for compat */
+#layer-tabs{display:none;}
+.layer-tab{display:none;}
+
+#panel-body{flex:1;overflow-y:auto;overflow-x:hidden;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* Control groups */
+.cg{padding:12px 14px;border-bottom:1px solid var(--border);}
+.cg-title{
+  font-size:8px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.22);margin-bottom:9px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cg-mini-btn{
+  font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:none;color:var(--mag);cursor:pointer;
+  font-family:'DM Mono',monospace;padding:0;
+}
+.cg-mini-btn:hover{color:#fff;}
+textarea.ti{
+  width:100%;padding:8px 9px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);color:#fff;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;
+  resize:vertical;min-height:44px;max-height:88px;outline:none;
+  transition:border-color .15s;
+}
+textarea.ti:focus{border-color:var(--mag);}
+.chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;}
+.chip{
+  padding:3px 7px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.09em;
+  cursor:pointer;transition:all .1s;text-transform:uppercase;
+}
+.chip:hover{border-color:var(--mag);color:#fff;}
+
+.color-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.cdot{
+  width:20px;height:20px;cursor:pointer;
+  border:2px solid transparent;transition:border-color .12s;flex-shrink:0;
+}
+.cdot.active{border-color:#fff;}
+.cdot:hover{border-color:rgba(255,255,255,.5);}
+.cust-color{
+  width:20px;height:20px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.15);background:transparent;padding:2px;
+}
+
+/* Palette color row in layers */
+.palette-colors{
+  display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;
+  padding:8px;
+  background:rgba(229,0,125,.04);
+  border:1px solid rgba(229,0,125,.12);
+}
+.palette-colors .ps-label{
+  width:100%;font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(229,0,125,.6);margin-bottom:4px;
+}
+
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.dist-btn{
+  padding:8px 5px;text-align:center;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+  color:rgba(255,255,255,.32);font-family:'DM Mono',monospace;
+  font-size:7px;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;transition:all .1s;line-height:1.5;
+}
+.dist-btn .di{display:block;font-size:14px;margin-bottom:2px;opacity:.55;}
+.dist-btn:hover{border-color:rgba(255,255,255,.2);color:#fff;}
+.dist-btn.active{border-color:var(--mag);color:#fff;background:rgba(229,0,125,.08);}
+.dist-btn.active .di{opacity:1;}
+
+.blend-seg{display:flex;gap:2px;flex-wrap:wrap;}
+.bg-opts-col{display:flex;flex-direction:column;gap:3px;}
+.bg-opt{
+  display:flex;align-items:center;gap:7px;padding:6px 8px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);
+  color:rgba(255,255,255,.38);font-size:8px;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;transition:all .1s;
+}
+.bg-opt:hover,.bg-opt.active{border-color:var(--mag);color:#fff;}
+.bg-opt .sw{width:14px;height:14px;flex-shrink:0;}
+
+.icon-btn{
+  width:24px;height:24px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.38);
+  cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;
+  transition:all .1s;flex-shrink:0;
+}
+.icon-btn:hover{border-color:var(--mag);color:#fff;}
+.icon-btn.active{background:rgba(229,0,125,.12);border-color:var(--mag);color:var(--mag);}
+
+/* Canvas stage */
+#stage{position:relative;z-index:1;box-shadow:0 0 0 1px rgba(229,0,125,.18),0 20px 60px rgba(0,0,0,.6);}
+#typeCanvas{display:block;}
+#canvas-info-bar{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:8px;margin-top:10px;
+}
+.c-info{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.18);padding:0 10px;}
+
+/* ════════════════════════════════════════
+   TEMPLATE DRAWER
+════════════════════════════════════════ */
+#tpl-drawer{
+  position:absolute;
+  top:40px; /* sits flush under the toolbar */
+  left:var(--panel-w);
+  right:180px;
+  z-index:50;
+  background:var(--ink2);
+  border-bottom:1.5px solid var(--mag-hi);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+  transform:translateY(-100%) translateY(-40px);
+  opacity:0;
+  pointer-events:none;
+  transition:transform .32s var(--ease), opacity .22s ease;
+  overflow:hidden;
+}
+#tpl-drawer.open{
+  transform:translateY(0);
+  opacity:1;
+  pointer-events:all;
+}
+.tpl-drawer-inner{
+  padding:16px 20px 20px;
+}
+.tpl-drawer-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.tpl-drawer-title{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);
+  display:flex;align-items:center;gap:10px;
+}
+.tpl-drawer-title::before{
+  content:'';display:block;width:16px;height:1.5px;background:var(--mag);
+}
+.tpl-close{
+  background:none;border:none;color:rgba(255,255,255,.3);
+  font-size:14px;cursor:pointer;padding:2px 6px;
+  transition:color .15s;font-family:'DM Mono',monospace;
+}
+.tpl-close:hover{color:var(--mag);}
+.tpl-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
+  gap:8px;
+}
+.tpl-card{
+  cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.07);
+  overflow:hidden;
+  transition:border-color .15s, transform .15s var(--ease);
+  position:relative;
+}
+.tpl-card:hover{
+  border-color:var(--mag);
+  transform:translateY(-2px);
+}
+.tpl-card.active-tpl{
+  border-color:var(--mag);
+  box-shadow:0 0 0 1px var(--mag);
+}
+/* The mini canvas preview */
+.tpl-preview{
+  height:90px;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:10px 10px 8px;
+  pointer-events:none;
+}
+.tpl-preview .tp-bar{
+  position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--mag);
+}
+.tpl-preview .tp-corner{
+  position:absolute;width:8px;height:8px;
+  border-color:rgba(229,0,125,.5);border-style:solid;border-width:0;
+}
+.tpl-preview .tp-corner.tl{top:5px;left:5px;border-top-width:1px;border-left-width:1px;}
+.tpl-preview .tp-corner.br{bottom:5px;right:5px;border-bottom-width:1px;border-right-width:1px;}
+.tpl-preview .tp-ey{
+  font-size:6px;letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:3px;display:flex;align-items:center;gap:4px;
+}
+.tpl-preview .tp-ey::before{content:'';display:block;width:8px;height:1px;background:currentColor;}
+.tpl-preview .tp-h1{
+  font-family:'Bebas Neue',sans-serif;line-height:.95;letter-spacing:.02em;
+}
+.tpl-preview .tp-h2{
+  font-family:'Playfair Display',serif;font-style:italic;line-height:1.1;
+}
+.tpl-preview .tp-sub{
+  font-family:'DM Mono',monospace;letter-spacing:.07em;text-transform:uppercase;
+}
+.tpl-meta{
+  padding:7px 9px 8px;
+  border-top:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.02);
+}
+.tpl-name{
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);display:block;margin-bottom:2px;
+}
+.tpl-desc{
+  font-size:7px;letter-spacing:.06em;color:rgba(255,255,255,.28);
+}
+.tpl-cat{
+  display:inline-block;margin-top:4px;
+  font-size:6px;letter-spacing:.15em;text-transform:uppercase;
+  padding:2px 6px;border:1px solid rgba(229,0,125,.3);color:var(--mag);
+}
+
+/* ════════════════════════════════════════
+   VECTOR + TEXTURE SECTIONS
+════════════════════════════════════════ */
+#vector-section{background:var(--ink3);}
+#texture-section{background:var(--ink2);}
+.two-gen-grid{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start;}
+.vector-stage{
+  aspect-ratio:1;background:var(--ink);
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+#vectorSvg{width:68%;height:68%;}
+.texture-stage{
+  aspect-ratio:16/9;border:1.5px solid var(--border);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#textureCanvas{position:absolute;inset:0;width:100%;height:100%;}
+.tex-overlay{
+  position:relative;z-index:1;text-align:center;pointer-events:none;
+}
+.tex-overlay .big{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3.5vw,48px);
+  letter-spacing:.05em;opacity:.55;}
+.tex-overlay .sm{font-size:9px;letter-spacing:.2em;text-transform:uppercase;opacity:.25;margin-top:4px;}
+
+/* ════════════════════════════════════════
+   OKLCH SHADE PANEL
+════════════════════════════════════════ */
+#oklch-panel{
+  display:none;
+  border:1px solid rgba(229,0,125,.22);
+  background:rgba(0,0,0,.3);
+  margin-top:8px;
+  animation:shadeIn .2s var(--ease) both;
+}
+@keyframes shadeIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+.oklch-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.oklch-title{
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);display:flex;align-items:center;gap:10px;
+}
+.oklch-source-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 8px 3px 6px;
+  border:1px solid rgba(255,255,255,.1);
+  font-size:9px;letter-spacing:.06em;
+}
+.oklch-source-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.oklch-actions{display:flex;gap:5px;}
+.oklch-x{
+  background:none;border:none;color:rgba(255,255,255,.2);
+  font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;
+  padding:2px 6px;transition:color .12s;
+}
+.oklch-x:hover{color:#fff;}
+
+/* Shade strip */
+.oklch-shades{
+  display:flex;height:72px;
+  overflow:hidden;
+}
+.oklch-shade{
+  flex:1;position:relative;cursor:pointer;
+  transition:flex .2s var(--ease);
+}
+.oklch-shade:hover{flex:2.2;}
+.oklch-shade-inner{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:5px 5px 4px;opacity:0;transition:opacity .12s;
+  gap:1px;pointer-events:none;
+}
+.oklch-shade:hover .oklch-shade-inner{opacity:1;}
+.oklch-shade-step{
+  font-size:7px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:'DM Mono',monospace;
+}
+.oklch-shade-hex{
+  font-size:8px;letter-spacing:.04em;font-family:'DM Mono',monospace;
+}
+.oklch-shade-val{
+  font-size:6.5px;letter-spacing:.04em;font-family:'DM Mono',monospace;opacity:.7;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Detail row */
+.oklch-detail{
+  display:flex;gap:0;border-top:1px solid rgba(255,255,255,.05);
+  flex-wrap:wrap;
+}
+.oklch-stat{
+  flex:1;min-width:80px;padding:9px 12px;border-right:1px solid rgba(255,255,255,.05);
+  display:flex;flex-direction:column;gap:3px;
+}
+.oklch-stat:last-child{border-right:none;}
+.oklch-stat-val{
+  font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.04em;color:#fff;
+  line-height:1;
+}
+.oklch-stat-key{
+  font-size:7px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);
+}
+
+/* Copy row */
+.oklch-copy-row{
+  display:flex;gap:4px;padding:8px 12px;border-top:1px solid rgba(255,255,255,.05);
+  flex-wrap:wrap;
+}
+.oklch-copy-btn{
+  font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.4);cursor:pointer;transition:all .1s;
+}
+.oklch-copy-btn:hover{border-color:var(--mag);color:#fff;}
+.oklch-copy-btn.copied{border-color:#00a878;color:#00a878;}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+footer{
+  padding:28px 64px;border-top:1.5px solid var(--mag);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.22);
+}
+
+/* ════════════════════════════════════════
+   TOAST + REVEAL
+════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--mag);color:#fff;padding:7px 18px;
+  font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+  opacity:0;transition:all .22s var(--ease);pointer-events:none;z-index:999;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.reveal{opacity:0;transform:translateY(18px);
+  transition:opacity .6s ease,transform .6s var(--ease);}
+.reveal.in{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  .color-gen-grid,.two-gen-grid{grid-template-columns:1fr;}
+  #type-tool{grid-template-columns:1fr;grid-template-rows:40px auto 1fr;height:auto;position:relative;}
+  #type-panel{max-height:320px;}
+  #type-rpanel{display:none;}
+  .section{padding:56px 24px;}
+  #nav .nav-links{display:none;}
+  footer{flex-direction:column;gap:10px;text-align:center;}
+  .type-section-header{padding:40px 24px 28px;flex-direction:column;gap:14px;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════
+  NAV
+══════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-logo">AIGA KC <span class="tag">Living System</span></div>
+  <ul class="nav-links">
+    <li><a href="#hero" class="active">Principles</a></li>
+    <li><a href="#color-section">Color</a></li>
+    <li><a href="#type-section">Typography</a></li>
+    <li><a href="#vector-section">Vector</a></li>
+    <li><a href="#texture-section">Texture</a></li>
+  </ul>
+  <div class="nav-spacer"></div>
+  <div class="nav-version">Brand System v3.0</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+  HERO — PRINCIPLES
+══════════════════════════════════════ -->
+<section id="hero" style="margin-top:var(--nav-h);">
+  <canvas id="hero-canvas"></canvas>
+
+  <div class="p-panel p-community" onclick="toast('Community — We build up our local design community and help every member flourish.')">
+    <span class="p-num">01</span>
+    <canvas class="p-canvas" id="pc-community"></canvas>
+    <div class="p-word" style="color:#00a878;">Community</div>
+    <div class="p-line"></div>
+    <p class="p-desc">We build up our local design community and help every member flourish — connecting nodes, strengthening networks.</p>
+    <div class="p-dot"></div>
+  </div>
+
+  <div class="p-panel p-inclusivity" onclick="toast('Inclusivity — Creativity is for everyone. Every background, every skill level is welcome here.')">
+    <span class="p-num">02</span>
+    <canvas class="p-canvas" id="pc-inclusivity"></canvas>
+    <div class="p-word" style="color:#4a9fff;">Inclusivity</div>
+    <div class="p-line"></div>
+    <p class="p-desc">Creativity is for everyone. Every background, every skill level, every story is welcome here. The table is always bigger.</p>
+    <div class="p-dot"></div>
+  </div>
+
+  <div class="p-panel p-vibrance" onclick="toast('Vibrance — We spark ideas, ignite collaboration, and power networking in KC.')">
+    <span class="p-num">03</span>
+    <canvas class="p-canvas" id="pc-vibrance"></canvas>
+    <div class="p-word" style="color:#e5007d;">Vibrance</div>
+    <div class="p-line"></div>
+    <p class="p-desc">We spark ideas, ignite collaboration, and power networking. Energy is the medium. Kansas City design is alive.</p>
+    <div class="p-dot"></div>
+  </div>
+
+  <div class="hero-bar">
+    <span>AIGA Kansas City — Brand System v3.0</span>
+    <div class="pulse-row"><div class="pulse-dot"></div><span>Living System — every tool outputs system-compliant assets</span></div>
+    <span>kc.aiga.org</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  COLOR GENERATOR
+══════════════════════════════════════ -->
+<div class="section" id="color-section">
+  <div class="eyebrow"><span>01 — Generator</span></div>
+  <h2 class="sec-title">Color Palette<br>Generator</h2>
+  <p class="sec-lead">Input any seed color. The system generates a full AIGA KC–compliant palette — Magenta always anchored, always harmonious. Generated colors sync instantly to the Typography Playground.</p>
+
+  <div class="gen-card reveal">
+    <div class="gen-card-head">
+      <div class="gen-card-title">Palette Engine <span class="gtag">Live</span></div>
+      <span style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.25);">#E5007D always present</span>
+    </div>
+    <div class="gen-body">
+      <div class="color-gen-grid">
+
+        <div class="color-controls">
+          <div>
+            <label class="ctrl-label">Seed Color</label>
+            <div class="color-input-row">
+              <input type="color" id="colorPicker" value="#002fa7" oninput="syncHex(this.value)">
+              <input type="text" id="colorHex" value="#002FA7" maxlength="7" oninput="syncPicker(this.value)" placeholder="#000000">
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Harmony Mode</label>
+            <div class="harm-row">
+              <button class="harm-btn active" onclick="setHarmony(this,'split')">Split</button>
+              <button class="harm-btn" onclick="setHarmony(this,'analogous')">Analog</button>
+              <button class="harm-btn" onclick="setHarmony(this,'triadic')">Triadic</button>
+            </div>
+          </div>
+          <div class="compat-block">
+            <span class="ctrl-label" style="margin-bottom:4px;">Magenta Compatibility</span>
+            <div class="compat-bar-track"><div class="compat-bar-fill" id="compatBar"></div></div>
+            <div class="compat-score" id="compatScore">—</div>
+          </div>
+          <button class="btn btn-primary" onclick="generatePalette()" style="width:100%;">Generate Palette</button>
+          <button class="btn btn-ghost" onclick="randomSeed()" style="width:100%;">↻ Random Seed</button>
+          <button class="push-palette-btn" id="pushBtn" onclick="pushToPlayground()">⬆ Push Palette to Typography Playground</button>
+          <div style="position:relative;">
+            <div class="css-box" id="cssBox">
+              <button class="copy-btn" id="cssBtn" onclick="copyCss()">Copy</button>
+              <div id="cssVars" style="font-size:10px;">-- Click Generate --</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-out">
+          <div class="swatch-row" id="paletteSwatches"></div>
+
+          <!-- OKLCH Shade Panel — injected below swatches on click -->
+          <div id="oklch-panel">
+            <div class="oklch-head">
+              <div class="oklch-title">
+                OKLCH Shades
+                <span class="oklch-source-chip" id="oklchSourceChip">
+                  <span class="oklch-source-dot" id="oklchSourceDot"></span>
+                  <span id="oklchSourceLabel">—</span>
+                </span>
+              </div>
+              <div class="oklch-actions">
+                <button class="oklch-copy-btn" onclick="copyOklchCss()">Copy CSS Vars</button>
+                <button class="oklch-x" onclick="closeOklchPanel()" title="Close">✕</button>
+              </div>
+            </div>
+            <div class="oklch-shades" id="oklchShades"></div>
+            <div class="oklch-detail" id="oklchDetail"></div>
+            <div class="oklch-copy-row" id="oklchCopyRow"></div>
+          </div>
+          <div class="preview-card" id="previewCard">
+            <svg id="pcTex" style="position:absolute;inset:0;width:100%;height:100%;opacity:.1;pointer-events:none;" preserveAspectRatio="xMidYMid slice"></svg>
+            <div class="cm tl"></div><div class="cm br"></div>
+            <div class="pc-bar" id="pcBar"></div>
+            <div class="pc-kc">KC</div>
+            <div class="pc-tag" id="pcTag">Campaign Identity</div>
+            <div class="pc-headline" id="pcHead">AIGA KC<br>2025 Season</div>
+            <div class="pc-sub" id="pcSub">Kansas City's Design Community</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  TYPOGRAPHY PLAYGROUND
+══════════════════════════════════════ -->
+<div id="type-section">
+  <div class="type-section-header">
+    <div class="type-section-header-left">
+      <div class="eyebrow" style="margin-bottom:12px;"><span>02 — Generator</span></div>
+      <h2 class="sec-title">Typography<br>Playground</h2>
+      <p class="sec-lead" style="margin-bottom:0;">Three independent layers. Eight distortion modes per layer. Blend modes, scale, tracking, rotation. Generate palettes above and push them here — or build freely. Export PNG.</p>
+    </div>
+    <div class="type-section-actions">
+      <button class="btn btn-ghost btn-sm" onclick="typo_chaos()">⚡ Chaos</button>
+      <button class="btn btn-ghost btn-sm" onclick="typo_shuffle()">↻ Shuffle</button>
+      <button class="btn btn-primary btn-sm" onclick="openExport()">↓ Export</button>
+    </div>
+  </div>
+
+  <!-- The sticky tool -->
+  <div id="type-tool">
+
+    <!-- Topbar -->
+    <div id="type-tb">
+      <div class="tb-item">
+        <span class="tb-label">Canvas</span>
+        <select class="tb-select" id="canvasSize" onchange="typo_resize()">
+          <option value="800,800">Square 1:1</option>
+          <option value="1200,630">Social 16:9</option>
+          <option value="630,1200">Story 9:16</option>
+          <option value="1200,450">Banner 8:3</option>
+          <option value="800,1000">Poster 4:5</option>
+        </select>
+      </div>
+      <div class="tb-item">
+        <span class="tb-label">Animate</span>
+        <div class="tb-toggle">
+          <button class="active" id="animOff" onclick="typo_setAnim(false,this)">Off</button>
+          <button id="animOn" onclick="typo_setAnim(true,this)">Live</button>
+        </div>
+      </div>
+      <div class="tb-item">
+        <button class="tb-btn" id="tplToggleBtn" onclick="toggleTplDrawer()">☰ Templates</button>
+      </div>
+      <div class="tb-item">
+        <button class="tb-btn" onclick="typo_reset()">Reset All</button>
+      </div>
+      <!-- Quick FX -->
+      <div class="tb-item" style="gap:3px;">
+        <span class="tb-label">Quick FX</span>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;">
+          <button class="tb-btn" title="Film Grain" onclick="quickFX('grain')" style="font-size:10px;padding:3px 6px;">⬛ Grain</button>
+          <button class="tb-btn" title="Gradient overlay" onclick="quickFX('gradient')" style="font-size:10px;padding:3px 6px;">🎨 Grad</button>
+          <button class="tb-btn" title="Paper texture" onclick="quickFX('paper')" style="font-size:10px;padding:3px 6px;">📄 Paper</button>
+          <button class="tb-btn" title="Noise overlay" onclick="quickFX('noise')" style="font-size:10px;padding:3px 6px;">📡 Noise</button>
+          <button class="tb-btn mag" title="Clear all FX" onclick="quickFX('clear')" style="font-size:10px;padding:3px 6px;">✕ Clear</button>
+        </div>
+      </div>
+      <!-- Palette sync strip -->
+      <div id="palette-sync-strip">
+        <span class="ps-label">↳ Palette:</span>
+        <!-- swatches injected here by JS -->
+      </div>
+    </div><!-- /#type-tb -->
+
+    <!-- Template Drawer -->
+    <div id="tpl-drawer">
+      <div class="tpl-drawer-inner">
+        <div class="tpl-drawer-header">
+          <span class="tpl-drawer-title">Premade Templates</span>
+          <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
+        </div>
+        <div class="tpl-grid" id="tplGrid"><!-- cards injected by JS --></div>
+      </div>
+    </div>
+
+    <!-- Left panel -->
+    <div id="type-panel">
+    <!-- Panel mode: BG vs Layers -->
+    <div id="panel-mode-tabs">
+      <button class="panel-mode-tab mode-bg active" onclick="switchPanelMode('bg',this)">
+        <span class="l-dot" style="background:rgba(255,255,255,.3);"></span>Background
+      </button>
+      <button class="panel-mode-tab mode-layers" onclick="switchPanelMode('layers',this)">
+        <span class="l-dot" style="background:var(--mag);"></span>Layers
+      </button>
+    </div>
+
+    <!-- Layer stack (always visible in Layers mode) -->
+    <div id="layer-stack" style="display:none;">
+      <!-- rows injected by buildLayerStack() -->
+      <div id="layer-stack-footer">
+        <span class="lsf-count" id="layerVisCount">3 of 3 visible</span>
+        <div style="display:flex;gap:4px;">
+          <button class="lsf-btn" onclick="setAllLayersVisible(true)">Show All</button>
+          <button class="lsf-btn mag" onclick="setAllLayersVisible(false)">Hide All</button>
+        </div>
+      </div>
+    </div>
+      <div id="panel-body">
+        <!-- BG pane -->
+        <div class="tab-pane" id="pane-bg">
+          <div class="cg">
+            <div class="cg-title">Background Color</div>
+            <div class="color-row" id="bg-colors">
+              <div class="cdot active" style="background:#080808;" data-c="#080808" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#f4f1ea;" data-c="#f4f1ea" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#e5007d;" data-c="#e5007d" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#002fa7;" data-c="#002fa7" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#00a878;" data-c="#00a878" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#1a0830;" data-c="#1a0830" onclick="setBG(this)"></div>
+              <input type="color" class="cust-color" value="#080808" oninput="T.bg=this.value;typo_render();">
+            </div>
+            <!-- palette colors injected here -->
+            <div class="palette-colors" id="bg-palette-colors" style="display:none;">
+              <span class="ps-label">From palette</span>
+            </div>
+          </div>
+          <div class="cg">
+            <div class="cg-title">Texture</div>
+            <div class="bg-opts-col" id="bgTexOpts">
+              <div class="bg-opt active" data-tex="none" onclick="setBGTex(this)"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+              <div class="bg-opt" data-tex="paper" onclick="setBGTex(this)"><span class="sw" style="background:white;background-image:repeating-linear-gradient(rgba(100,160,220,.35) 1px,transparent 1px),repeating-linear-gradient(90deg,rgba(100,160,220,.35) 1px,transparent 1px);background-size:8px 8px;"></span>Paper</div>
+              <div class="bg-opt" data-tex="grid" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(rgba(229,0,125,.4) 1px,transparent 1px),repeating-linear-gradient(90deg,rgba(229,0,125,.4) 1px,transparent 1px);background-size:5px 5px;"></span>Grid Mag</div>
+              <div class="bg-opt" data-tex="dot" onclick="setBGTex(this)"><span class="sw" style="background:radial-gradient(circle,rgba(229,0,125,.5) 1px,transparent 1px);background-size:5px 5px;"></span>Dot</div>
+              <div class="bg-opt" data-tex="diagonal" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(45deg,rgba(229,0,125,.4) 0,rgba(229,0,125,.4) 1px,transparent 1px,transparent 5px);"></span>Diagonal</div>
+              <div class="bg-opt" data-tex="scan" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(180deg,rgba(0,0,0,.18) 0,rgba(0,0,0,.18) 1px,transparent 1px,transparent 3px);"></span>Scan Lines</div>
+              <div class="bg-opt" data-tex="noise" onclick="setBGTex(this)"><span class="sw" style="background:#888;filter:url(#noise-filter) contrast(170%) brightness(100%);background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.8%22/></svg>');background-size:64px 64px;"></span>Noise</div>
+            </div>
+          </div>
+          <div class="cg">
+            <div class="cg-title">Texture Opacity</div>
+            <div class="sl-row">
+              <span class="sl-label">Opacity</span>
+              <div class="sl-wrap"><input type="range" min="3" max="35" value="12" oninput="T.texOp=+this.value;document.getElementById('texOpVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="texOpVal">12%</span>
+            </div>
+          </div>
+
+          <!-- GRADIENT -->
+          <div class="cg">
+            <div class="cg-title">Gradient Overlay</div>
+            <div class="bg-opts-col" id="gradTypeOpts">
+              <div class="bg-opt active" data-g="none" onclick="setGrad(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+              <div class="bg-opt" data-g="linear" onclick="setGrad(this,'linear')"><span class="sw" style="background:linear-gradient(135deg,#e5007d,#002fa7);"></span>Linear</div>
+              <div class="bg-opt" data-g="radial" onclick="setGrad(this,'radial')"><span class="sw" style="background:radial-gradient(circle,#e5007d,#002fa7);"></span>Radial</div>
+              <div class="bg-opt" data-g="split" onclick="setGrad(this,'split')"><span class="sw" style="background:linear-gradient(90deg,#00a878 50%,#e5007d 50%);"></span>Split</div>
+              <div class="bg-opt" data-g="vignette" onclick="setGrad(this,'vignette')"><span class="sw" style="background:radial-gradient(circle,transparent 30%,rgba(0,0,0,.8));"></span>Vignette</div>
+              <div class="bg-opt" data-g="sunset" onclick="setGrad(this,'sunset')"><span class="sw" style="background:linear-gradient(180deg,#ffb347,#e5007d,#002fa7);"></span>Sunset</div>
+              <div class="bg-opt" data-g="glow-corner" onclick="setGrad(this,'glow-corner')"><span class="sw" style="background:radial-gradient(circle at 0% 100%,#e5007d 0%,transparent 60%);"></span>Corner Glow</div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
+              <span class="cg-title" style="margin-bottom:0;width:32px;flex-shrink:0;">C1</span>
+              <input type="color" class="cust-color" value="#e5007d" id="gradC1" oninput="T.gradC1=this.value;typo_render();" style="width:28px;height:22px;">
+              <span class="cg-title" style="margin-bottom:0;width:32px;flex-shrink:0;">C2</span>
+              <input type="color" class="cust-color" value="#002fa7" id="gradC2" oninput="T.gradC2=this.value;typo_render();" style="width:28px;height:22px;">
+            </div>
+            <div class="sl-row" style="margin-top:8px;">
+              <span class="sl-label">Angle</span>
+              <div class="sl-wrap"><input type="range" min="0" max="360" value="135" id="gradAngle" oninput="T.gradAngle=+this.value;document.getElementById('gradAngleVal').textContent=this.value+'°';typo_render();"></div>
+              <span class="sl-val" id="gradAngleVal">135°</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Opacity</span>
+              <div class="sl-wrap"><input type="range" min="5" max="100" value="80" id="gradOpacity" oninput="T.gradOpacity=+this.value;document.getElementById('gradOpacityVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="gradOpacityVal">80%</span>
+            </div>
+          </div>
+
+          <!-- GRAIN -->
+          <div class="cg">
+            <div class="cg-title">Film Grain / Noise</div>
+            <div class="sl-row">
+              <span class="sl-label">Amount</span>
+              <div class="sl-wrap"><input type="range" min="0" max="100" value="0" id="grainAmount" oninput="T.grain=+this.value;document.getElementById('grainVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="grainVal">0%</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Grain Size</span>
+              <div class="sl-wrap"><input type="range" min="1" max="4" value="1" step="0.5" id="grainSize" oninput="T.grainSize=+this.value;document.getElementById('grainSizeVal').textContent=this.value+'×';typo_render();"></div>
+              <span class="sl-val" id="grainSizeVal">1×</span>
+            </div>
+            <div class="bg-opts-col" id="grainStyleOpts" style="margin-top:6px;">
+              <div class="bg-opt active" data-gs="overlay" onclick="setGrainStyle(this,'overlay')"><span class="sw" style="background:rgba(255,255,255,.15);"></span>Overlay</div>
+              <div class="bg-opt" data-gs="monochrome" onclick="setGrainStyle(this,'monochrome')"><span class="sw" style="background:rgba(255,255,255,.08);"></span>Mono</div>
+              <div class="bg-opt" data-gs="color" onclick="setGrainStyle(this,'color')"><span class="sw" style="background:linear-gradient(45deg,rgba(229,0,125,.2),rgba(0,47,167,.2));"></span>Color</div>
+            </div>
+          </div>
+        </div>
+        <!-- L1/L2/L3 panes built by JS -->
+        <div class="tab-pane active" id="pane-l1"></div>
+        <div class="tab-pane" id="pane-l2"></div>
+        <div class="tab-pane" id="pane-l3"></div>
+      </div>
+    </div>
+
+    <!-- Canvas area -->
+    <div id="type-canvas-area">
+      <div id="stage"><canvas id="typeCanvas" width="800" height="800"></canvas></div>
+      <div id="canvas-info-bar">
+        <span class="c-info" id="canvasInfo">800 × 800px</span>
+        <button class="tb-btn" onclick="typo_resetLayer()">Reset Layer</button>
+        <button class="tb-btn mag" style="margin-left:4px;" onclick="openExport()">↓ Export</button>
+      </div>
+    </div>
+
+    <!-- Right panel: accents + kc mark -->
+    <div id="type-rpanel">
+      <div class="cg">
+        <div class="cg-title">Magenta Accent</div>
+        <div class="bg-opts-col" id="accentOpts">
+          <div class="bg-opt active" data-a="none" onclick="setAccent(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+          <div class="bg-opt" data-a="bar-top" onclick="setAccent(this,'bar-top')"><span class="sw" style="background:linear-gradient(180deg,#e5007d 3px,transparent 3px);"></span>Bar Top</div>
+          <div class="bg-opt" data-a="bar-bottom" onclick="setAccent(this,'bar-bottom')"><span class="sw" style="background:linear-gradient(0deg,#e5007d 3px,transparent 3px);"></span>Bar Bottom</div>
+          <div class="bg-opt" data-a="bar-left" onclick="setAccent(this,'bar-left')"><span class="sw" style="background:linear-gradient(90deg,#e5007d 3px,transparent 3px);"></span>Bar Left</div>
+          <div class="bg-opt" data-a="corners" onclick="setAccent(this,'corners')"><span class="sw" style="border:1px solid rgba(229,0,125,.5);"></span>Corners</div>
+          <div class="bg-opt" data-a="rule" onclick="setAccent(this,'rule')"><span class="sw" style="background:linear-gradient(180deg,transparent 47%,#e5007d 47%,#e5007d 53%,transparent 53%);"></span>H-Rule</div>
+          <div class="bg-opt" data-a="dot" onclick="setAccent(this,'dot')"><span class="sw" style="display:flex;align-items:center;justify-content:center;"><span style="width:7px;height:7px;background:#e5007d;border-radius:50%;display:block;"></span></span>Dot</div>
+        </div>
+      </div>
+      <div class="cg">
+        <div class="cg-title">KC Mark</div>
+        <div class="bg-opts-col" id="kcOpts">
+          <div class="bg-opt active" data-kc="none" onclick="setKC(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+          <div class="bg-opt" data-kc="tr" onclick="setKC(this,'tr')"><span class="sw" style="display:flex;align-items:center;justify-content:center;"><span style="font-family:'Bebas Neue';font-size:7px;border:1px solid #e5007d;padding:1px 3px;color:#e5007d;">KC</span></span>Top Right</div>
+          <div class="bg-opt" data-kc="bl" onclick="setKC(this,'bl')"><span class="sw" style="display:flex;align-items:center;justify-content:center;"><span style="font-family:'Bebas Neue';font-size:7px;border:1px solid #e5007d;padding:1px 3px;color:#e5007d;">KC</span></span>Bot Left</div>
+        </div>
+      </div>
+      <div class="cg">
+        <div class="cg-title">Canvas Glow</div>
+        <div class="sl-row">
+          <span class="sl-label">Intensity</span>
+          <div class="sl-wrap"><input type="range" min="0" max="100" value="0" oninput="T.glow=+this.value;document.getElementById('glowVal').textContent=this.value+'%';typo_render();"></div>
+          <span class="sl-val" id="glowVal">0%</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /type-tool -->
+</div><!-- /type-section -->
+
+<!-- ══════════════════════════════════════
+  VECTOR MARK GENERATOR
+══════════════════════════════════════ -->
+<div class="section" id="vector-section">
+  <div class="eyebrow"><span>03 — Generator</span></div>
+  <h2 class="sec-title">Vector Mark<br>Generator</h2>
+  <p class="sec-lead">Generative SVG marks rooted in the three brand principles. Download for use in any campaign. Colors update when you generate a new palette.</p>
+  <div class="gen-card reveal">
+    <div class="gen-card-head">
+      <div class="gen-card-title">Mark Engine <span class="gtag">SVG</span></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="genVector()">↻ Generate</button>
+        <button class="btn btn-ghost btn-sm" onclick="dlSVG()">↓ SVG</button>
+      </div>
+    </div>
+    <div class="gen-body">
+      <div class="two-gen-grid">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label class="ctrl-label">Archetype</label>
+            <div class="seg" id="arcOpts" style="flex-direction:column;gap:3px;">
+              <button class="seg-btn active" data-v="community" onclick="selCtrl(this,'arcOpts');V.arch=this.dataset.v;genVector();">Community — Network</button>
+              <button class="seg-btn" data-v="inclusivity" onclick="selCtrl(this,'arcOpts');V.arch=this.dataset.v;genVector();">Inclusivity — Spectrum</button>
+              <button class="seg-btn" data-v="vibrance" onclick="selCtrl(this,'arcOpts');V.arch=this.dataset.v;genVector();">Vibrance — Kinetic</button>
+              <button class="seg-btn" data-v="structural" onclick="selCtrl(this,'arcOpts');V.arch=this.dataset.v;genVector();">Structural — Grid</button>
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Complexity</label>
+            <div class="seg" id="cmpxOpts">
+              <button class="seg-btn active" data-v="simple" onclick="selCtrl(this,'cmpxOpts');V.complexity=this.dataset.v;genVector();">Simple</button>
+              <button class="seg-btn" data-v="medium" onclick="selCtrl(this,'cmpxOpts');V.complexity=this.dataset.v;genVector();">Medium</button>
+              <button class="seg-btn" data-v="complex" onclick="selCtrl(this,'cmpxOpts');V.complexity=this.dataset.v;genVector();">Complex</button>
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Color</label>
+            <div class="seg" id="vcOpts">
+              <button class="seg-btn active" data-v="mono" onclick="selCtrl(this,'vcOpts');V.color=this.dataset.v;genVector();">Mono</button>
+              <button class="seg-btn" data-v="accent" onclick="selCtrl(this,'vcOpts');V.color=this.dataset.v;genVector();">Magenta</button>
+              <button class="seg-btn" data-v="palette" onclick="selCtrl(this,'vcOpts');V.color=this.dataset.v;genVector();">Palette</button>
+            </div>
+          </div>
+        </div>
+        <div class="vector-stage">
+          <div class="cm tl" style="color:rgba(229,0,125,.2);"></div>
+          <div class="cm tr" style="color:rgba(229,0,125,.2);"></div>
+          <div class="cm bl" style="color:rgba(229,0,125,.2);"></div>
+          <div class="cm br" style="color:rgba(229,0,125,.2);"></div>
+          <svg id="vectorSvg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  TEXTURE GENERATOR
+══════════════════════════════════════ -->
+<div class="section" id="texture-section">
+  <div class="eyebrow"><span>04 — Generator</span></div>
+  <h2 class="sec-title">Texture<br>Generator</h2>
+  <p class="sec-lead">Parametric backgrounds. One texture per composition — a core brand rule. Texture color tracks your generated palette. Export PNG or copy CSS.</p>
+  <div class="gen-card reveal">
+    <div class="gen-card-head">
+      <div class="gen-card-title">Texture Engine <span class="gtag">Parametric</span></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="renderTexture()">↻ Render</button>
+        <button class="btn btn-ghost btn-sm" onclick="dlTexture()">↓ PNG</button>
+        <button class="btn btn-ghost btn-sm" onclick="copyTexCSS()">↓ CSS</button>
+      </div>
+    </div>
+    <div class="gen-body">
+      <div class="two-gen-grid">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label class="ctrl-label">Pattern</label>
+            <div class="seg" id="patOpts" style="flex-direction:column;gap:3px;">
+              <button class="seg-btn active" data-v="grid" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Grid</button>
+              <button class="seg-btn" data-v="dot" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Dot</button>
+              <button class="seg-btn" data-v="diagonal" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Diagonal</button>
+              <button class="seg-btn" data-v="crosshatch" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Crosshatch</button>
+              <button class="seg-btn" data-v="hex" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Hexagonal</button>
+              <button class="seg-btn" data-v="wave" onclick="selCtrl(this,'patOpts');TX.pattern=this.dataset.v;renderTexture();">Wave</button>
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Density</label>
+            <div class="sl-row"><span class="sl-label">Size</span><div class="sl-wrap"><input type="range" min="8" max="60" value="20" oninput="TX.density=+this.value;document.getElementById('txDenVal').textContent=this.value+'px';renderTexture();"></div><span class="sl-val" id="txDenVal">20px</span></div>
+          </div>
+          <div>
+            <label class="ctrl-label">Opacity</label>
+            <div class="sl-row"><span class="sl-label">Amount</span><div class="sl-wrap"><input type="range" min="3" max="35" value="12" oninput="TX.opacity=+this.value;document.getElementById('txOpVal').textContent=this.value+'%';renderTexture();"></div><span class="sl-val" id="txOpVal">12%</span></div>
+          </div>
+          <div>
+            <label class="ctrl-label">Color Source</label>
+            <div class="seg" id="txcOpts">
+              <button class="seg-btn active" data-v="magenta" onclick="selCtrl(this,'txcOpts');TX.color=this.dataset.v;renderTexture();">Magenta</button>
+              <button class="seg-btn" data-v="primary" onclick="selCtrl(this,'txcOpts');TX.color=this.dataset.v;renderTexture();">Palette Primary</button>
+              <button class="seg-btn" data-v="white" onclick="selCtrl(this,'txcOpts');TX.color=this.dataset.v;renderTexture();">White</button>
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Background</label>
+            <div class="seg" id="txbgOpts">
+              <button class="seg-btn active" data-v="dark" onclick="selCtrl(this,'txbgOpts');TX.bg=this.dataset.v;renderTexture();">Dark</button>
+              <button class="seg-btn" data-v="light" onclick="selCtrl(this,'txbgOpts');TX.bg=this.dataset.v;renderTexture();">Light</button>
+              <button class="seg-btn" data-v="palette" onclick="selCtrl(this,'txbgOpts');TX.bg=this.dataset.v;renderTexture();">Palette Deep</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="texture-stage" id="texStage">
+            <canvas id="textureCanvas"></canvas>
+            <div class="tex-overlay">
+              <div class="big" id="texOverlayBig">AIGA KC</div>
+              <div class="sm">Background Texture Preview</div>
+            </div>
+          </div>
+          <div class="css-box" style="margin-top:12px;position:relative;">
+            <button class="copy-btn" id="texCssBtn" onclick="copyTexCSS()">Copy CSS</button>
+            <div id="texCssOut" style="font-size:9px;line-height:1.9;color:rgba(255,255,255,.4);">-- Select pattern and click Render --</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>AIGA Kansas City</span>
+  <span>Brand System v3.0 — The Living System</span>
+  <span>kc.aiga.org</span>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════
+   SHARED PALETTE STATE — the bridge
+════════════════════════════════════════════ */
+const PALETTE = {
+  magenta: '#e5007d',
+  primary: '#002fa7',
+  deep:    '#080f20',
+  dark:    '#0d1a35',
+  surface: '#e8f0fe',
+  muted:   '#6b8ecf',
+  h1:      '#a86fa7',
+  h2:      '#7fb3e8',
+};
+
+function firePaletteChange() {
+  window.dispatchEvent(new CustomEvent('paletteChange', {detail: {...PALETTE}}));
+}
+
+/* ════════════════════════════════════════════
+   COLOR UTILS
+════════════════════════════════════════════ */
+function hexToRgb(hex){
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const n=parseInt(hex,16);
+  return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+  let h,s,l=(mx+mn)/2;
+  if(mx===mn){h=s=0;}else{
+    const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);
+    switch(mx){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}
+  }
+  return[Math.round(h*360),Math.round(s*100),Math.round(l*100)];
+}
+function hslToHex(h,s,l){
+  h=((h%360)+360)%360;s/=100;l/=100;
+  const a=s*Math.min(l,1-l);
+  const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(-1,Math.min(k-3,9-k,1));return Math.round(255*c).toString(16).padStart(2,'0');};
+  return'#'+f(0)+f(8)+f(4);
+}
+function hexToHsl(hex){const{r,g,b}=hexToRgb(hex);return rgbToHsl(r,g,b);}
+function luminance(hex){const{r,g,b}=hexToRgb(hex);const t=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);};return .2126*t(r)+.7152*t(g)+.0722*t(b);}
+function contrastRatio(a,b){const la=luminance(a),lb=luminance(b);return(Math.max(la,lb)+.05)/(Math.min(la,lb)+.05);}
+function lightness(hex){return hexToHsl(hex)[2];}
+function textOn(bg){return lightness(bg)>50?'#080808':'#ffffff';}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+
+/* ════════════════════════════════════════════
+   COLOR GENERATOR
+════════════════════════════════════════════ */
+let harmonyMode = 'split';
+function syncHex(v){document.getElementById('colorHex').value=v.toUpperCase();}
+function syncPicker(v){if(/^#[0-9A-Fa-f]{6}$/.test(v))document.getElementById('colorPicker').value=v;}
+function setHarmony(btn,v){
+  document.querySelectorAll('.harm-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');harmonyMode=v;generatePalette();
+}
+function randomSeed(){
+  const hex=hslToHex(Math.floor(Math.random()*360),60+Math.floor(Math.random()*40),35+Math.floor(Math.random()*25));
+  document.getElementById('colorPicker').value=hex;
+  document.getElementById('colorHex').value=hex.toUpperCase();
+  generatePalette();
+}
+function generatePalette(){
+  let hex=document.getElementById('colorHex').value.trim();
+  if(!/^#[0-9A-Fa-f]{6}$/.test(hex))hex=document.getElementById('colorPicker').value;
+  const[h,s,l]=hexToHsl(hex);
+  let ah=h;if(Math.abs(h-330)<25||Math.abs(h-330+360)<25)ah=(h+35)%360;
+  const primary=hslToHex(ah,clamp(s,50,100),clamp(l,35,65));
+  const deep=hslToHex(ah,clamp(s*.7,20,70),clamp(l*.15,5,18));
+  const dark=hslToHex(ah,clamp(s*.6,15,60),clamp(l*.22,10,25));
+  const surface=hslToHex(ah,clamp(s*.08,3,15),clamp(100-l*.05,92,97));
+  const muted=hslToHex(ah,clamp(s*.45,20,70),clamp(l+20,50,80));
+  let h1,h2;
+  if(harmonyMode==='analogous'){h1=hslToHex((ah+28)%360,s,l);h2=hslToHex((ah-28+360)%360,s,l);}
+  else if(harmonyMode==='split'){h1=hslToHex((ah+150)%360,s,l);h2=hslToHex((ah+210)%360,s,l);}
+  else{h1=hslToHex((ah+120)%360,s,l);h2=hslToHex((ah+240)%360,s,l);}
+
+  Object.assign(PALETTE,{magenta:'#e5007d',primary,deep,dark,surface,muted,h1,h2});
+
+  const cr=contrastRatio(primary,'#e5007d');
+  const score=Math.min(100,Math.round((cr/5)*100));
+  document.getElementById('compatBar').style.width=score+'%';
+  document.getElementById('compatBar').style.background=score>60?'#00a878':score>35?'#d4af37':'#e5007d';
+  document.getElementById('compatScore').textContent=`${score}% — ${score>60?'Excellent':score>35?'Good — test in context':'Close to Magenta — test carefully'}`;
+
+  renderSwatches();
+  renderPreviewCard();
+  renderCssExport();
+  firePaletteChange();
+  toast('Palette generated — use ⬆ Push to sync to Typography');
+}
+
+function renderSwatches(){
+  const sw=[
+    {c:PALETTE.magenta,n:'Magenta'},{c:PALETTE.primary,n:'Primary'},
+    {c:PALETTE.deep,n:'Deep'},{c:PALETTE.surface,n:'Surface'},
+    {c:PALETTE.h1,n:'Harmony 1'},{c:PALETTE.h2,n:'Harmony 2'},
+  ];
+  document.getElementById('paletteSwatches').innerHTML=sw.map(s=>`
+    <div class="p-swatch" style="background:${s.c};" onclick="openOklchPanel('${s.c}','${s.n}',this)" title="Click to view OKLCH shades">
+      <div class="p-swatch-inner" style="color:${textOn(s.c)};">
+        <span class="p-swatch-hex">${s.c.toUpperCase()}</span>
+        <span class="p-swatch-name">${s.n}</span>
+      </div>
+    </div>`).join('');
+  // Close panel when palette regenerates with a new seed
+  if(_currentOklchHex) closeOklchPanel();
+}
+function renderPreviewCard(){
+  const p=PALETTE;const tc=textOn(p.deep);
+  document.getElementById('previewCard').style.background=p.deep;
+  document.getElementById('pcBar').style.background=p.magenta;
+  document.getElementById('pcTag').style.color=p.magenta;
+  document.getElementById('pcHead').style.color=tc==='#ffffff'?p.surface:p.primary;
+  document.getElementById('pcSub').style.color=tc==='#ffffff'?'rgba(255,255,255,.4)':'rgba(0,0,0,.4)';
+  const tex=document.getElementById('pcTex');
+  tex.innerHTML=`<defs><pattern id="pp" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><line x1="0" y1="20" x2="20" y2="0" stroke="${p.magenta}" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#pp)"/>`;
+}
+function renderCssExport(){
+  const p=PALETTE;
+  document.getElementById('cssVars').innerHTML=[
+    `--color-magenta: ${p.magenta};`,`--color-primary: ${p.primary};`,
+    `--color-deep:    ${p.deep};`,`--color-dark:    ${p.dark};`,
+    `--color-surface: ${p.surface};`,`--color-muted:   ${p.muted};`,
+    `--color-h1:      ${p.h1};`,`--color-h2:      ${p.h2};`,
+  ].map(l=>`<div>${l}</div>`).join('');
+}
+function copyCss(){
+  const p=PALETTE;
+  const t=`:root {\n  --color-magenta: ${p.magenta};\n  --color-primary: ${p.primary};\n  --color-deep:    ${p.deep};\n  --color-dark:    ${p.dark};\n  --color-surface: ${p.surface};\n  --color-muted:   ${p.muted};\n  --color-h1:      ${p.h1};\n  --color-h2:      ${p.h2};\n}`;
+  navigator.clipboard?.writeText(t);
+  const b=document.getElementById('cssBtn');b.textContent='Copied!';b.classList.add('ok');
+  setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok');},2000);
+  toast('CSS variables copied');
+}
+
+function pushToPlayground(){
+  // Push palette colors into the type playground
+  updatePlaygroundPaletteSwatches();
+  // Also apply deep color as bg option
+  toast('Palette pushed to Typography Playground — check L1/L2/L3 color rows');
+}
+
+/* ════════════════════════════════════════════
+   TYPOGRAPHY PLAYGROUND STATE
+════════════════════════════════════════════ */
+const COPY={
+  display:['AIGA KC','DESIGN','COMMUNITY','GALA','PORTFOLIO','VIBRANCE','INCLUSIVITY','CREATIVE','KC','CONNECT','FLOURISH','BELONG'],
+  editorial:['"Where KC designers come alive."','"Creativity belongs to everyone."','"Build. Connect. Flourish."','"This is your community."'],
+  utility:['kc.aiga.org','Spring 2025','Portfolio Review Day','Coffee with Creatives','Annual Gala','Mentorship Program','Board Recruitment'],
+};
+const R={
+  f:(a,b)=>a+Math.random()*(b-a),
+  i:(a,b)=>Math.round(R.f(a,b)),
+  p:a=>a[Math.floor(Math.random()*a.length)],
+};
+const defLayer=(text,color,size,x,y,font)=>({
+  text,color,size,x,y,font:font||'Bebas Neue',
+  style:'normal',bold:false,sx:100,sy:100,rot:0,ls:2,
+  opacity:100,blend:'source-over',
+  dist:'normal',distAmt:40,distSpd:30,visible:true,
+});
+const T={
+  bg:'#080808',bgTex:'none',texOp:12,
+  accent:'none',kc:'none',glow:0,
+  // Gradient
+  grad:'none', gradC1:'#e5007d', gradC2:'#002fa7',
+  gradAngle:135, gradOpacity:80,
+  // Grain
+  grain:0, grainSize:1,
+  frame:0,animating:false,
+  layers:[
+    defLayer('AIGA KC','#ffffff',160,50,50,'Bebas Neue'),
+    defLayer('"Where KC designers\ncome alive."','#e5007d',38,50,72,'Playfair Display'),
+    defLayer('kc.aiga.org','rgba(255,255,255,0.4)',16,50,89,'DM Mono'),
+  ],
+};
+let TW=800,TH=800,animId=null;
+
+/* ── Layer pane builder ── */
+function buildLayerPane(lid){
+  const idx=parseInt(lid[1])-1;
+  const layer=T.layers[idx];
+  const dotColors=['#e5007d','#4a9fff','#00c896','#d4af37','#ffffff','#f4f1ea'];
+  const distItems=[
+    {d:'normal',i:'Aa',l:'Normal'},{d:'wave',i:'∿',l:'Wave'},
+    {d:'stagger',i:'↕',l:'Stagger'},{d:'explode',i:'✳',l:'Explode'},
+    {d:'arch',i:'◡',l:'Arch'},{d:'tile',i:'▦',l:'Tile'},
+    {d:'mirror',i:'⇅',l:'Mirror'},{d:'glitch',i:'▓',l:'Glitch'},
+  ];
+  const blendModes=['source-over','multiply','screen','overlay','difference','color-dodge'];
+  document.getElementById(`pane-${lid}`).innerHTML=`
+    <div class="cg">
+      <div class="cg-title">Text Content <button class="cg-mini-btn" onclick="randText('${lid}')">↻ Random</button></div>
+      <textarea class="ti" id="${lid}-text" oninput="T.layers[${idx}].text=this.value;typo_render();if(currentPanelMode==='layers')buildLayerStack();">${layer.text}</textarea>
+      <div class="chips" id="${lid}-chips">${buildChips(lid)}</div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Typeface</div>
+      <div class="seg">
+        ${['Bebas Neue','Playfair Display','DM Mono'].map(f=>`<button class="seg-btn${layer.font===f?' active':''}" onclick="T.layers[${idx}].font='${f}';selCtrl(this,null);typo_render();">${f==='Bebas Neue'?'Bebas':f==='Playfair Display'?'Playfair':'Mono'}</button>`).join('')}
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Style</div>
+      <div class="seg">
+        <button class="seg-btn${layer.style==='normal'?' active':''}" onclick="T.layers[${idx}].style='normal';selCtrl(this,null);typo_render();">Normal</button>
+        <button class="seg-btn${layer.style==='italic'?' active':''}" onclick="T.layers[${idx}].style='italic';selCtrl(this,null);typo_render();">Italic</button>
+        <button class="seg-btn${layer.bold?' active':''}" id="${lid}-bold" onclick="T.layers[${idx}].bold=!T.layers[${idx}].bold;this.classList.toggle('active');typo_render();">Bold</button>
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Color</div>
+      <div class="palette-colors" id="${lid}-pal-colors"><span class="ps-label">From palette</span></div>
+      <div class="color-row">
+        ${dotColors.map(c=>`<div class="cdot${layer.color===c?' active':''}" style="background:${c};" data-c="${c}" onclick="T.layers[${idx}].color='${c}';this.closest('.color-row').querySelectorAll('.cdot').forEach(d=>d.classList.remove('active'));this.classList.add('active');typo_render();"></div>`).join('')}
+        <input type="color" class="cust-color" value="${layer.color.startsWith('#')?layer.color:'#ffffff'}" oninput="T.layers[${idx}].color=this.value;typo_render();">
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Size & Scale</div>
+      ${sliderRow(lid,idx,'size','Font Size',8,500,layer.size,'px')}
+      ${sliderRow(lid,idx,'sx','Scale X',10,400,layer.sx,'%')}
+      ${sliderRow(lid,idx,'sy','Scale Y',10,400,layer.sy,'%')}
+    </div>
+    <div class="cg">
+      <div class="cg-title">Position & Transform</div>
+      ${sliderRow(lid,idx,'x','X',-50,150,layer.x,'%')}
+      ${sliderRow(lid,idx,'y','Y',-50,150,layer.y,'%')}
+      ${sliderRow(lid,idx,'rot','Rotate',-180,180,layer.rot,'°')}
+      ${sliderRow(lid,idx,'ls','Tracking',-10,120,layer.ls,'')}
+      ${sliderRow(lid,idx,'op','Opacity',1,100,layer.opacity,'%')}
+    </div>
+    <div class="cg">
+      <div class="cg-title">Blend Mode</div>
+      <div class="blend-seg seg">
+        ${blendModes.map(b=>`<button class="seg-btn${layer.blend===b?' active':''}" onclick="T.layers[${idx}].blend='${b}';selCtrl(this,null);typo_render();">${b==='source-over'?'Normal':b.replace('-',' ')}</button>`).join('')}
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Distortion</div>
+      <div class="dist-grid">
+        ${distItems.map(d=>`<button class="dist-btn${layer.dist===d.d?' active':''}" onclick="T.layers[${idx}].dist='${d.d}';this.closest('.dist-grid').querySelectorAll('.dist-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();"><span class="di">${d.i}</span>${d.l}</button>`).join('')}
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Distortion Amount</div>
+      ${sliderRow(lid,idx,'da','Amount',0,100,layer.distAmt,'')}
+      ${sliderRow(lid,idx,'ds','Speed',1,100,layer.distSpd,'')}
+    </div>`;
+}
+
+function sliderRow(lid,idx,param,label,min,max,val,unit){
+  const map={size:'size',sx:'sx',sy:'sy',x:'x',y:'y',rot:'rot',ls:'ls',op:'opacity',da:'distAmt',ds:'distSpd'};
+  const field=map[param]||param;
+  return `<div class="sl-row">
+    <span class="sl-label">${label}</span>
+    <div class="sl-wrap"><input type="range" min="${min}" max="${max}" value="${val}" id="${lid}-${param}" oninput="T.layers[${idx}].${field}=+this.value;document.getElementById('${lid}-${param}Val').textContent=this.value+'${unit}';typo_render();"></div>
+    <span class="sl-val" id="${lid}-${param}Val">${val}${unit}</span>
+  </div>`;
+}
+
+function buildChips(lid){
+  const pool=[...COPY.display.slice(0,5),...COPY.utility.slice(0,3)];
+  const idx=parseInt(lid[1])-1;
+  return pool.map(c=>`<div class="chip" onclick="T.layers[${idx}].text='${c.replace(/'/g,"\\'")}';document.getElementById('${lid}-text').value='${c.replace(/'/g,"\\'")}';typo_render();">${c.length>13?c.slice(0,12)+'…':c}</div>`).join('');
+}
+
+function randText(lid){
+  const idx=parseInt(lid[1])-1;
+  const pools=[COPY.display,COPY.editorial,COPY.utility];
+  const t=R.p(R.p(pools));
+  T.layers[idx].text=t;
+  const el=document.getElementById(`${lid}-text`);if(el)el.value=t;
+  typo_render();
+}
+
+/* ── Palette sync into layer swatches ── */
+function updatePlaygroundPaletteSwatches(){
+  const pal=PALETTE;
+  const swatches=[
+    {c:pal.magenta,n:'Mag'},{c:pal.primary,n:'Pri'},{c:pal.deep,n:'Deep'},
+    {c:pal.surface,n:'Surf'},{c:pal.h1,n:'H1'},{c:pal.h2,n:'H2'},
+  ];
+
+  ['l1','l2','l3'].forEach(lid=>{
+    const idx=parseInt(lid[1])-1;
+    const container=document.getElementById(`${lid}-pal-colors`);
+    if(!container)return;
+    container.style.display='flex';
+    container.innerHTML=`<span class="ps-label">From palette</span>`;
+    swatches.forEach(s=>{
+      const d=document.createElement('div');
+      d.className='cdot ps-swatch';d.style.background=s.c;
+      d.title=s.n+' '+s.c;
+      d.onclick=()=>{T.layers[idx].color=s.c;typo_render();};
+      container.appendChild(d);
+    });
+  });
+
+  // BG palette
+  const bgpc=document.getElementById('bg-palette-colors');
+  if(bgpc){
+    bgpc.style.display='flex';bgpc.style.flexWrap='wrap';bgpc.style.gap='4px';
+    bgpc.innerHTML=`<span class="ps-label">From palette</span>`;
+    [pal.deep,pal.dark,pal.primary,pal.surface,pal.magenta].forEach(c=>{
+      const d=document.createElement('div');
+      d.className='cdot';d.style.background=c;d.title=c;
+      d.onclick=()=>{T.bg=c;typo_render();};
+      bgpc.appendChild(d);
+    });
+  }
+
+  // Update toolbar strip
+  const strip=document.getElementById('palette-sync-strip');
+  strip.classList.add('visible');
+  // Remove old swatches (keep label)
+  [...strip.querySelectorAll('.ps-swatch')].forEach(e=>e.remove());
+  swatches.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='ps-swatch';d.style.background=s.c;d.title=s.c;
+    d.onclick=()=>{
+      const activeTab=document.querySelector('.layer-tab.active')?.dataset.tab;
+      if(activeTab&&activeTab!=='bg'){
+        const idx=parseInt(activeTab[1])-1;
+        T.layers[idx].color=s.c;typo_render();
+        toast(`${s.n} → Layer ${idx+1}`);
+      }
+    };
+    strip.appendChild(d);
+  });
+}
+
+window.addEventListener('paletteChange',()=>updatePlaygroundPaletteSwatches());
+
+/* ════════════════════════════════════════════
+   CANVAS RENDER ENGINE
+════════════════════════════════════════════ */
+function typo_render(){
+  const canvas=document.getElementById('typeCanvas');
+  const ctx=canvas.getContext('2d');
+  const t=T.frame;
+  ctx.clearRect(0,0,TW,TH);
+
+  // BG solid
+  ctx.fillStyle=T.bg;ctx.fillRect(0,0,TW,TH);
+
+  // Gradient overlay
+  if(T.grad!=='none'){
+    ctx.save();ctx.globalAlpha=T.gradOpacity/100;
+    drawGradient(ctx,T.grad,TW,TH,T.gradC1,T.gradC2,T.gradAngle);
+    ctx.restore();
+  }
+
+  // Glow
+  if(T.glow>0){
+    const g=ctx.createRadialGradient(TW/2,TH/2,0,TW/2,TH/2,Math.max(TW,TH)*.7);
+    g.addColorStop(0,`rgba(229,0,125,${T.glow/400})`);g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.fillRect(0,0,TW,TH);
+  }
+
+  // Texture
+  if(T.bgTex!=='none'){
+    ctx.save();ctx.globalAlpha=T.texOp/100;
+    drawBGTexture(ctx,T.bgTex,TW,TH);ctx.restore();
+  }
+
+  // Layers
+  T.layers.forEach(layer=>{
+    if(!layer.visible)return;
+    ctx.save();ctx.globalAlpha=layer.opacity/100;
+    ctx.globalCompositeOperation=layer.blend;
+    drawLayer(ctx,layer,t);ctx.restore();
+  });
+
+  // Accents & KC
+  drawAccent(ctx,TW,TH);drawKC(ctx,TW,TH);
+
+  // Grain (always on top)
+  if(T.grain>0) drawGrain(ctx,TW,TH,T.grain,T.grainSize,T.grainStyle||'overlay');
+}
+
+function drawBGTexture(ctx,type,W,H){
+  const s=22;ctx.strokeStyle='#e5007d';ctx.fillStyle='#e5007d';ctx.lineWidth=1;
+  if(type==='grid'){
+    for(let x=0;x<W;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }else if(type==='paper'){
+    // Blueprint / graph paper — light blue lines, standard grid spacing
+    const sp=28;const minor='rgba(100,160,220,0.55)';const major='rgba(60,120,190,0.75)';
+    ctx.lineWidth=0.8;
+    for(let x=0;x<W;x+=sp){
+      ctx.strokeStyle=(Math.round(x/sp)%5===0)?major:minor;
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
+    }
+    for(let y=0;y<H;y+=sp){
+      ctx.strokeStyle=(Math.round(y/sp)%5===0)?major:minor;
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+    }
+  }else if(type==='dot'){
+    for(let x=s/2;x<W;x+=s)for(let y=s/2;y<H;y+=s){ctx.beginPath();ctx.arc(x,y,s*.1,0,Math.PI*2);ctx.fill();}
+  }else if(type==='diagonal'){
+    const d=Math.ceil(Math.hypot(W,H));ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI/4);ctx.translate(-d/2,-d/2);
+    for(let x=0;x<d*2;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,d*2);ctx.stroke();}
+    ctx.restore();
+  }else if(type==='scan'){
+    // Horizontal scan lines — CRT / risograph feel
+    ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=1;
+    const lh=3;
+    for(let y=0;y<H;y+=lh){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }else if(type==='noise'){
+    // Fine static noise drawn pixel-by-pixel
+    const imgd=ctx.createImageData(W,H);const d=imgd.data;
+    for(let i=0;i<d.length;i+=4){
+      const v=Math.random()>0.5?255:0;
+      d[i]=v;d[i+1]=v;d[i+2]=v;d[i+3]=Math.round(Math.random()*80+20);
+    }
+    ctx.putImageData(imgd,0,0);
+  }
+}
+
+function drawGradient(ctx,type,W,H,c1,c2,angle){
+  let g;
+  if(type==='linear'){
+    const rad=angle*Math.PI/180;
+    const cx=W/2,cy=H/2,len=Math.max(W,H);
+    g=ctx.createLinearGradient(cx-Math.cos(rad)*len/2,cy-Math.sin(rad)*len/2,cx+Math.cos(rad)*len/2,cy+Math.sin(rad)*len/2);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }else if(type==='radial'){
+    g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.7);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }else if(type==='split'){
+    ctx.fillStyle=c1;ctx.fillRect(0,0,W/2,H);
+    ctx.fillStyle=c2;ctx.fillRect(W/2,0,W/2,H);
+    // soft seam
+    const sg=ctx.createLinearGradient(W/2-W*.06,0,W/2+W*.06,0);
+    sg.addColorStop(0,c1);sg.addColorStop(1,c2);
+    ctx.fillStyle=sg;ctx.fillRect(W/2-W*.06,0,W*.12,H);
+  }else if(type==='vignette'){
+    g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.2,W/2,H/2,Math.max(W,H)*.85);
+    g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.88)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }else if(type==='sunset'){
+    g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#ffb347');g.addColorStop(0.45,c1);g.addColorStop(1,c2);
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  }else if(type==='glow-corner'){
+    const corners=[[0,H],[W,0]];
+    corners.forEach(([cx,cy])=>{
+      const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(W,H)*.75);
+      cg.addColorStop(0,c1+'88');cg.addColorStop(1,'transparent');
+      ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
+    });
+  }
+}
+
+// Cached grain canvas for performance
+let _grainCanvas=null,_grainW=0,_grainH=0,_grainSeed=0;
+function drawGrain(ctx,W,H,intensity,size,style){
+  size=Math.max(1,Math.round(size));
+  const gW=Math.ceil(W/size),gH=Math.ceil(H/size);
+  // Regenerate grain every 2 frames for animation feel
+  if(!_grainCanvas||_grainW!==gW||_grainH!==gH||T.animating&&T.frame%2===0){
+    if(!_grainCanvas)_grainCanvas=document.createElement('canvas');
+    _grainCanvas.width=gW;_grainCanvas.height=gH;
+    const gCtx=_grainCanvas.getContext('2d');
+    const imgData=gCtx.createImageData(gW,gH);
+    const d=imgData.data;
+    const alpha=Math.round(intensity*2);
+    for(let i=0;i<d.length;i+=4){
+      if(style==='color'){
+        d[i]=Math.random()>0.5?229:0;
+        d[i+1]=0;
+        d[i+2]=Math.random()>0.5?125:47;
+        d[i+3]=Math.random()*alpha;
+      }else{
+        const v=Math.round(Math.random()*255);
+        d[i]=d[i+1]=d[i+2]=v;
+        d[i+3]=Math.random()*alpha;
+      }
+    }
+    gCtx.putImageData(imgData,0,0);
+    _grainW=gW;_grainH=gH;
+  }
+  ctx.save();
+  ctx.globalCompositeOperation=style==='overlay'?'overlay':'screen';
+  ctx.globalAlpha=1;
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(_grainCanvas,0,0,W,H);
+  ctx.restore();
+}
+
+function drawLayer(ctx,layer,t){
+  const text=layer.text||'';if(!text.trim())return;
+  const fstr=`${layer.style==='italic'?'italic ':''}${layer.bold?'bold ':''}${layer.size}px '${layer.font}'`;
+  ctx.font=fstr.trim();ctx.fillStyle=layer.color;ctx.textBaseline='middle';
+  const px=(layer.x/100)*TW,py=(layer.y/100)*TH;
+  const dist=layer.dist,amt=layer.distAmt,spd=layer.distSpd/100;
+  const lines=text.split('\n');
+  if(dist==='tile'){drawTile(ctx,layer,fstr,lines,t);return;}
+  const lineH=layer.size*1.15;
+  const totalH=lineH*lines.length;
+  let yOff=py-totalH/2+lineH/2;
+  lines.forEach(line=>{
+    if(dist==='normal'){
+      ctx.save();ctx.translate(px,yOff);ctx.rotate(layer.rot*Math.PI/180);ctx.scale(layer.sx/100,layer.sy/100);
+      const tw=ctx.measureText(line).width+(line.length-1)*layer.ls;
+      ctx.fillText(line,-tw/2,0);ctx.restore();
+    }else{
+      const chars=line.split('');ctx.save();ctx.translate(px,yOff);ctx.rotate(layer.rot*Math.PI/180);ctx.scale(layer.sx/100,layer.sy/100);
+      let totalW=0;const widths=chars.map(c=>{const w=ctx.measureText(c).width+layer.ls;totalW+=w;return w;});
+      let cx=-totalW/2;
+      chars.forEach((ch,i)=>{
+        ctx.save();const cT=t*spd+i*.3;
+        if(dist==='wave'){ctx.translate(cx+widths[i]/2,Math.sin(cT*2+i*.5)*(amt/100)*layer.size*.6);}
+        else if(dist==='stagger'){ctx.translate(cx+widths[i]/2,Math.sin(cT*1.5+i*1.1)*(amt/100)*layer.size*.8);}
+        else if(dist==='explode'){
+          const sd=i*2.4+1.3,ea=(amt/100)*layer.size*1.5;
+          ctx.translate(cx+widths[i]/2+Math.sin(sd*5.1)*ea+Math.sin(cT*.8+sd)*ea*.3,Math.cos(sd*3.7)*ea*.5+Math.sin(cT*.6+sd*1.2)*ea*.2);
+          ctx.rotate(Math.sin(sd*2.7+cT*.5)*(amt/100)*.8);
+        }
+        else if(dist==='arch'){
+          const arcR=Math.max(TW,TH)*(.3+(1-amt/100)*.5);
+          const arcSpan=totalW/arcR;const sA=-arcSpan/2-Math.PI/2;
+          const charA=sA+(cx+widths[i]/2+totalW/2)/arcR;
+          ctx.translate(Math.cos(charA)*arcR,Math.sin(charA)*arcR+arcR);ctx.rotate(charA+Math.PI/2);
+          ctx.translate(-widths[i]/2,0);ctx.fillText(ch,0,0);ctx.restore();cx+=widths[i];return;
+        }
+        else if(dist==='mirror'){
+          ctx.translate(cx+widths[i]/2,0);ctx.fillText(ch,-widths[i]/2,0);
+          ctx.save();ctx.scale(1,-1);ctx.globalAlpha=(amt/100)*.4;ctx.fillText(ch,-widths[i]/2,layer.size*.15);ctx.restore();
+          cx+=widths[i];ctx.restore();return;
+        }
+        else if(dist==='glitch'){
+          const ga=(amt/100)*layer.size,gx=Math.sin(t*spd*3+i)*ga*.3;
+          ctx.translate(cx+widths[i]/2,0);
+          ctx.save();ctx.fillStyle='#e5007d';ctx.globalAlpha*=.65;ctx.fillText(ch,-widths[i]/2+gx,Math.sin(t*spd*2+i*1.3)*ga*.1);ctx.restore();
+          ctx.save();ctx.fillStyle='#00e5ff';ctx.globalAlpha*=.45;ctx.fillText(ch,-widths[i]/2-gx*.5,0);ctx.restore();
+          ctx.fillStyle=layer.color;ctx.fillText(ch,-widths[i]/2,0);cx+=widths[i];ctx.restore();return;
+        }
+        else{ctx.translate(cx+widths[i]/2,0);}
+        ctx.fillText(ch,-widths[i]/2,0);ctx.restore();cx+=widths[i];
+      });ctx.restore();
+    }
+    yOff+=lineH;
+  });
+}
+
+function drawTile(ctx,layer,fstr,lines,t){
+  const text=lines.join(' ');ctx.font=fstr.trim();ctx.fillStyle=layer.color;ctx.textBaseline='middle';
+  const tw=ctx.measureText(text).width+layer.ls*(text.length);
+  const th=layer.size;const spd=layer.distSpd/100;
+  const offset=(T.frame*spd*.5)%tw;
+  ctx.save();ctx.rotate(layer.rot*Math.PI/180);
+  const rows=Math.ceil(TH/th)+2;const cols=Math.ceil(TW/tw)+2;
+  for(let r=-1;r<rows;r++)for(let c=-1;c<cols;c++){
+    ctx.globalAlpha=layer.opacity/100*(.2+((r+c)%3===0?layer.distAmt/200:.1));
+    ctx.fillText(text,c*tw-offset,r*th*1.6+(c%2===0?0:th*.8));
+  }ctx.restore();
+}
+
+function drawAccent(ctx,W,H){
+  ctx.fillStyle='#e5007d';const bw=Math.max(3,W*.004);
+  if(T.accent==='bar-top')ctx.fillRect(0,0,W,bw);
+  if(T.accent==='bar-bottom')ctx.fillRect(0,H-bw,W,bw);
+  if(T.accent==='bar-left')ctx.fillRect(0,0,bw,H);
+  if(T.accent==='corners'){
+    ctx.lineWidth=bw;ctx.strokeStyle='#e5007d';
+    const p=W*.03,s=W*.05;
+    [[p,p,1,1],[W-p,p,-1,1],[p,H-p,1,-1],[W-p,H-p,-1,-1]].forEach(([x,y,dx,dy])=>{
+      ctx.beginPath();ctx.moveTo(x+s*dx,y);ctx.lineTo(x,y);ctx.lineTo(x,y+s*dy);ctx.stroke();
+    });
+  }
+  if(T.accent==='rule')ctx.fillRect(0,H/2-bw/2,W,bw);
+  if(T.accent==='dot'){ctx.beginPath();ctx.arc(W*.91,H*.09,W*.013,0,Math.PI*2);ctx.fill();}
+}
+function drawKC(ctx,W,H){
+  if(T.kc==='none')return;
+  const sz=W*.09,pad=W*.04;
+  const x=T.kc==='tr'?W-pad-sz:pad;
+  const y=T.kc==='tr'?pad:H-pad-sz;
+  ctx.strokeStyle='#e5007d';ctx.lineWidth=W*.004;ctx.strokeRect(x,y,sz,sz);
+  ctx.fillStyle='#e5007d';ctx.font=`${sz*.45}px 'Bebas Neue'`;
+  ctx.textBaseline='middle';ctx.textAlign='center';
+  ctx.fillText('KC',x+sz/2,y+sz/2);ctx.textAlign='left';
+}
+
+/* ── Fit canvas ── */
+function typo_fitCanvas(){
+  const area=document.getElementById('type-canvas-area');
+  const aw=area.clientWidth-48,ah=area.clientHeight-60;
+  const scale=Math.min(1,aw/TW,ah/TH);
+  const stage=document.getElementById('stage');
+  stage.style.transform=`scale(${scale})`;
+  stage.style.transformOrigin='center center';
+  stage.style.width=TW+'px';stage.style.height=TH+'px';
+}
+window.addEventListener('resize',typo_fitCanvas);
+
+function typo_resize(){
+  const v=document.getElementById('canvasSize').value;
+  [TW,TH]=v.split(',').map(Number);
+  const c=document.getElementById('typeCanvas');c.width=TW;c.height=TH;
+  document.getElementById('canvasInfo').textContent=`${TW} × ${TH}px`;
+  typo_fitCanvas();typo_render();
+}
+
+/* ── Tab switching ── */
+/* ════════════════════════════════════════════
+   PANEL MODE — BG vs Layers
+════════════════════════════════════════════ */
+let currentPanelMode = 'bg';
+let activeLayerId = 'l1';
+let soloedLayerId = null;
+
+function switchPanelMode(mode, btn) {
+  currentPanelMode = mode;
+  document.querySelectorAll('.panel-mode-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const stack = document.getElementById('layer-stack');
+  const body = document.getElementById('panel-body');
+
+  if (mode === 'bg') {
+    stack.style.display = 'none';
+    // Show BG pane, hide layer panes
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('pane-bg').classList.add('active');
+    body.style.display = 'block';
+  } else {
+    stack.style.display = 'block';
+    // Show active layer pane
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById(`pane-${activeLayerId}`).classList.add('active');
+    body.style.display = 'block';
+    buildLayerStack();
+  }
+}
+
+// Legacy compat — called by quickFX bg tab switch
+function switchTab(tab, btn) {
+  if (tab === 'bg') {
+    const bgModeBtn = document.querySelector('.panel-mode-tab.mode-bg');
+    if (bgModeBtn) switchPanelMode('bg', bgModeBtn);
+  } else {
+    const layersModeBtn = document.querySelector('.panel-mode-tab.mode-layers');
+    if (layersModeBtn) switchPanelMode('layers', layersModeBtn);
+    selectLayer(tab);
+  }
+}
+
+function selectLayer(lid) {
+  activeLayerId = lid;
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(`pane-${lid}`).classList.add('active');
+  document.querySelectorAll('.layer-row').forEach(r => {
+    r.classList.toggle('active-layer', r.dataset.lid === lid);
+  });
+}
+
+function toggleLayerVisible(lid, e) {
+  e.stopPropagation();
+  const idx = parseInt(lid[1]) - 1;
+  T.layers[idx].visible = !T.layers[idx].visible;
+  // Update the row appearance
+  const row = document.querySelector(`.layer-row[data-lid="${lid}"]`);
+  if (row) {
+    row.classList.toggle('layer-hidden', !T.layers[idx].visible);
+    const eye = row.querySelector('.layer-eye');
+    if (eye) eye.textContent = T.layers[idx].visible ? '👁' : '🚫';
+  }
+  updateLayerVisCount();
+  typo_render();
+}
+
+function toggleSolo(lid, e) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  if (soloedLayerId === lid) {
+    // Un-solo: restore all
+    soloedLayerId = null;
+    T.layers.forEach(l => l.visible = true);
+  } else {
+    soloedLayerId = lid;
+    const idx = parseInt(lid[1]) - 1;
+    T.layers.forEach((l, i) => l.visible = i === idx);
+  }
+  buildLayerStack();
+  typo_render();
+}
+
+function setAllLayersVisible(vis) {
+  soloedLayerId = null;
+  T.layers.forEach(l => l.visible = vis);
+  buildLayerStack();
+  typo_render();
+}
+
+function updateLayerVisCount() {
+  const vis = T.layers.filter(l => l.visible).length;
+  const el = document.getElementById('layerVisCount');
+  if (el) el.textContent = `${vis} of ${T.layers.length} visible`;
+}
+
+function buildLayerStack() {
+  const LAYER_COLORS = ['#e5007d', '#4a9fff', '#00c896'];
+  const LAYER_NAMES  = ['L1', 'L2', 'L3'];
+  const FONT_SHORT   = { 'Bebas Neue': 'Bebas', 'Playfair Display': 'Playfair', 'DM Mono': 'Mono' };
+
+  const stack = document.getElementById('layer-stack');
+  // Remove old rows (keep footer)
+  stack.querySelectorAll('.layer-row').forEach(r => r.remove());
+  const footer = document.getElementById('layer-stack-footer');
+
+  T.layers.forEach((layer, i) => {
+    const lid = `l${i + 1}`;
+    const color = LAYER_COLORS[i];
+    const name = LAYER_NAMES[i];
+    const isHidden = !layer.visible;
+    const isSoloed = soloedLayerId === lid;
+    const textPrev = layer.text.replace(/\n/g, ' ').slice(0, 28) + (layer.text.length > 28 ? '…' : '');
+    const fontShort = FONT_SHORT[layer.font] || layer.font;
+    const opPct = Math.round(layer.opacity);
+
+    const row = document.createElement('div');
+    row.className = `layer-row${isHidden ? ' layer-hidden' : ''}${activeLayerId === lid ? ' active-layer' : ''}`;
+    row.dataset.lid = lid;
+    row.onclick = () => {
+      selectLayer(lid);
+      // Build pane if coming from BG mode
+      if (currentPanelMode !== 'layers') {
+        const layersModeBtn = document.querySelector('.panel-mode-tab.mode-layers');
+        if (layersModeBtn) switchPanelMode('layers', layersModeBtn);
+      }
+    };
+
+    row.innerHTML = `
+      <div class="layer-eye" title="${isHidden ? 'Show layer' : 'Hide layer'}" onclick="toggleLayerVisible('${lid}',event)">
+        ${isHidden ? '🚫' : '👁'}
+      </div>
+      <div style="width:3px;height:24px;background:${color};border-radius:2px;flex-shrink:0;opacity:${isHidden?'0.2':'0.7'};"></div>
+      <div class="layer-body">
+        <div class="layer-body-top">
+          <span class="layer-name-badge" style="color:${isHidden?'rgba(255,255,255,.15)':color};">${name}</span>
+          <span class="layer-text-preview">${textPrev || '—'}</span>
+        </div>
+        <div class="layer-body-meta">
+          <span class="layer-font-badge">${fontShort}</span>
+          <div class="layer-op-bar">
+            <div class="layer-op-bar-fill" style="width:${opPct}%;background:${color};"></div>
+          </div>
+          <span style="font-size:7px;color:rgba(255,255,255,.2);width:22px;text-align:right;flex-shrink:0;">${opPct}%</span>
+        </div>
+      </div>
+      <div class="layer-solo${isSoloed ? ' soloed' : ''}" title="Solo this layer" onclick="toggleSolo('${lid}',event)">S</div>`;
+
+    stack.insertBefore(row, footer);
+  });
+
+  updateLayerVisCount();
+}
+
+/* ── BG / Accent / KC ── */
+function setBG(dot){
+  document.querySelectorAll('#bg-colors .cdot').forEach(d=>d.classList.remove('active'));
+  dot.classList.add('active');T.bg=dot.dataset.c;typo_render();
+}
+function setBGTex(el){
+  document.querySelectorAll('#bgTexOpts .bg-opt').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');T.bgTex=el.dataset.tex;typo_render();
+}
+function setGrad(el,v){
+  document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');T.grad=v;typo_render();
+}
+function setGrainStyle(el,v){
+  document.querySelectorAll('#grainStyleOpts .bg-opt').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');T.grainStyle=v;_grainCanvas=null;typo_render();
+}
+function setAccent(el,v){
+  document.querySelectorAll('#accentOpts .bg-opt').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');T.accent=v;typo_render();
+}
+function setKC(el,v){
+  document.querySelectorAll('#kcOpts .bg-opt').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');T.kc=v;typo_render();
+}
+function selCtrl(btn,groupId){
+  if(!btn||!groupId)return;
+  const g=document.getElementById(groupId);if(!g)return;
+  g.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Animation ── */
+function typo_setAnim(on,btn){
+  document.querySelectorAll('.tb-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');T.animating=on;
+  if(on){if(animId)cancelAnimationFrame(animId);(function loop(){T.frame++;typo_render();if(T.animating)animId=requestAnimationFrame(loop);})();}
+  else{if(animId){cancelAnimationFrame(animId);animId=null;}typo_render();}
+}
+
+/* ── Shuffle & Chaos ── */
+function typo_shuffle(){
+  const fonts=['Bebas Neue','Playfair Display','DM Mono'];
+  const dists=['normal','wave','stagger','explode','arch','tile','mirror','glitch'];
+  const bgs=['#080808','#0a0e1a','#1a0010','#0f1a0a','#f4f1ea','#1a1a0a'];
+  const blends=['source-over','source-over','multiply','screen','overlay'];
+  T.bg=R.p(bgs);T.bgTex=R.p(['none','none','grid','dot','diagonal']);
+  T.accent=R.p(['none','bar-top','bar-bottom','corners','rule','dot','none']);
+  T.layers.forEach((layer,i)=>{
+    layer.font=R.p(fonts);
+    layer.text=R.p(R.p([COPY.display,COPY.editorial,COPY.utility]));
+    layer.size=[R.i(80,280),R.i(18,72),R.i(11,26)][i];
+    layer.x=R.f(10,90);layer.y=R.f(20,85);layer.rot=R.f(-12,12);
+    layer.sx=R.f(70,180);layer.sy=R.f(75,160);layer.ls=R.f(-2,28);
+    layer.opacity=[100,R.i(60,100),R.i(30,80)][i];
+    layer.dist=i===0?R.p(dists):R.p(['normal','normal','wave','stagger']);
+    layer.distAmt=R.i(20,75);layer.blend=R.p(blends);
+    layer.visible=true;layer.style=R.p(['normal','normal','italic']);layer.bold=Math.random()>.7;
+    layer.color=i===0?'#ffffff':i===1?'#e5007d':`hsl(${R.i(0,360)},${R.i(50,100)}%,${R.i(55,80)}%)`;
+  });
+  syncLayerUI();typo_render();toast('Composition shuffled');
+}
+function typo_chaos(){
+  const dists=['wave','stagger','explode','arch','tile','mirror','glitch'];
+  const blends=['multiply','screen','overlay','difference','color-dodge'];
+  T.layers.forEach(l=>{l.dist=R.p(dists);l.distAmt=R.i(60,100);l.distSpd=R.i(50,100);l.rot=R.f(-40,40);l.sx=R.f(20,380);l.sy=R.f(20,380);l.blend=Math.random()>.4?R.p(blends):'source-over';l.ls=R.f(5,60);});
+  T.animating=true;document.getElementById('animOn').classList.add('active');document.getElementById('animOff').classList.remove('active');
+  typo_setAnim(true,document.getElementById('animOn'));
+  syncLayerUI();toast('⚡ Chaos — hit Live to animate');
+}
+function syncLayerUI(){
+  ['l1','l2','l3'].forEach(lid=>{
+    const idx=parseInt(lid[1])-1,layer=T.layers[idx];
+    const get=id=>document.getElementById(id);
+    const set=(id,v,u)=>{const el=get(id);if(el)el.value=v;const vl=get(id+'Val');if(vl)vl.textContent=v+u;};
+    set(`${lid}-size`,Math.round(layer.size),'px');
+    set(`${lid}-x`,Math.round(layer.x),'%');set(`${lid}-y`,Math.round(layer.y),'%');
+    set(`${lid}-sx`,Math.round(layer.sx),'%');set(`${lid}-sy`,Math.round(layer.sy),'%');
+    set(`${lid}-rot`,Math.round(layer.rot),'°');
+    set(`${lid}-ls`,Math.round(layer.ls),'');
+    set(`${lid}-op`,Math.round(layer.opacity),'%');
+    set(`${lid}-da`,Math.round(layer.distAmt),'');
+    set(`${lid}-ds`,Math.round(layer.distSpd),'');
+    const ta=get(`${lid}-text`);if(ta)ta.value=layer.text;
+  });
+  if(currentPanelMode==='layers') buildLayerStack();
+}
+
+function typo_resetLayer(){
+  const lid = activeLayerId;
+  if(!lid || lid==='bg') return;
+  const idx=parseInt(lid[1])-1;
+  const defs=[
+    defLayer('AIGA KC','#ffffff',160,50,50,'Bebas Neue'),
+    defLayer('"Where KC designers\ncome alive."','#e5007d',38,50,72,'Playfair Display'),
+    defLayer('kc.aiga.org','rgba(255,255,255,0.4)',16,50,89,'DM Mono'),
+  ];
+  T.layers[idx]=defs[idx];syncLayerUI();typo_render();toast(`Layer ${idx+1} reset`);
+}
+function typo_reset(){
+  T.bg='#080808';T.bgTex='none';T.texOp=12;T.accent='none';T.kc='none';T.glow=0;
+  T.grad='none';T.gradC1='#e5007d';T.gradC2='#002fa7';T.gradAngle=135;T.gradOpacity=80;
+  T.grain=0;T.grainSize=1;T.grainStyle='overlay';
+  soloedLayerId = null;
+  T.layers=[
+    defLayer('AIGA KC','#ffffff',160,50,50,'Bebas Neue'),
+    defLayer('"Where KC designers\ncome alive."','#e5007d',38,50,72,'Playfair Display'),
+    defLayer('kc.aiga.org','rgba(255,255,255,0.4)',16,50,89,'DM Mono'),
+  ];
+  syncLayerUI();typo_render();toast('All layers reset');
+}
+function typo_download(){
+  const c=document.getElementById('typeCanvas');
+  const a=document.createElement('a');a.download='aigakc-composition.png';
+  a.href=c.toDataURL('image/png');a.click();toast('PNG downloaded');
+}
+function typo_copy(){
+  const c=document.getElementById('typeCanvas');
+  c.toBlob(b=>{try{navigator.clipboard.write([new ClipboardItem({'image/png':b})]);toast('Copied to clipboard');}catch(e){toast('Use download instead');}});
+}
+
+/* ════════════════════════════════════════════
+   VECTOR GENERATOR
+════════════════════════════════════════════ */
+const V={arch:'community',complexity:'simple',color:'mono'};
+function genVector(){
+  const svg=document.getElementById('vectorSvg');
+  const m='#e5007d';
+  const c1=V.color==='mono'?'rgba(255,255,255,0.8)':V.color==='accent'?m:PALETTE.primary;
+  const c2=V.color==='mono'?'rgba(255,255,255,0.35)':V.color==='accent'?'rgba(229,0,125,0.35)':PALETTE.h1;
+  const c3=V.color==='mono'?'rgba(255,255,255,0.12)':PALETTE.h2;
+  const rr=(a,b)=>a+Math.random()*(b-a);const ri=(a,b)=>Math.round(rr(a,b));
+  let marks='';
+  if(V.arch==='community'){
+    const n=V.complexity==='simple'?7:V.complexity==='medium'?13:22;
+    const nodes=Array.from({length:n},()=>({x:rr(25,275),y:rr(25,275),r:rr(2.5,7)}));
+    nodes.forEach((n1,i)=>nodes.slice(i+1).forEach(n2=>{
+      const d=Math.hypot(n1.x-n2.x,n1.y-n2.y);
+      if(d<105)marks+=`<line x1="${n1.x.toFixed(1)}" y1="${n1.y.toFixed(1)}" x2="${n2.x.toFixed(1)}" y2="${n2.y.toFixed(1)}" stroke="${c1}" stroke-width="0.8" opacity="${((1-d/105)*.5).toFixed(2)}"/>`;
+    }));
+    nodes.forEach(n=>marks+=`<circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${n.r.toFixed(1)}" fill="${c1}" opacity="0.9"/>`);
+    marks+=`<circle cx="150" cy="150" r="${V.complexity==='simple'?12:18}" fill="none" stroke="${m}" stroke-width="1.5"/><circle cx="150" cy="150" r="4" fill="${m}"/>`;
+  }else if(V.arch==='inclusivity'){
+    const colors=[m,'#e55800','#d4af37','#00a878','#002fa7','#6b00d4','#e5007d'];
+    const n=V.complexity==='simple'?4:V.complexity==='medium'?7:11;
+    for(let i=0;i<n;i++){
+      const cx=80+i*(140/(n-1||1)),cy=150+Math.sin(i*Math.PI/3)*20,cr=32+Math.sin(i*.7)*12;
+      marks+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${cr.toFixed(1)}" fill="${colors[i%colors.length]}" fill-opacity="0.16" stroke="${colors[i%colors.length]}" stroke-width="1" stroke-opacity="0.55"/>`;
+    }
+    marks+=`<circle cx="150" cy="150" r="18" fill="${m}" fill-opacity="0.55"/><circle cx="150" cy="150" r="18" fill="none" stroke="${m}" stroke-width="2"/>`;
+  }else if(V.arch==='vibrance'){
+    const n=V.complexity==='simple'?8:V.complexity==='medium'?16:24;
+    const ir=V.complexity==='simple'?40:30;
+    for(let i=0;i<n;i++){
+      const a=(i/n)*Math.PI*2-Math.PI/2;const len=rr(50,130);
+      marks+=`<line x1="${(150+Math.cos(a)*ir).toFixed(1)}" y1="${(150+Math.sin(a)*ir).toFixed(1)}" x2="${(150+Math.cos(a)*len).toFixed(1)}" y2="${(150+Math.sin(a)*len).toFixed(1)}" stroke="${i%3===0?m:c1}" stroke-width="${rr(.5,2.5).toFixed(1)}" opacity="${(.3+Math.random()*.7).toFixed(2)}"/>`;
+    }
+    if(V.complexity!=='simple'){const nd=V.complexity==='medium'?3:6;for(let i=0;i<nd;i++){const a=(i/nd)*Math.PI*2,cr=60+i*15,dx=150+Math.cos(a)*cr,dy=150+Math.sin(a)*cr,s=rr(6,14);marks+=`<rect x="${(dx-s/2).toFixed(1)}" y="${(dy-s/2).toFixed(1)}" width="${s.toFixed(1)}" height="${s.toFixed(1)}" fill="${i%2===0?m:c1}" fill-opacity="${(.4+Math.random()*.4).toFixed(2)}" transform="rotate(45,${dx.toFixed(1)},${dy.toFixed(1)})"/>`;}}
+    marks+=`<circle cx="150" cy="150" r="26" fill="none" stroke="${m}" stroke-width="2"/><circle cx="150" cy="150" r="7" fill="${m}"/>`;
+  }else{
+    const step=V.complexity==='simple'?60:V.complexity==='medium'?40:30;
+    for(let x=step;x<300;x+=step)marks+=`<line x1="${x}" y1="0" x2="${x}" y2="300" stroke="${c3}" stroke-width="1"/>`;
+    for(let y=step;y<300;y+=step)marks+=`<line x1="0" y1="${y}" x2="300" y2="${y}" stroke="${c3}" stroke-width="1"/>`;
+    const cm=22;[[10,10,1,1],[10,268,1,-1],[268,10,-1,1],[268,268,-1,-1]].forEach(([x,y,dx,dy])=>{
+      marks+=`<polyline points="${x+cm*dx},${y} ${x},${y} ${x},${y+cm*dy}" fill="none" stroke="${m}" stroke-width="2"/>`;
+    });
+    marks+=`<rect x="130" y="130" width="40" height="40" fill="none" stroke="${c1}" stroke-width="1.5"/><rect x="140" y="140" width="20" height="20" fill="${m}" fill-opacity="0.8"/>`;
+    if(V.complexity!=='simple'){for(let i=0;i<4;i++){const a=(i/4)*Math.PI*2;marks+=`<circle cx="${(150+Math.cos(a)*80).toFixed(1)}" cy="${(150+Math.sin(a)*80).toFixed(1)}" r="3" fill="${c2}"/>`;}}
+  }
+  svg.innerHTML=marks;
+}
+function dlSVG(){
+  const svg=document.getElementById('vectorSvg');
+  const full=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="background:#0a0a0a">${svg.innerHTML}</svg>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([full],{type:'image/svg+xml'}));
+  a.download=`aigakc-mark-${V.arch}.svg`;a.click();toast('SVG downloaded');
+}
+window.addEventListener('paletteChange',()=>{if(V.color==='palette')genVector();});
+
+/* ════════════════════════════════════════════
+   TEXTURE GENERATOR
+════════════════════════════════════════════ */
+const TX={pattern:'grid',density:20,opacity:12,color:'magenta',bg:'dark'};
+function getTXColor(){return TX.color==='magenta'?'#e5007d':TX.color==='primary'?PALETTE.primary:'#ffffff';}
+function getTXBg(){return TX.bg==='dark'?'#0a0a0a':TX.bg==='light'?'#f4f1ea':PALETTE.deep;}
+
+function renderTexture(){
+  const stage=document.getElementById('texStage');
+  const canvas=document.getElementById('textureCanvas');
+  const W=stage.clientWidth||800,H=stage.clientHeight||450;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const s=TX.density,op=TX.opacity/100,bg=getTXBg(),col=getTXColor();
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.globalAlpha=op;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1;
+  if(TX.pattern==='grid'){
+    for(let x=0;x<W;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=s){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }else if(TX.pattern==='dot'){
+    for(let x=s/2;x<W;x+=s)for(let y=s/2;y<H;y+=s){ctx.beginPath();ctx.arc(x,y,s*.11,0,Math.PI*2);ctx.fill();}
+  }else if(TX.pattern==='diagonal'){
+    const d=Math.ceil(Math.hypot(W,H));ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI/4);ctx.translate(-d/2,-d/2);
+    for(let x=0;x<d*2;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,d*2);ctx.stroke();}ctx.restore();
+  }else if(TX.pattern==='crosshatch'){
+    const d=Math.ceil(Math.hypot(W,H));
+    [[Math.PI/4],[-Math.PI/4]].forEach(([a])=>{
+      ctx.save();ctx.translate(W/2,H/2);ctx.rotate(a);ctx.translate(-d/2,-d/2);
+      for(let x=0;x<d*2;x+=s){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,d*2);ctx.stroke();}ctx.restore();
+    });
+  }else if(TX.pattern==='hex'){
+    const rh=s,rw=rh*Math.cos(Math.PI/6),rows=Math.ceil(H/(rh*1.5))+2,cols=Math.ceil(W/(rw*2))+2;
+    for(let row=-1;row<rows;row++)for(let col=-1;col<cols;col++){
+      const cx=col*rw*2+(row%2?rw:0),cy=row*rh*1.5;
+      ctx.beginPath();for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);i===0?ctx.moveTo(cx+rh*.85*Math.cos(a),cy+rh*.85*Math.sin(a)):ctx.lineTo(cx+rh*.85*Math.cos(a),cy+rh*.85*Math.sin(a));}
+      ctx.closePath();ctx.stroke();
+    }
+  }else if(TX.pattern==='wave'){
+    ctx.lineWidth=1.5;const amp=s*.6,freq=Math.PI*2/s/2;
+    for(let y=s/2;y<H+s;y+=s){ctx.beginPath();for(let x=0;x<=W;x+=2){const wy=y+Math.sin(x*freq)*amp;x===0?ctx.moveTo(x,wy):ctx.lineTo(x,wy);}ctx.stroke();}
+  }
+  ctx.restore();
+
+  const ovl=document.getElementById('texOverlayBig');
+  if(ovl){ovl.style.color=lightness(bg)>50?'rgba(0,0,0,0.5)':'rgba(255,255,255,0.5)';}
+
+  // CSS output
+  const{r,g,b}=hexToRgb(col);
+  const rgbStr=`rgba(${r},${g},${b},${op})`;
+  let css='';
+  if(TX.pattern==='grid')css=`background-color: ${bg};\nbackground-image:\n  linear-gradient(${rgbStr} 1px, transparent 1px),\n  linear-gradient(90deg, ${rgbStr} 1px, transparent 1px);\nbackground-size: ${s}px ${s}px;`;
+  else if(TX.pattern==='dot')css=`background-color: ${bg};\nbackground-image: radial-gradient(circle, ${col} ${Math.round(s*.11)}px, transparent ${Math.round(s*.11)}px);\nbackground-size: ${s}px ${s}px;`;
+  else if(TX.pattern==='diagonal')css=`background-color: ${bg};\nbackground-image: repeating-linear-gradient(\n  45deg, transparent, transparent ${s-1}px,\n  ${rgbStr} ${s-1}px, ${rgbStr} ${s}px\n);`;
+  else if(TX.pattern==='crosshatch')css=`background-color: ${bg};\nbackground-image:\n  repeating-linear-gradient(45deg, ${rgbStr} 0, ${rgbStr} 1px, transparent 0, transparent 50%),\n  repeating-linear-gradient(-45deg, ${rgbStr} 0, ${rgbStr} 1px, transparent 0, transparent 50%);\nbackground-size: ${s}px ${s}px;`;
+  else css=`/* ${TX.pattern} — download PNG as background */\nbackground-color: ${bg};\nbackground-image: url('aigakc-texture-${TX.pattern}.png');\nbackground-size: ${s*4}px;`;
+  document.getElementById('texCssOut').textContent=css;
+}
+function dlTexture(){
+  const c=document.getElementById('textureCanvas');
+  const a=document.createElement('a');a.download=`aigakc-texture-${TX.pattern}.png`;
+  a.href=c.toDataURL();a.click();toast('PNG downloaded');
+}
+function copyTexCSS(){
+  navigator.clipboard?.writeText(document.getElementById('texCssOut').textContent);
+  const b=document.getElementById('texCssBtn');b.textContent='Copied!';b.classList.add('ok');
+  setTimeout(()=>{b.textContent='Copy CSS';b.classList.remove('ok');},2000);
+  toast('CSS copied');
+}
+window.addEventListener('paletteChange',()=>{if(TX.color==='primary'||TX.bg==='palette')renderTexture();});
+
+/* ════════════════════════════════════════════
+   HERO CANVASES
+════════════════════════════════════════════ */
+function initHeroCanvas(){
+  const canvas=document.getElementById('hero-canvas');
+  const ctx=canvas.getContext('2d');let W,H,pts=[];
+  function resize(){W=canvas.offsetWidth;H=canvas.offsetHeight;canvas.width=W;canvas.height=H;pts=Array.from({length:Math.floor(W*H/12000)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.8+.8}));}
+  resize();window.addEventListener('resize',resize);
+  (function tick(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;});
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(229,0,125,${(1-d/110)*.1})`;ctx.lineWidth=.7;ctx.stroke();}}
+    pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(229,0,125,0.2)';ctx.fill();});
+    requestAnimationFrame(tick);
+  })();
+}
+function initPrincipleCanvas(id,type){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d');let f=0;
+  function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  (function tick(){const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);f++;
+    if(type==='community'){
+      const n=8,r=Math.min(W,H)*.35,pts=Array.from({length:n},(_,i)=>{const a=(i/n)*Math.PI*2+f*.005;return{x:W/2+Math.cos(a)*(r+Math.sin(f*.02+i)*12),y:H/2+Math.sin(a)*(r+Math.sin(f*.02+i)*12)};});
+      pts.forEach(p=>{const d=Math.hypot(p.x-W/2,p.y-H/2);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(W/2,H/2);ctx.strokeStyle=`rgba(0,168,120,${.28*(1-d/(r+20))})`;ctx.lineWidth=.8;ctx.stroke();});
+      pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='rgba(0,168,120,0.7)';ctx.fill();});
+      ctx.beginPath();ctx.arc(W/2,H/2,5+Math.sin(f*.05)*2,0,Math.PI*2);ctx.fillStyle='#00a878';ctx.fill();
+    }else if(type==='inclusivity'){
+      ['#e5007d','#e55800','#d4af37','#00a878','#002fa7','#8b00d4'].forEach((col,i)=>{
+        const a=(i/6)*Math.PI*2+f*.007,cr=Math.min(W,H)*.28+Math.sin(f*.018+i)*5;
+        const{r,g,b}=hexToRgb(col);
+        ctx.beginPath();ctx.arc(W/2+Math.cos(a)*cr*.3,H/2+Math.sin(a)*cr*.3,cr,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${r},${g},${b},0.055)`;ctx.fill();
+        ctx.strokeStyle=`rgba(${r},${g},${b},0.32)`;ctx.lineWidth=1;ctx.stroke();
+      });
+      ctx.beginPath();ctx.arc(W/2,H/2,8+Math.sin(f*.08)*2,0,Math.PI*2);ctx.fillStyle='rgba(229,0,125,0.75)';ctx.fill();
+    }else{
+      const n=12;for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2+f*.01,len=Math.min(W,H)*(.22+Math.sin(f*.035+i*.7)*.1);ctx.beginPath();ctx.moveTo(W/2+Math.cos(a)*7,H/2+Math.sin(a)*7);ctx.lineTo(W/2+Math.cos(a)*len,H/2+Math.sin(a)*len);ctx.strokeStyle=i%3===0?'rgba(229,0,125,0.75)':'rgba(255,255,255,0.1)';ctx.lineWidth=i%3===0?1.5:.7;ctx.stroke();}
+      const p=Math.sin(f*.055)*3.5+10;ctx.beginPath();ctx.arc(W/2,H/2,p,0,Math.PI*2);ctx.fillStyle='#e5007d';ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  })();
+}
+
+/* ════════════════════════════════════════════
+   TEMPLATES
+════════════════════════════════════════════ */
+
+const TEMPLATES = [
+  {
+    id: 'event-poster',
+    name: 'Event Poster',
+    cat: 'Event',
+    desc: 'Bold headline with date & URL',
+    canvas: '800,1000',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'bar-top', kc: 'tr', glow: 18,
+    preview: {
+      bg: '#080808', barTop: true, corners: false,
+      eyebrow: { text: 'AIGA KC', color: '#e5007d', size: 9 },
+      h1: { text: 'PORTFOLIO\nREVIEW\nDAY', color: '#ffffff', size: 38, font: 'Bebas Neue' },
+      sub: { text: 'kc.aiga.org', color: 'rgba(255,255,255,0.4)', size: 7 },
+    },
+    layers: [
+      { text: 'PORTFOLIO\nREVIEW\nDAY', color: '#ffffff', size: 210, x: 50, y: 40,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'April 12, 2025', color: '#e5007d', size: 28, x: 50, y: 72,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 8, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'kc.aiga.org', color: 'rgba(255,255,255,0.35)', size: 16, x: 50, y: 90,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 14, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'social-square',
+    name: 'Social Square',
+    cat: 'Social',
+    desc: 'Instagram-ready 1:1 announcement',
+    canvas: '800,800',
+    bg: '#e5007d', bgTex: 'grid', texOp: 10,
+    accent: 'corners', kc: 'tr', glow: 0,
+    preview: {
+      bg: '#e5007d', barTop: false, corners: true,
+      eyebrow: { text: 'SAVE THE DATE', color: '#ffffff', size: 7 },
+      h1: { text: 'GALA\n2025', color: '#ffffff', size: 40, font: 'Bebas Neue' },
+      sub: { text: 'Annual Design Awards', color: 'rgba(255,255,255,0.65)', size: 7 },
+    },
+    layers: [
+      { text: 'GALA\n2025', color: '#ffffff', size: 220, x: 50, y: 46,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 3, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'Annual Design Awards', color: 'rgba(255,255,255,0.75)', size: 24, x: 50, y: 74,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'AIGA KC', color: 'rgba(255,255,255,0.22)', size: 18, x: 50, y: 87,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 22, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'editorial',
+    name: 'Editorial',
+    cat: 'Brand',
+    desc: 'Serif quote with structural rules',
+    canvas: '1200,630',
+    bg: '#f4f1ea', bgTex: 'none', texOp: 12,
+    accent: 'rule', kc: 'none', glow: 0,
+    preview: {
+      bg: '#f4f1ea', barTop: false, corners: false, light: true,
+      eyebrow: { text: 'AIGA KC', color: '#e5007d', size: 7 },
+      h1: { text: '"Build.\nConnect.\nFlourish."', color: '#080808', size: 22, font: 'Playfair Display' },
+      sub: { text: 'kc.aiga.org', color: 'rgba(0,0,0,0.35)', size: 7 },
+    },
+    layers: [
+      { text: '"Build.\nConnect.\nFlourish."', color: '#080808', size: 120, x: 50, y: 46,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'Kansas City\'s Design Community', color: 'rgba(0,0,0,0.45)', size: 18, x: 50, y: 79,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 10, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'AIGA KC', color: '#e5007d', size: 16, x: 50, y: 88,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 26, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'story-vertical',
+    name: 'Story / Reel',
+    cat: 'Social',
+    desc: 'Full-bleed 9:16 for Stories & Reels',
+    canvas: '630,1200',
+    bg: '#0a0010', bgTex: 'dot', texOp: 14,
+    accent: 'bar-left', kc: 'bl', glow: 45,
+    preview: {
+      bg: '#0a0010', barTop: false, corners: false,
+      eyebrow: { text: 'THIS WEEK', color: '#e5007d', size: 7 },
+      h1: { text: 'COFFEE\nWITH\nCREATIVES', color: '#ffffff', size: 24, font: 'Bebas Neue' },
+      sub: { text: 'Join us Thursday', color: 'rgba(255,255,255,0.5)', size: 7 },
+    },
+    layers: [
+      { text: 'COFFEE\nWITH\nCREATIVES', color: '#ffffff', size: 160, x: 50, y: 42,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '"Join us every Thursday\nfor good coffee and\nbetter conversation."', color: 'rgba(255,255,255,0.55)', size: 26, x: 50, y: 72,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'kc.aiga.org', color: '#e5007d', size: 15, x: 50, y: 88,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 16, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'stat-banner',
+    name: 'Stat Banner',
+    cat: 'Brand',
+    desc: 'Big number + supporting copy',
+    canvas: '1200,450',
+    bg: '#080808', bgTex: 'diagonal', texOp: 7,
+    accent: 'bar-bottom', kc: 'none', glow: 0,
+    preview: {
+      bg: '#080808', barTop: false, corners: false,
+      eyebrow: { text: 'COMMUNITY', color: '#e5007d', size: 7 },
+      h1: { text: '500+\nMEMBERS', color: '#ffffff', size: 30, font: 'Bebas Neue' },
+      sub: { text: 'Kansas City Designers', color: 'rgba(255,255,255,0.35)', size: 7 },
+    },
+    layers: [
+      { text: '500+', color: '#ffffff', size: 280, x: 30, y: 52,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: -2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'Kansas City\nDesign Members', color: '#e5007d', size: 46, x: 72, y: 45,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'and growing every year', color: 'rgba(255,255,255,0.35)', size: 18, x: 72, y: 72,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 6, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'glitch-energy',
+    name: 'Glitch Energy',
+    cat: 'Experimental',
+    desc: 'RGB split — animated distortion',
+    canvas: '800,800',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'dot', kc: 'none', glow: 30,
+    preview: {
+      bg: '#080808', barTop: false, corners: false,
+      eyebrow: { text: 'LIVE', color: '#e5007d', size: 7 },
+      h1: { text: 'DESIGN\nCOMMUNITY', color: '#ffffff', size: 26, font: 'Bebas Neue' },
+      sub: { text: 'glitch / animated', color: 'rgba(229,0,125,0.6)', size: 7 },
+    },
+    layers: [
+      { text: 'DESIGN\nCOMMUNITY', color: '#ffffff', size: 160, x: 50, y: 43,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'glitch', distAmt: 68, distSpd: 55, visible: true },
+      { text: 'KANSAS CITY', color: '#e5007d', size: 44, x: 50, y: 69,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 18, opacity: 85, blend: 'source-over', dist: 'wave', distAmt: 28, distSpd: 40, visible: true },
+      { text: 'kc.aiga.org', color: 'rgba(255,255,255,0.3)', size: 14, x: 50, y: 84,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 20, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'board-recruitment',
+    name: 'Board Recruitment',
+    cat: 'Event',
+    desc: 'Call-to-action with diagonal energy',
+    canvas: '800,800',
+    bg: '#002fa7', bgTex: 'grid', texOp: 10,
+    accent: 'corners', kc: 'bl', glow: 20,
+    preview: {
+      bg: '#002fa7', barTop: false, corners: true,
+      eyebrow: { text: 'JOIN THE BOARD', color: '#ffffff', size: 7 },
+      h1: { text: 'SHAPE\nKC\nDESIGN', color: '#ffffff', size: 34, font: 'Bebas Neue' },
+      sub: { text: 'Apply now', color: 'rgba(255,255,255,0.55)', size: 7 },
+    },
+    layers: [
+      { text: 'SHAPE\nKC\nDESIGN', color: '#ffffff', size: 200, x: 50, y: 43,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: -4, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '"Lead. Build. Inspire."', color: '#e5007d', size: 30, x: 50, y: 74,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'Board Applications Open', color: 'rgba(255,255,255,0.55)', size: 15, x: 50, y: 87,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 10, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'mentorship',
+    name: 'Mentorship',
+    cat: 'Event',
+    desc: 'Warm and editorial — light on dark',
+    canvas: '800,800',
+    bg: '#0d1208', bgTex: 'none', texOp: 12,
+    accent: 'bar-top', kc: 'none', glow: 12,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 0, grainSize: 1, grainStyle: 'overlay',
+    preview: {
+      bg: '#0d1208', barTop: true, corners: false,
+      eyebrow: { text: 'MENTORSHIP PROGRAM', color: '#e5007d', size: 7 },
+      h1: { text: 'GROW\nTOGETHER', color: '#ffffff', size: 30, font: 'Bebas Neue' },
+      sub: { text: '"Every expert was once a beginner."', color: 'rgba(255,255,255,0.5)', size: 7 },
+    },
+    layers: [
+      { text: 'GROW\nTOGETHER', color: '#ffffff', size: 190, x: 50, y: 42,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 3, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '"Every expert was\nonce a beginner."', color: 'rgba(255,255,255,0.5)', size: 28, x: 50, y: 73,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'AIGA KC  ·  kc.aiga.org', color: '#e5007d', size: 13, x: 50, y: 89,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 12, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  // ── NEW TEMPLATES FROM EXISTING LIBRARY ──
+  {
+    id: 'awards-call',
+    name: 'A-Awards CFS',
+    cat: 'Gala',
+    desc: 'Black + magenta — call for submissions',
+    canvas: '800,1000',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'tr', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 22, grainSize: 1, grainStyle: 'overlay',
+    preview: {
+      bg: '#080808', barTop: false, corners: false,
+      eyebrow: { text: 'A-AWARDS', color: '#e5007d', size: 7 },
+      h1: { text: 'CALL FOR\nSUBMISSIONS\nIS OPEN!', color: '#ffffff', size: 28, font: 'Bebas Neue' },
+      sub: { text: 'AIGA KC Annual Design Awards', color: '#e5007d', size: 7 },
+    },
+    layers: [
+      { text: 'CALL FOR\nSUBMISSIONS\nIS OPEN!', color: '#ffffff', size: 195, x: 50, y: 42,
+        font: 'Bebas Neue', style: 'normal', bold: true, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'EARLY BIRD', color: '#e5007d', size: 80, x: 50, y: 71,
+        font: 'Bebas Neue', style: 'normal', bold: true, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'A-AWARDS  ·  AIGA KC', color: 'rgba(255,255,255,0.35)', size: 14, x: 50, y: 88,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 16, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'split-takeover',
+    name: 'Takeover Split',
+    cat: 'Campaign',
+    desc: 'Two-tone split bg — high energy matchup',
+    canvas: '800,800',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'split', gradC1: '#00a878', gradC2: '#c8000e', gradAngle: 90, gradOpacity: 100,
+    grain: 35, grainSize: 1.5, grainStyle: 'overlay',
+    preview: {
+      bg: '#080808', barTop: false, corners: false,
+      eyebrow: { text: 'THE TAKEOVER', color: '#ffffff', size: 7 },
+      h1: { text: 'AIGA PHL\nvs AIGA KC', color: '#ffffff', size: 26, font: 'Bebas Neue' },
+      sub: { text: 'Winner takes all of social media', color: 'rgba(255,255,255,0.6)', size: 7 },
+    },
+    layers: [
+      { text: 'THE\nTAKEOVER', color: '#ffffff', size: 195, x: 50, y: 35,
+        font: 'Bebas Neue', style: 'normal', bold: true, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'WINNER TAKES ALL', color: '#ffffff', size: 46, x: 50, y: 68,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 4, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'kc.aiga.org', color: 'rgba(255,255,255,0.45)', size: 16, x: 50, y: 85,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 14, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'cocktails-solid',
+    name: 'Cocktails w/ Creatives',
+    cat: 'Event',
+    desc: 'Solid vibrant bg — bold display info',
+    canvas: '800,800',
+    bg: '#00a878', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 8, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#00a878', barTop: false, corners: false,
+      eyebrow: { text: 'THIS THURSDAY', color: '#1a1a0a', size: 7 },
+      h1: { text: 'COCKTAILS\nWITH\nCREATIVES', color: '#1a1a0a', size: 26, font: 'Bebas Neue' },
+      sub: { text: '6–8PM  ·  Vine Street Brewing', color: 'rgba(0,0,0,0.6)', size: 7 },
+    },
+    layers: [
+      { text: 'COCKTAILS\nWITH\nCREATIVES', color: '#1a1a0a', size: 190, x: 50, y: 42,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'JULY 31  ·  6–8PM', color: '#080808', size: 32, x: 50, y: 73,
+        font: 'DM Mono', style: 'normal', bold: true, sx: 100, sy: 100,
+        rot: 0, ls: 6, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '@AIGAKC', color: '#e5007d', size: 22, x: 50, y: 86,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 18, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'jazz-couture',
+    name: 'Jazz Couture / Gala',
+    cat: 'Gala',
+    desc: 'Dark bg + bold mixed color type',
+    canvas: '800,800',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'glow-corner', gradC1: '#002fa7', gradC2: '#080808', gradAngle: 135, gradOpacity: 60,
+    grain: 18, grainSize: 1, grainStyle: 'overlay',
+    preview: {
+      bg: '#080808', barTop: false, corners: false,
+      eyebrow: { text: 'A20 THEME ATTIRE', color: '#e5007d', size: 7 },
+      h1: { text: 'JAZZ\nCOUTURE', color: '#f4f1ea', size: 36, font: 'Bebas Neue' },
+      sub: { text: 'Fashion that embodies heart and soul', color: 'rgba(255,255,255,0.6)', size: 7 },
+    },
+    layers: [
+      { text: 'A20 THEME', color: '#e5007d', size: 36, x: 50, y: 22,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 20, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'JAZZ\nCOUTURE', color: '#f4f1ea', size: 220, x: 50, y: 52,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'Heart & Soul', color: '#e5007d', size: 38, x: 50, y: 83,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'join-board-grid',
+    name: 'Join Our Board',
+    cat: 'Brand',
+    desc: 'Grid paper bg — bold black type, magenta accents',
+    canvas: '800,1000',
+    bg: '#f8f7f2', bgTex: 'grid', texOp: 22,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#f8f7f2', gradAngle: 135, gradOpacity: 80,
+    grain: 6, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#f8f7f2', barTop: false, corners: false, light: true,
+      eyebrow: { text: 'FIND YOUR CREATIVE COMMUNITY', color: '#e5007d', size: 7 },
+      h1: { text: 'JOIN\nOUR\nBOARD', color: '#080808', size: 38, font: 'Bebas Neue' },
+      sub: { text: 'AIGA KC — Apply Now', color: 'rgba(0,0,0,0.5)', size: 7 },
+    },
+    layers: [
+      { text: 'JOIN\nOUR\nBOARD', color: '#080808', size: 210, x: 50, y: 42,
+        font: 'Bebas Neue', style: 'normal', bold: true, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'FIND YOUR\nCREATIVE COMMUNITY', color: '#e5007d', size: 34, x: 50, y: 74,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 4, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '@AIGAKC', color: 'rgba(0,0,0,0.45)', size: 18, x: 50, y: 88,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 20, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'peach-gradient',
+    name: 'Upcoming Events',
+    cat: 'Event',
+    desc: 'Soft warm gradient — upcoming events style',
+    canvas: '800,800',
+    bg: '#f4c5a0', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'linear', gradC1: '#f9d4b0', gradC2: '#e8a080', gradAngle: 160, gradOpacity: 100,
+    grain: 14, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#f4c5a0', barTop: false, corners: false, light: true,
+      eyebrow: { text: 'MARCH 2025', color: '#080808', size: 7 },
+      h1: { text: 'UPCOMING\nEVENTS', color: '#080808', size: 36, font: 'Bebas Neue' },
+      sub: { text: 'AIGA KC  ·  Sign up today!', color: 'rgba(0,0,0,0.5)', size: 7 },
+    },
+    layers: [
+      { text: 'UPCOMING\nEVENTS', color: '#080808', size: 185, x: 50, y: 35,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'March 2025', color: '#080808', size: 32, x: 50, y: 60,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: '@AIGAKC', color: '#e5007d', size: 18, x: 50, y: 84,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 22, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'lavender-editorial',
+    name: 'Wellness / Collab',
+    cat: 'Event',
+    desc: 'Soft lavender + vignette — calm editorial feel',
+    canvas: '800,800',
+    bg: '#c8c0e8', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'vignette', gradC1: '#c8c0e8', gradC2: '#9080c0', gradAngle: 135, gradOpacity: 55,
+    grain: 20, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#c8c0e8', barTop: false, corners: false, light: true,
+      eyebrow: { text: 'A CREATIVE WELLNESS WORKSHOP', color: '#e5007d', size: 7 },
+      h1: { text: 'REFRESH\n& RESET', color: '#080808', size: 30, font: 'Playfair Display' },
+      sub: { text: 'AIGA KC  ·  kc.aiga.org', color: 'rgba(0,0,0,0.45)', size: 7 },
+    },
+    layers: [
+      { text: 'REFRESH\n& RESET', color: '#1a0830', size: 160, x: 50, y: 40,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'A Creative Wellness Workshop', color: '#080808', size: 22, x: 50, y: 67,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 3, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'AIGA KC', color: '#e5007d', size: 20, x: 50, y: 83,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 24, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  // ─── FROM REFERENCE LIBRARY ─────────────────────────────────────────────
+  {
+    id: 'coffee-creatives',
+    name: 'Coffee w/ Creatives',
+    cat: 'Event',
+    desc: 'Grid paper bg, mixed script + display headline',
+    canvas: '800,800',
+    bg: '#f6f4ef', bgTex: 'paper', texOp: 28,
+    accent: 'none', kc: 'tr', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#f6f4ef', gradAngle: 135, gradOpacity: 80,
+    grain: 10, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#f6f4ef', barTop: false, corners: false, light: true,
+      eyebrow: { text: 'LEARN MORE ABOUT JOINING', color: '#e5007d', size: 6 },
+      h1: { text: 'Coffee\nwith\nCreatives', color: '#080808', size: 26, font: 'Playfair Display' },
+      sub: { text: 'AIGA KC  ·  @AIGAKC', color: 'rgba(0,0,0,0.35)', size: 7 },
+    },
+    layers: [
+      { text: 'Coffee with\nCreatives', color: '#080808', size: 152, x: 50, y: 38,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: -2, ls: -1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'LEARN MORE ABOUT', color: '#e5007d', size: 24, x: 50, y: 66,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 8, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'JOINING OUR BOARD', color: '#080808', size: 30, x: 50, y: 74,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 4, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'portfolio-day',
+    name: 'Portfolio Day',
+    cat: 'Event',
+    desc: 'Black bg, vibrant multicolor header + speaker layout',
+    canvas: '800,800',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'bl', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 8, grainSize: 1, grainStyle: 'overlay',
+    preview: {
+      bg: '#080808', barTop: false, corners: false, light: false,
+      eyebrow: { text: 'AIGA KC  ·  PRESENTED BY ADOBE', color: '#ffffff', size: 6 },
+      h1: { text: 'PORTFOLIO\nDAY', color: '#e5007d', size: 36, font: 'Bebas Neue' },
+      sub: { text: 'SPEAKER SPOTLIGHT', color: 'rgba(255,255,255,0.5)', size: 7 },
+    },
+    layers: [
+      { text: 'PORTFOLIO\nDAY', color: '#e5007d', size: 220, x: 50, y: 32,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'SPEAKER NAME', color: '#ffffff', size: 42, x: 50, y: 62,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 2, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'VP OF DESIGN  ·  COMPANY NAME', color: '#f5a623', size: 22, x: 50, y: 74,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 3, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'field-guide',
+    name: 'Field Guide',
+    cat: 'Event',
+    desc: 'Clean cream card, deep green display, editorial serif',
+    canvas: '800,1000',
+    bg: '#f2f0e8', bgTex: 'none', texOp: 12,
+    accent: 'corners', kc: 'bl', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 16, grainSize: 1.5, grainStyle: 'monochrome',
+    preview: {
+      bg: '#f2f0e8', barTop: false, corners: true, light: true,
+      eyebrow: { text: 'A CREATIVE BOTANICAL EXPLORATION', color: 'rgba(0,0,0,0.45)', size: 6 },
+      h1: { text: 'FIELD\nGUIDE', color: '#1a4a1a', size: 42, font: 'Bebas Neue' },
+      sub: { text: 'SATURDAY  ·  11AM – 1PM', color: '#e5007d', size: 7 },
+    },
+    layers: [
+      { text: 'FIELD\nGUIDE', color: '#1a4a1a', size: 240, x: 50, y: 35,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'A Creative Botanical Exploration', color: '#080808', size: 28, x: 50, y: 58,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 0, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'SATURDAY  ·  11AM – 1PM', color: '#e5007d', size: 20, x: 50, y: 70,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 10, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'cocktails-teal',
+    name: 'Cocktails / Social',
+    cat: 'Event',
+    desc: 'Vibrant teal bg, chunky rounded display type, editorial date block',
+    canvas: '800,800',
+    bg: '#00a878', bgTex: 'none', texOp: 12,
+    accent: 'none', kc: 'none', glow: 0,
+    grad: 'none', gradC1: '#e5007d', gradC2: '#002fa7', gradAngle: 135, gradOpacity: 80,
+    grain: 20, grainSize: 1, grainStyle: 'monochrome',
+    preview: {
+      bg: '#00a878', barTop: false, corners: false, light: false,
+      eyebrow: { text: 'JULY 31  ·  6–8PM', color: '#080808', size: 6 },
+      h1: { text: 'COCKTAILS\nW/ CREATIVES', color: '#080808', size: 26, font: 'Bebas Neue' },
+      sub: { text: 'VINE STREET BREWING  ·  @AIGAKC', color: 'rgba(0,0,0,0.55)', size: 7 },
+    },
+    layers: [
+      { text: 'Cocktails\nwith\nCreatives', color: '#080808', size: 165, x: 50, y: 38,
+        font: 'Playfair Display', style: 'italic', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: -1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'JULY 31  ·  6–8PM', color: '#080808', size: 32, x: 50, y: 70,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 4, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'BOOK DONATION  ·  BLK + BRWN', color: '#e5007d', size: 20, x: 50, y: 83,
+        font: 'DM Mono', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 6, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+  {
+    id: 'gala-dark-energy',
+    name: 'Gala / A-Awards',
+    cat: 'Brand',
+    desc: 'Black bg, blue torn-paper border feel, cream + magenta mixed type',
+    canvas: '800,800',
+    bg: '#080808', bgTex: 'none', texOp: 12,
+    accent: 'corners', kc: 'none', glow: 22,
+    grad: 'vignette', gradC1: '#0a0820', gradC2: '#080808', gradAngle: 135, gradOpacity: 70,
+    grain: 28, grainSize: 1, grainStyle: 'overlay',
+    preview: {
+      bg: '#080808', barTop: false, corners: true, light: false,
+      eyebrow: { text: 'A20 · ANNUAL DESIGN AWARDS', color: '#e5007d', size: 6 },
+      h1: { text: 'JAZZ\nCOUTURE', color: '#f0e8d8', size: 38, font: 'Bebas Neue' },
+      sub: { text: 'FASHION THAT EMBODIES HEART AND SOUL', color: 'rgba(255,255,255,0.4)', size: 6 },
+    },
+    layers: [
+      { text: 'A20 · ANNUAL DESIGN AWARDS', color: '#e5007d', size: 22, x: 50, y: 14,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 8, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'JAZZ\nCOUTURE', color: '#f0e8d8', size: 220, x: 50, y: 48,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 1, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+      { text: 'FASHION THAT EMBODIES\nHEART AND SOUL', color: '#e5007d', size: 34, x: 50, y: 80,
+        font: 'Bebas Neue', style: 'normal', bold: false, sx: 100, sy: 100,
+        rot: 0, ls: 3, opacity: 100, blend: 'source-over', dist: 'normal', distAmt: 40, distSpd: 30, visible: true },
+    ],
+  },
+];
+
+let activeTplId = null;
+let drawerOpen = false;
+
+function toggleTplDrawer() {
+  drawerOpen = !drawerOpen;
+  const drawer = document.getElementById('tpl-drawer');
+  const btn = document.getElementById('tplToggleBtn');
+  drawer.classList.toggle('open', drawerOpen);
+  btn.classList.toggle('mag', drawerOpen);
+  btn.textContent = drawerOpen ? '✕ Close' : '☰ Templates';
+}
+
+function buildTplCards() {
+  const grid = document.getElementById('tplGrid');
+  const cats = [...new Set(TEMPLATES.map(t => t.cat))];
+
+  grid.innerHTML = TEMPLATES.map(tpl => {
+    const p = tpl.preview;
+    const lightBg = p.light;
+    const textColor = lightBg ? p.h1.color : p.h1.color;
+    const eyeColor = p.eyebrow.color;
+    const subColor = p.sub.color;
+
+    const barHTML = p.barTop
+      ? `<div style="position:absolute;top:0;left:0;right:0;height:2.5px;background:#e5007d;"></div>` : '';
+    const cornerHTML = p.corners
+      ? `<div style="position:absolute;top:5px;left:5px;width:8px;height:8px;border-top:1px solid rgba(229,0,125,0.55);border-left:1px solid rgba(229,0,125,0.55);"></div>
+         <div style="position:absolute;bottom:5px;right:5px;width:8px;height:8px;border-bottom:1px solid rgba(229,0,125,0.55);border-right:1px solid rgba(229,0,125,0.55);"></div>` : '';
+
+    // Encode canvas size label
+    const [cw, ch] = tpl.canvas.split(',');
+    const ratio = parseInt(cw) > parseInt(ch) ? '16:9' : parseInt(cw) < parseInt(ch) ? '9:16' : '1:1';
+
+    return `<div class="tpl-card${activeTplId === tpl.id ? ' active-tpl' : ''}" onclick="applyTemplate('${tpl.id}')" data-tpl="${tpl.id}">
+      <div class="tpl-preview" style="background:${p.bg};">
+        ${barHTML}${cornerHTML}
+        <div class="tp-ey" style="color:${eyeColor};font-size:${p.eyebrow.size}px;">${p.eyebrow.text}</div>
+        <div style="font-family:'${p.h1.font}',${p.h1.font==='Playfair Display'?'serif':'sans-serif'};font-size:${p.h1.size}px;line-height:.95;letter-spacing:.02em;color:${textColor};${p.h1.font==='Playfair Display'?'font-style:italic;':''}">${p.h1.text.replace(/\n/g,'<br>')}</div>
+        <div style="font-size:${p.sub.size}px;letter-spacing:.12em;text-transform:uppercase;color:${subColor};margin-top:4px;font-family:'DM Mono',monospace;">${p.sub.text}</div>
+      </div>
+      <div class="tpl-meta">
+        <span class="tpl-name">${tpl.name}</span>
+        <span class="tpl-desc">${tpl.desc}</span>
+        <span class="tpl-cat">${tpl.cat} · ${ratio}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function applyTemplate(id) {
+  const tpl = TEMPLATES.find(t => t.id === id);
+  if (!tpl) return;
+
+  activeTplId = id;
+
+  // Apply canvas size
+  const sel = document.getElementById('canvasSize');
+  [...sel.options].forEach(o => { if (o.value === tpl.canvas) o.selected = true; });
+  [TW, TH] = tpl.canvas.split(',').map(Number);
+  const canvas = document.getElementById('typeCanvas');
+  canvas.width = TW; canvas.height = TH;
+  document.getElementById('canvasInfo').textContent = `${TW} × ${TH}px`;
+
+  // Apply global state
+  T.bg = tpl.bg;
+  T.bgTex = tpl.bgTex;
+  T.texOp = tpl.texOp;
+  T.accent = tpl.accent;
+  T.kc = tpl.kc;
+  T.glow = tpl.glow;
+  // Gradient
+  T.grad = tpl.grad ?? 'none';
+  T.gradC1 = tpl.gradC1 ?? '#e5007d';
+  T.gradC2 = tpl.gradC2 ?? '#002fa7';
+  T.gradAngle = tpl.gradAngle ?? 135;
+  T.gradOpacity = tpl.gradOpacity ?? 80;
+  // Grain
+  T.grain = tpl.grain ?? 0;
+  T.grainSize = tpl.grainSize ?? 1;
+  T.grainStyle = tpl.grainStyle ?? 'overlay';
+  _grainCanvas = null; // reset grain cache
+
+  // Deep-copy layers
+  T.layers = tpl.layers.map(l => ({...l}));
+
+  // Sync all UI
+  syncLayerUI();
+
+  // Sync right panel overlays
+  document.querySelectorAll('#accentOpts .bg-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.a === tpl.accent);
+  });
+  document.querySelectorAll('#kcOpts .bg-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.kc === tpl.kc);
+  });
+
+  // Sync bg texture
+  document.querySelectorAll('#bgTexOpts .bg-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.tex === tpl.bgTex);
+  });
+
+  // Sync gradient UI
+  document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.g === T.grad);
+  });
+  const gc1El = document.getElementById('gradC1'); if(gc1El) gc1El.value = T.gradC1;
+  const gc2El = document.getElementById('gradC2'); if(gc2El) gc2El.value = T.gradC2;
+  const gaEl = document.getElementById('gradAngle'); if(gaEl){ gaEl.value = T.gradAngle; document.getElementById('gradAngleVal').textContent = T.gradAngle + '°'; }
+  const gopEl = document.getElementById('gradOpacity'); if(gopEl){ gopEl.value = T.gradOpacity; document.getElementById('gradOpacityVal').textContent = T.gradOpacity + '%'; }
+
+  // Sync grain UI
+  const grAmtEl = document.getElementById('grainAmount'); if(grAmtEl){ grAmtEl.value = T.grain; document.getElementById('grainVal').textContent = T.grain + '%'; }
+  const grSzEl = document.getElementById('grainSize'); if(grSzEl){ grSzEl.value = T.grainSize; document.getElementById('grainSizeVal').textContent = T.grainSize + '×'; }
+  document.querySelectorAll('#grainStyleOpts .bg-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.gs === T.grainStyle);
+  });
+
+  // Sync glow
+  const glEl = document.querySelector('[oninput*="T.glow"]'); if(glEl){ glEl.value = T.glow; document.getElementById('glowVal').textContent = T.glow + '%'; }
+
+  // Mark cards
+  document.querySelectorAll('.tpl-card').forEach(c => {
+    c.classList.toggle('active-tpl', c.dataset.tpl === id);
+  });
+
+  // Rebuild layer panes so controls reflect new values
+  buildLayerPane('l1'); buildLayerPane('l2'); buildLayerPane('l3');
+  updatePlaygroundPaletteSwatches();
+  soloedLayerId = null;
+  if (currentPanelMode === 'layers') buildLayerStack();
+  // Switch to Layers mode to show the template visually
+  const layersBtn = document.querySelector('.panel-mode-tab.mode-layers');
+  if (layersBtn) switchPanelMode('layers', layersBtn);
+  selectLayer('l1');
+
+  typo_fitCanvas();
+  typo_render();
+  toggleTplDrawer();
+  toast(`Template loaded: ${tpl.name}`);
+}
+
+/* ════════════════════════════════════════════
+   SCROLLSPY
+════════════════════════════════════════════ */
+function initScrollSpy(){
+  const sections=['hero','color-section','type-section','vector-section','texture-section'];
+  const links=document.querySelectorAll('.nav-links a');
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id=e.target.id;
+        links.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+id);});
+      }
+    });
+  },{threshold:.15,rootMargin:'-52px 0px 0px 0px'});
+  sections.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});
+}
+
+/* ════════════════════════════════════════════
+   REVEAL
+════════════════════════════════════════════ */
+const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  initHeroCanvas();
+  initPrincipleCanvas('pc-community','community');
+  initPrincipleCanvas('pc-inclusivity','inclusivity');
+  initPrincipleCanvas('pc-vibrance','vibrance');
+
+  buildLayerPane('l1');buildLayerPane('l2');buildLayerPane('l3');
+  buildTplCards();
+
+  // Init panel: start on BG tab, pane-bg active
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-bg').classList.add('active');
+
+  typo_fitCanvas();typo_render();
+  generatePalette();
+  genVector();
+  setTimeout(renderTexture,120);
+
+  document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+  initScrollSpy();
+});
+/* ════════════════════════════════════════════
+   QUICK FX — one-click grain / gradient / texture presets
+════════════════════════════════════════════ */
+function quickFX(type) {
+  _grainCanvas = null;
+  if (type === 'grain') {
+    // Toggle: if grain already on, bump it up; if maxed, reset
+    T.grain = T.grain < 20 ? 35 : T.grain < 50 ? 65 : 0;
+    T.grainSize = 1; T.grainStyle = 'overlay';
+    const el = document.getElementById('grainAmount'); if(el){ el.value = T.grain; document.getElementById('grainVal').textContent = T.grain + '%'; }
+    // Switch to BG tab so the slider is visible
+    const bgTab = document.querySelector('[data-tab="bg"]'); if(bgTab) switchTab('bg', bgTab);
+  } else if (type === 'gradient') {
+    const presets = [
+      { grad:'vignette', c1:'#000000', c2:'#080808', op:80 },
+      { grad:'linear', c1:'#e5007d', c2:'#002fa7', op:60 },
+      { grad:'sunset', c1:'#e5007d', c2:'#1a0830', op:80 },
+      { grad:'glow-corner', c1:'#e5007d', c2:'#080808', op:70 },
+    ];
+    // Cycle through presets
+    const cur = presets.findIndex(p => p.grad === T.grad);
+    const next = presets[(cur + 1) % presets.length];
+    T.grad = next.grad; T.gradC1 = next.c1; T.gradC2 = next.c2; T.gradOpacity = next.op;
+    document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(el => {
+      el.classList.toggle('active', el.dataset.g === T.grad);
+    });
+    const bgTab = document.querySelector('[data-tab="bg"]'); if(bgTab) switchTab('bg', bgTab);
+  } else if (type === 'paper') {
+    const isPaper = T.bgTex === 'paper';
+    T.bgTex = isPaper ? 'none' : 'paper';
+    T.texOp = isPaper ? 12 : 30;
+    document.querySelectorAll('#bgTexOpts .bg-opt').forEach(el => {
+      el.classList.toggle('active', el.dataset.tex === T.bgTex);
+    });
+  } else if (type === 'noise') {
+    const isNoise = T.bgTex === 'noise';
+    T.bgTex = isNoise ? 'none' : 'noise';
+    T.texOp = isNoise ? 12 : 20;
+    document.querySelectorAll('#bgTexOpts .bg-opt').forEach(el => {
+      el.classList.toggle('active', el.dataset.tex === T.bgTex);
+    });
+  } else if (type === 'clear') {
+    T.grain = 0; T.grainSize = 1; T.grainStyle = 'overlay';
+    T.grad = 'none'; T.glow = 0; T.bgTex = 'none'; T.texOp = 12;
+    const gEl = document.getElementById('grainAmount'); if(gEl){ gEl.value = 0; document.getElementById('grainVal').textContent = '0%'; }
+    document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(el => el.classList.toggle('active', el.dataset.g === 'none'));
+    document.querySelectorAll('#bgTexOpts .bg-opt').forEach(el => el.classList.toggle('active', el.dataset.tex === 'none'));
+    document.querySelectorAll('#grainStyleOpts .bg-opt').forEach(el => el.classList.toggle('active', el.dataset.gs === 'overlay'));
+    toast('FX cleared');
+  }
+  typo_render();
+}
+
+/* ════════════════════════════════════════════
+   EXPORT SYSTEM
+════════════════════════════════════════════ */
+
+const PLATFORMS_DEF = [
+  { id:'ig-post',    label:'Instagram',  sub:'Post',    icon:'📷', w:1080, h:1080 },
+  { id:'ig-story',   label:'Instagram',  sub:'Story',   icon:'📱', w:1080, h:1920 },
+  { id:'tiktok',     label:'TikTok',     sub:'Video',   icon:'🎵', w:1080, h:1920 },
+  { id:'twitter',    label:'X / Twitter',sub:'Post',    icon:'𝕏',  w:1200, h:675  },
+  { id:'linkedin',   label:'LinkedIn',   sub:'Post',    icon:'💼', w:1200, h:628  },
+  { id:'facebook',   label:'Facebook',   sub:'Post',    icon:'📘', w:1200, h:630  },
+  { id:'youtube',    label:'YouTube',    sub:'Thumb',   icon:'▶',  w:1280, h:720  },
+  { id:'custom',     label:'Canvas',     sub:'Current', icon:'⬜', w:null, h:null },
+];
+
+const EX = {
+  platform: 'ig-post',
+  format: 'png',
+  quality: 0.92,
+  scale: 2,
+  duration: 4,
+  fps: 30,
+  loop: 'loop',
+};
+
+let recTimer = null;
+let recMediaRecorder = null;
+
+function getExportDims() {
+  const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
+  if (!p || p.w === null) return { w: TW * EX.scale, h: TH * EX.scale };
+  return { w: p.w, h: p.h };
+}
+
+function openExport() {
+  document.getElementById('export-overlay').classList.add('open');
+  buildPlatformGrid();
+  updateExpSummary();
+}
+function closeExport() {
+  document.getElementById('export-overlay').classList.remove('open');
+}
+
+function buildPlatformGrid() {
+  const grid = document.getElementById('platGrid');
+  grid.innerHTML = PLATFORMS_DEF.map(p => {
+    const dims = p.w ? `${p.w}×${p.h}` : `${TW}×${TH}`;
+    return `<button class="plat-btn${EX.platform===p.id?' active':''}" onclick="selPlatform('${p.id}',this)">
+      <span class="plat-icon">${p.icon}</span>
+      <span class="plat-name">${p.label}</span>
+      <span class="plat-dim">${p.sub} · ${dims}</span>
+    </button>`;
+  }).join('');
+}
+
+function selPlatform(id, btn) {
+  EX.platform = id;
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateExpSummary();
+}
+
+function switchExpTab(tab, btn) {
+  document.querySelectorAll('.exp-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.exp-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`exp-pane-${tab}`).classList.add('active');
+}
+
+function selExpSeg(btn, groupId) {
+  document.querySelectorAll(`#${groupId} .exp-seg`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateExpSummary() {
+  const d = getExportDims();
+  // Image summary
+  document.getElementById('sumW').textContent = d.w.toLocaleString();
+  document.getElementById('sumH').textContent = d.h.toLocaleString();
+  document.getElementById('sumFmt').textContent = EX.format.toUpperCase();
+  const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
+  document.getElementById('sumPlat').textContent = p ? p.label.split('/')[0].trim() : 'Custom';
+  // Show/hide quality slider
+  const isPNG = EX.format === 'png';
+  document.getElementById('qualitySlider').disabled = isPNG;
+  document.getElementById('qualityNote').style.display = isPNG ? 'inline' : 'none';
+  document.getElementById('qualitySlider').style.opacity = isPNG ? '.3' : '1';
+  // Video summary
+  document.getElementById('vidSumW').textContent = d.w.toLocaleString();
+  document.getElementById('vidSumH').textContent = d.h.toLocaleString();
+  document.getElementById('vidSumDur').textContent = EX.duration + 's';
+  document.getElementById('vidSumFps').textContent = EX.fps;
+}
+
+/* ── Render at arbitrary resolution ── */
+function renderAtRes(targetW, targetH) {
+  const off = document.createElement('canvas');
+  off.width = targetW; off.height = targetH;
+  const ctx = off.getContext('2d');
+  const sx = targetW / TW;
+  const sy = targetH / TH;
+
+  // Background
+  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, targetW, targetH);
+
+  // Gradient
+  if (T.grad !== 'none') {
+    ctx.save(); ctx.globalAlpha = T.gradOpacity/100;
+    drawGradient(ctx, T.grad, targetW, targetH, T.gradC1, T.gradC2, T.gradAngle);
+    ctx.restore();
+  }
+
+  // Glow
+  if (T.glow > 0) {
+    const g = ctx.createRadialGradient(targetW/2, targetH/2, 0, targetW/2, targetH/2, Math.max(targetW,targetH)*.7);
+    g.addColorStop(0, `rgba(229,0,125,${T.glow/400})`); g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, targetW, targetH);
+  }
+
+  // Texture (scale-aware)
+  if (T.bgTex !== 'none') {
+    ctx.save(); ctx.globalAlpha = T.texOp/100;
+    const s = 22 * sx;
+    ctx.strokeStyle = '#e5007d'; ctx.fillStyle = '#e5007d'; ctx.lineWidth = sx;
+    if (T.bgTex === 'grid') {
+      for (let x=0; x<targetW; x+=s) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,targetH); ctx.stroke(); }
+      for (let y=0; y<targetH; y+=s) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(targetW,y); ctx.stroke(); }
+    } else if (T.bgTex === 'paper') {
+      const sp = 28 * sx; const minor = 'rgba(100,160,220,0.55)'; const major = 'rgba(60,120,190,0.75)';
+      ctx.lineWidth = 0.8 * sx;
+      for (let x=0; x<targetW; x+=sp) {
+        ctx.strokeStyle = (Math.round(x/sp)%5===0) ? major : minor;
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,targetH); ctx.stroke();
+      }
+      for (let y=0; y<targetH; y+=sp) {
+        ctx.strokeStyle = (Math.round(y/sp)%5===0) ? major : minor;
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(targetW,y); ctx.stroke();
+      }
+    } else if (T.bgTex === 'dot') {
+      for (let x=s/2; x<targetW; x+=s) for (let y=s/2; y<targetH; y+=s) { ctx.beginPath(); ctx.arc(x,y,s*.1,0,Math.PI*2); ctx.fill(); }
+    } else if (T.bgTex === 'diagonal') {
+      const d = Math.ceil(Math.hypot(targetW,targetH));
+      ctx.save(); ctx.translate(targetW/2,targetH/2); ctx.rotate(Math.PI/4); ctx.translate(-d/2,-d/2);
+      for (let x=0; x<d*2; x+=s) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,d*2); ctx.stroke(); }
+      ctx.restore();
+    } else if (T.bgTex === 'scan') {
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = sx;
+      const lh = 3 * sx;
+      for (let y=0; y<targetH; y+=lh) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(targetW,y); ctx.stroke(); }
+    } else if (T.bgTex === 'noise') {
+      const imgd = ctx.createImageData(targetW, targetH); const nd = imgd.data;
+      for (let i=0; i<nd.length; i+=4) {
+        const v = Math.random()>0.5?255:0; nd[i]=v; nd[i+1]=v; nd[i+2]=v; nd[i+3]=Math.round(Math.random()*80+20);
+      }
+      ctx.putImageData(imgd, 0, 0);
+    }
+    ctx.restore();
+  }
+
+  // Layers — scale all size/position values
+  const savedTW = TW, savedTH = TH;
+  TW = targetW; TH = targetH;
+  T.layers.forEach(layer => {
+    if (!layer.visible) return;
+    const scaledLayer = {
+      ...layer,
+      size: layer.size * ((sx + sy) / 2),
+    };
+    ctx.save();
+    ctx.globalAlpha = scaledLayer.opacity / 100;
+    ctx.globalCompositeOperation = scaledLayer.blend;
+    drawLayer(ctx, scaledLayer, T.frame);
+    ctx.restore();
+  });
+  TW = savedTW; TH = savedTH;
+
+  // Accents and KC mark at target dims
+  const savedAccentTW = TW, savedAccentTH = TH;
+  TW = targetW; TH = targetH;
+  drawAccent(ctx, targetW, targetH);
+  drawKC(ctx, targetW, targetH);
+  TW = savedAccentTW; TH = savedAccentTH;
+
+  // Grain
+  if (T.grain > 0) {
+    _grainCanvas = null; // force regenerate at export res
+    drawGrain(ctx, targetW, targetH, T.grain, T.grainSize, T.grainStyle||'overlay');
+  }
+
+  return off;
+}
+
+/* ── Image export ── */
+function exportImage() {
+  const d = getExportDims();
+  const off = renderAtRes(d.w, d.h);
+  const mime = EX.format === 'png' ? 'image/png' : EX.format === 'jpeg' ? 'image/jpeg' : 'image/webp';
+  const quality = EX.format === 'png' ? undefined : EX.quality;
+  const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
+  const platSlug = p ? p.id : 'custom';
+  const ext = EX.format === 'jpeg' ? 'jpg' : EX.format;
+  const ts = new Date().toISOString().slice(0,10);
+  const filename = `aigakc-${platSlug}-${ts}.${ext}`;
+
+  off.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    const kb = Math.round(blob.size / 1024);
+    toast(`Downloaded ${filename} · ${kb < 1024 ? kb+'KB' : (kb/1024).toFixed(1)+'MB'}`);
+  }, mime, quality);
+}
+
+function exportCopy() {
+  const d = getExportDims();
+  const off = renderAtRes(d.w, d.h);
+  off.toBlob(blob => {
+    try {
+      navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      toast('Copied to clipboard — paste into Figma, Canva, or your app');
+    } catch(e) {
+      toast('Clipboard write failed — try Download instead');
+    }
+  }, 'image/png');
+}
+
+/* ── Video export ── */
+function recordVideo() {
+  if (recMediaRecorder && recMediaRecorder.state === 'recording') return;
+
+  const d = getExportDims();
+  // Resize the live canvas to export dims
+  const canvas = document.getElementById('typeCanvas');
+  const origW = TW, origH = TH;
+  TW = d.w; TH = d.h;
+  canvas.width = d.w; canvas.height = d.h;
+  typo_fitCanvas();
+
+  // Enable animation
+  const wasAnimating = T.animating;
+  if (!T.animating) typo_setAnim(true, document.getElementById('animOn'));
+
+  const btn = document.getElementById('recBtn');
+  btn.disabled = true;
+  btn.textContent = '● Recording…';
+
+  const progress = document.getElementById('rec-progress');
+  const barFill = document.getElementById('recBarFill');
+  const recLabel = document.getElementById('recLabel');
+  progress.classList.add('visible');
+
+  // Choose best codec
+  const mimeOptions = [
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm',
+  ];
+  const mime = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+  const stream = canvas.captureStream(EX.fps);
+  recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8000000 });
+  const chunks = [];
+
+  recMediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+  recMediaRecorder.onstop = () => {
+    // Restore canvas
+    TW = origW; TH = origH;
+    canvas.width = TW; canvas.height = TH;
+    document.getElementById('canvasInfo').textContent = `${TW} × ${TH}px`;
+    typo_fitCanvas(); typo_render();
+    if (!wasAnimating) typo_setAnim(false, document.getElementById('animOff'));
+
+    btn.disabled = false;
+    btn.textContent = '● Record & Export WebM';
+    progress.classList.remove('visible');
+    barFill.style.width = '0%';
+    clearInterval(recTimer);
+
+    const blob = new Blob(chunks, { type: mime });
+    const url = URL.createObjectURL(blob);
+    const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
+    const platSlug = p ? p.id : 'custom';
+    const ts = new Date().toISOString().slice(0,10);
+    const a = document.createElement('a');
+    a.href = url; a.download = `aigakc-${platSlug}-${ts}.webm`; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    const mb = (blob.size / (1024*1024)).toFixed(1);
+    toast(`Downloaded WebM · ${mb}MB · ${EX.duration}s at ${EX.fps}fps`);
+  };
+
+  recMediaRecorder.start(100); // collect data every 100ms
+
+  // Progress countdown
+  const startTime = Date.now();
+  const totalMs = EX.duration * 1000;
+  recTimer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const pct = Math.min(100, (elapsed / totalMs) * 100);
+    barFill.style.width = pct + '%';
+    recLabel.textContent = `Recording… ${(elapsed/1000).toFixed(1)}s / ${EX.duration}s`;
+    if (elapsed >= totalMs) {
+      clearInterval(recTimer);
+      recMediaRecorder.stop();
+    }
+  }, 60);
+}
+
+/* ════════════════════════════════════════════
+   OKLCH COLOR ENGINE
+════════════════════════════════════════════ */
+
+// sRGB → Linear
+function srgbToLinear(c) {
+  c = c / 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+// Linear → sRGB
+function linearToSrgb(c) {
+  c = Math.max(0, Math.min(1, c));
+  return Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1/2.4) - 0.055));
+}
+
+// sRGB → OKLab (via linear sRGB → XYZ D65 → OKLab)
+function rgbToOklab(r, g, b) {
+  const lr = srgbToLinear(r), lg = srgbToLinear(g), lb = srgbToLinear(b);
+  // Linear sRGB → LMS (via M1 matrix)
+  const l = 0.4122214708*lr + 0.5363325363*lg + 0.0514459929*lb;
+  const m = 0.2119034982*lr + 0.6806995451*lg + 0.1073969566*lb;
+  const s = 0.0883024619*lr + 0.2817188376*lg + 0.6299787005*lb;
+  // Cube-root
+  const l_ = Math.cbrt(l), m_ = Math.cbrt(m), s_ = Math.cbrt(s);
+  return {
+    L: 0.2104542553*l_ + 0.7936177850*m_ - 0.0040720468*s_,
+    a: 1.9779984951*l_ - 2.4285922050*m_ + 0.4505937099*s_,
+    b: 0.0259040371*l_ + 0.7827717662*m_ - 0.8086757660*s_
+  };
+}
+
+// OKLab → OKLCH
+function oklabToOklch({ L, a, b }) {
+  const C = Math.sqrt(a * a + b * b);
+  let H = Math.atan2(b, a) * 180 / Math.PI;
+  if (H < 0) H += 360;
+  return { L, C, H };
+}
+
+// OKLCH → OKLab
+function oklchToOklab({ L, C, H }) {
+  const hr = H * Math.PI / 180;
+  return { L, a: C * Math.cos(hr), b: C * Math.sin(hr) };
+}
+
+// OKLab → linear RGB → sRGB hex
+function oklabToHex({ L, a, b }) {
+  const l_ = L + 0.3963377774*a + 0.2158037573*b;
+  const m_ = L - 0.1055613458*a - 0.0638541728*b;
+  const s_ = L - 0.0894841775*a - 1.2914855480*b;
+  const l = l_*l_*l_, m = m_*m_*m_, s = s_*s_*s_;
+  const lr =  4.0767416621*l - 3.3077115913*m + 0.2309699292*s;
+  const lg = -1.2684380046*l + 2.6097574011*m - 0.3413193965*s;
+  const lb = -0.0041960863*l - 0.7034186147*m + 1.7076147010*s;
+  const R = linearToSrgb(lr), G = linearToSrgb(lg), B = linearToSrgb(lb);
+  return '#' + [R,G,B].map(v => Math.max(0,Math.min(255,v)).toString(16).padStart(2,'0')).join('');
+}
+
+// Full pipeline: hex → OKLCH
+function hexToOklch(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  return oklabToOklch(rgbToOklab(r, g, b));
+}
+
+// Full pipeline: OKLCH → hex
+function oklchToHex(L, C, H) {
+  return oklabToHex(oklchToOklab({ L, C, H }));
+}
+
+// Generate N perceptually-even shades by sweeping L from near-white to near-black,
+// keeping C and H constant (chroma-preserved scale)
+function generateOklchShades(hex, steps = 11) {
+  const { L, C, H } = hexToOklch(hex);
+  const shades = [];
+  for (let i = 0; i < steps; i++) {
+    // L sweep: 0.97 (near white) → 0.10 (near black)
+    const t = i / (steps - 1);
+    const targetL = 0.97 - t * 0.87;
+    // Scale chroma: reduce slightly at extremes to avoid gamut issues
+    const chromaScale = 1 - Math.pow(Math.abs(targetL - 0.5) * 2, 2.5) * 0.35;
+    const targetC = C * chromaScale;
+    const h = oklchToHex(targetL, Math.max(0, targetC), H);
+    const step = i === 0 ? 50 : i * 100; // 50, 100, 200…1000
+    shades.push({
+      step,
+      hex: h,
+      L: targetL,
+      C: targetC,
+      H,
+      isSrc: Math.abs(targetL - L) < 0.045 // flag the shade closest to source
+    });
+  }
+  return shades;
+}
+
+/* ── Panel open/close ── */
+let _currentOklchHex = null;
+let _currentOklchName = null;
+let _oklchShades = [];
+
+function openOklchPanel(hex, name, sourceEl) {
+  _currentOklchHex = hex;
+  _currentOklchName = name;
+
+  // Update source chip
+  document.getElementById('oklchSourceDot').style.background = hex;
+  document.getElementById('oklchSourceLabel').textContent = `${name}  ${hex.toUpperCase()}`;
+
+  // Generate shades
+  _oklchShades = generateOklchShades(hex, 11);
+
+  renderOklchShades();
+  renderOklchDetail(hex);
+  renderOklchCopyRow();
+
+  // Show panel
+  const panel = document.getElementById('oklch-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeOklchPanel() {
+  document.getElementById('oklch-panel').style.display = 'none';
+  _currentOklchHex = null;
+}
+
+function renderOklchShades() {
+  const STEP_LABELS = ['50','100','200','300','400','500','600','700','800','900','950'];
+  document.getElementById('oklchShades').innerHTML = _oklchShades.map((s, i) => {
+    const tc = textOn(s.hex);
+    const marker = s.isSrc ? `<div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:${tc};opacity:.5;"></div>` : '';
+    return `<div class="oklch-shade" style="background:${s.hex};" onclick="copyShadeHex('${s.hex}','${STEP_LABELS[i]}',this)" title="Click to copy ${s.hex}">
+      ${marker}
+      <div class="oklch-shade-inner" style="color:${tc};">
+        <span class="oklch-shade-step">${STEP_LABELS[i]}</span>
+        <span class="oklch-shade-hex">${s.hex.toUpperCase()}</span>
+        <span class="oklch-shade-val">L ${s.L.toFixed(2)} C ${s.C.toFixed(3)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderOklchDetail(hex) {
+  const { L, C, H } = hexToOklch(hex);
+  const { r, g, b } = hexToRgb(hex);
+  const wcagWhite = contrastRatio(hex, '#ffffff').toFixed(1);
+  const wcagBlack = contrastRatio(hex, '#000000').toFixed(1);
+  const wcagMag   = contrastRatio(hex, '#e5007d').toFixed(1);
+
+  document.getElementById('oklchDetail').innerHTML = `
+    <div class="oklch-stat">
+      <div class="oklch-stat-val" style="font-family:'DM Mono',monospace;font-size:12px;">${L.toFixed(3)}</div>
+      <div class="oklch-stat-key">Lightness (L)</div>
+    </div>
+    <div class="oklch-stat">
+      <div class="oklch-stat-val" style="font-family:'DM Mono',monospace;font-size:12px;">${C.toFixed(4)}</div>
+      <div class="oklch-stat-key">Chroma (C)</div>
+    </div>
+    <div class="oklch-stat">
+      <div class="oklch-stat-val" style="font-family:'DM Mono',monospace;font-size:12px;">${H.toFixed(1)}°</div>
+      <div class="oklch-stat-key">Hue (H)</div>
+    </div>
+    <div class="oklch-stat">
+      <div class="oklch-stat-val">${wcagWhite}:1</div>
+      <div class="oklch-stat-key">vs White</div>
+    </div>
+    <div class="oklch-stat">
+      <div class="oklch-stat-val">${wcagBlack}:1</div>
+      <div class="oklch-stat-key">vs Black</div>
+    </div>
+    <div class="oklch-stat">
+      <div class="oklch-stat-val" style="color:#e5007d;">${wcagMag}:1</div>
+      <div class="oklch-stat-key">vs Magenta</div>
+    </div>`;
+}
+
+function renderOklchCopyRow() {
+  const { L, C, H } = hexToOklch(_currentOklchHex);
+  const oklchStr = `oklch(${(L*100).toFixed(1)}% ${C.toFixed(4)} ${H.toFixed(1)})`;
+
+  document.getElementById('oklchCopyRow').innerHTML = `
+    <button class="oklch-copy-btn" onclick="copyText('${oklchStr}',this)">Copy oklch()</button>
+    <button class="oklch-copy-btn" onclick="copyText('${_currentOklchHex.toUpperCase()}',this)">Copy HEX</button>
+    <button class="oklch-copy-btn" onclick="copyOklchCss()">Copy full scale CSS</button>
+    <button class="oklch-copy-btn" onclick="pushShadeToPlayground('${_currentOklchHex}')">→ Push to Playground</button>`;
+}
+
+function copyShadeHex(hex, step, el) {
+  copyText(hex.toUpperCase(), el);
+  // Update detail panel to reflect clicked shade
+  _currentOklchHex = hex;
+  renderOklchDetail(hex);
+  renderOklchCopyRow();
+  // Highlight the clicked shade
+  document.querySelectorAll('.oklch-shade').forEach(s => s.style.outline = 'none');
+  el.style.outline = '2px solid #fff';
+  setTimeout(() => { el.style.outline = 'none'; }, 900);
+}
+
+function copyText(text, btn) {
+  navigator.clipboard?.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1600);
+  toast(`Copied: ${text}`);
+}
+
+function copyOklchCss() {
+  const STEP_LABELS = ['50','100','200','300','400','500','600','700','800','900','950'];
+  const name = (_currentOklchName || 'color').toLowerCase().replace(/\s+/g, '-');
+  const lines = _oklchShades.map((s, i) => {
+    const { L, C, H } = hexToOklch(s.hex);
+    return `  --${name}-${STEP_LABELS[i]}: oklch(${(L*100).toFixed(1)}% ${C.toFixed(4)} ${H.toFixed(1)}); /* ${s.hex.toUpperCase()} */`;
+  });
+  const css = `:root {\n${lines.join('\n')}\n}`;
+  navigator.clipboard?.writeText(css);
+  toast(`CSS scale for ${_currentOklchName} copied`);
+}
+
+function pushShadeToPlayground(hex) {
+  // Add the color to the palette and push to playground
+  PALETTE.primary = hex;
+  updatePlaygroundPaletteSwatches();
+  toast(`${hex.toUpperCase()} pushed to Typography Playground`);
+}
+
+</script>
+<style>
+/* ════════════════════════════════════════
+   EXPORT MODAL
+════════════════════════════════════════ */
+#export-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+#export-overlay.open{opacity:1;pointer-events:all;}
+#export-panel{
+  width:100%;max-width:860px;
+  background:var(--ink2);
+  border:1.5px solid var(--mag-hi);
+  border-bottom:none;
+  transform:translateY(40px);transition:transform .32s var(--ease);
+  max-height:90vh;overflow-y:auto;overflow-x:hidden;
+}
+#export-overlay.open #export-panel{transform:translateY(0);}
+
+.exp-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:1px solid var(--border);
+  background:rgba(229,0,125,.05);position:sticky;top:0;z-index:2;
+  backdrop-filter:blur(8px);
+}
+.exp-title{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;
+  display:flex;align-items:center;gap:12px;
+}
+.exp-title .gtag{font-size:9px;letter-spacing:.18em;}
+.exp-x{
+  background:none;border:none;color:rgba(255,255,255,.35);
+  font-size:16px;cursor:pointer;padding:4px 8px;
+  font-family:'DM Mono',monospace;transition:color .15s;
+}
+.exp-x:hover{color:var(--mag);}
+
+/* Platform presets */
+.exp-platforms{
+  padding:16px 24px;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015);
+}
+.exp-plat-label{
+  font-size:8px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);margin-bottom:10px;
+}
+.plat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:5px;
+}
+.plat-btn{
+  padding:9px 7px;text-align:center;
+  background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.07);
+  cursor:pointer;transition:all .12s;
+}
+.plat-btn:hover{border-color:rgba(255,255,255,.2);}
+.plat-btn.active{border-color:var(--mag);background:rgba(229,0,125,.08);}
+.plat-icon{font-size:15px;display:block;margin-bottom:4px;opacity:.7;}
+.plat-name{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);display:block;}
+.plat-dim{font-size:7px;letter-spacing:.06em;color:rgba(255,255,255,.28);display:block;margin-top:2px;}
+.plat-btn.active .plat-name{color:#fff;}
+.plat-btn.active .plat-icon{opacity:1;}
+
+/* Tabs */
+.exp-tabs{
+  display:flex;border-bottom:1px solid var(--border);
+}
+.exp-tab{
+  flex:1;padding:11px 16px;text-align:center;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;color:rgba(255,255,255,.3);
+  border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;
+  transition:all .15s;font-family:'DM Mono',monospace;
+}
+.exp-tab:hover{color:rgba(255,255,255,.7);}
+.exp-tab.active{color:#fff;border-bottom-color:var(--mag);}
+
+/* Tab panes */
+.exp-pane{display:none;padding:20px 24px 28px;}
+.exp-pane.active{display:block;}
+.exp-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin-bottom:16px;
+}
+.exp-field{display:flex;flex-direction:column;gap:7px;}
+.exp-field-label{
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);
+}
+.exp-segs{display:flex;gap:3px;flex-wrap:wrap;}
+.exp-seg{
+  padding:6px 12px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .1s;
+}
+.exp-seg:hover{border-color:rgba(255,255,255,.2);color:#fff;}
+.exp-seg.active{border-color:var(--mag);color:#fff;background:rgba(229,0,125,.08);}
+
+.exp-quality-row{
+  display:flex;align-items:center;gap:10px;margin-top:4px;
+}
+.exp-quality-row .sl-wrap{flex:1;}
+.exp-quality-row .sl-val{
+  font-size:10px;color:rgba(255,255,255,.5);width:34px;text-align:right;
+  flex-shrink:0;
+}
+
+/* Output summary */
+.exp-summary{
+  display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;
+  padding:12px 14px;
+  background:rgba(229,0,125,.04);
+  border:1px solid rgba(229,0,125,.12);
+}
+.exp-stat{display:flex;flex-direction:column;gap:2px;}
+.exp-stat-val{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;
+  letter-spacing:.04em;color:#fff;line-height:1;
+}
+.exp-stat-key{
+  font-size:7px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+}
+.exp-stat-sep{
+  width:1px;background:rgba(255,255,255,.08);
+  align-self:stretch;margin:0 4px;
+}
+
+/* Big export buttons */
+.exp-actions{display:flex;gap:8px;margin-top:18px;}
+.exp-btn{
+  flex:1;padding:13px 20px;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;cursor:pointer;border:1.5px solid;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.exp-btn-primary{background:var(--mag);border-color:var(--mag);color:#fff;}
+.exp-btn-primary:hover{background:#c8006d;border-color:#c8006d;}
+.exp-btn-ghost{background:transparent;border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+.exp-btn-ghost:hover{border-color:#fff;color:#fff;}
+.exp-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* Video progress */
+#rec-progress{
+  margin-top:14px;display:none;flex-direction:column;gap:6px;
+}
+#rec-progress.visible{display:flex;}
+.rec-bar-track{height:3px;background:rgba(255,255,255,.08);overflow:hidden;}
+.rec-bar-fill{
+  height:100%;background:var(--mag);width:0%;
+  transition:width .1s linear;
+}
+.rec-label{
+  font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);display:flex;align-items:center;gap:8px;
+}
+.rec-dot{
+  width:6px;height:6px;border-radius:50%;background:#f44;
+  animation:pulse 1s infinite;
+}
+.exp-note{
+  margin-top:10px;padding:10px 12px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  font-size:9px;line-height:1.7;color:rgba(255,255,255,.35);
+  letter-spacing:.04em;
+}
+.exp-note strong{color:rgba(255,255,255,.6);}
+</style>
+
+<!-- ══════════════════════════════════════
+  EXPORT MODAL
+══════════════════════════════════════ -->
+<div id="export-overlay" onclick="if(event.target===this)closeExport()">
+  <div id="export-panel">
+
+    <div class="exp-head">
+      <div class="exp-title">Export <span class="gtag">Image &amp; Video</span></div>
+      <button class="exp-x" onclick="closeExport()">✕ Close</button>
+    </div>
+
+    <!-- Platform presets -->
+    <div class="exp-platforms">
+      <div class="exp-plat-label">Platform Preset — sets canvas dimensions at export time</div>
+      <div class="plat-grid" id="platGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="exp-tabs">
+      <button class="exp-tab active" onclick="switchExpTab('image',this)">Image</button>
+      <button class="exp-tab" onclick="switchExpTab('video',this)">Video</button>
+    </div>
+
+    <!-- IMAGE pane -->
+    <div class="exp-pane active" id="exp-pane-image">
+      <div class="exp-row">
+        <div class="exp-field">
+          <div class="exp-field-label">Format</div>
+          <div class="exp-segs" id="expFmtSegs">
+            <button class="exp-seg active" data-v="png" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">PNG</button>
+            <button class="exp-seg" data-v="jpeg" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">JPEG</button>
+            <button class="exp-seg" data-v="webp" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">WebP</button>
+          </div>
+        </div>
+        <div class="exp-field">
+          <div class="exp-field-label">Scale</div>
+          <div class="exp-segs" id="expScaleSegs">
+            <button class="exp-seg" data-v="1" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">1×</button>
+            <button class="exp-seg active" data-v="2" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">2× Retina</button>
+            <button class="exp-seg" data-v="3" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">3×</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-field" id="qualityField">
+        <div class="exp-field-label">Quality <span id="qualityNote" style="color:rgba(255,255,255,.2);font-size:8px;"> — PNG is lossless, quality not applicable</span></div>
+        <div class="exp-quality-row">
+          <div class="sl-wrap"><input type="range" min="50" max="100" value="92" id="qualitySlider" oninput="EX.quality=+this.value/100;document.getElementById('qualityVal').textContent=this.value+'%';updateExpSummary();"></div>
+          <span class="sl-val" id="qualityVal">92%</span>
+        </div>
+      </div>
+
+      <div class="exp-summary" id="exp-img-summary">
+        <div class="exp-stat"><div class="exp-stat-val" id="sumW">—</div><div class="exp-stat-key">Width px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumH">—</div><div class="exp-stat-key">Height px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumFmt">PNG</div><div class="exp-stat-key">Format</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumPlat">Custom</div><div class="exp-stat-key">Platform</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumColor">sRGB</div><div class="exp-stat-key">Color space</div></div>
+      </div>
+
+      <div class="exp-actions">
+        <button class="exp-btn exp-btn-ghost" onclick="exportCopy()">⎘ Copy to Clipboard</button>
+        <button class="exp-btn exp-btn-primary" onclick="exportImage()">↓ Download Image</button>
+      </div>
+    </div>
+
+    <!-- VIDEO pane -->
+    <div class="exp-pane" id="exp-pane-video">
+      <div class="exp-row">
+        <div class="exp-field">
+          <div class="exp-field-label">Duration</div>
+          <div class="exp-segs" id="expDurSegs">
+            <button class="exp-seg" data-v="2" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">2s</button>
+            <button class="exp-seg active" data-v="4" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">4s</button>
+            <button class="exp-seg" data-v="6" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">6s</button>
+            <button class="exp-seg" data-v="8" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">8s</button>
+            <button class="exp-seg" data-v="12" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">12s</button>
+          </div>
+        </div>
+        <div class="exp-field">
+          <div class="exp-field-label">Frame Rate</div>
+          <div class="exp-segs" id="expFpsSegs">
+            <button class="exp-seg" data-v="24" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">24 fps</button>
+            <button class="exp-seg active" data-v="30" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">30 fps</button>
+            <button class="exp-seg" data-v="60" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">60 fps</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-field" style="margin-bottom:14px;">
+        <div class="exp-field-label">Loop</div>
+        <div class="exp-segs" id="expLoopSegs">
+          <button class="exp-seg active" data-v="loop" onclick="selExpSeg(this,'expLoopSegs');EX.loop='loop';">Loop</button>
+          <button class="exp-seg" data-v="once" onclick="selExpSeg(this,'expLoopSegs');EX.loop='once';">Play Once</button>
+        </div>
+      </div>
+
+      <div class="exp-summary">
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumW">—</div><div class="exp-stat-key">Width px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumH">—</div><div class="exp-stat-key">Height px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumDur">4s</div><div class="exp-stat-key">Duration</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumFps">30</div><div class="exp-stat-key">FPS</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val">WebM</div><div class="exp-stat-key">Format</div></div>
+      </div>
+
+      <div id="rec-progress">
+        <div class="rec-label"><div class="rec-dot"></div><span id="recLabel">Recording… 0s / 4s</span></div>
+        <div class="rec-bar-track"><div class="rec-bar-fill" id="recBarFill"></div></div>
+      </div>
+
+      <div class="exp-actions">
+        <button class="exp-btn exp-btn-primary" id="recBtn" onclick="recordVideo()">● Record &amp; Export WebM</button>
+      </div>
+
+      <div class="exp-note">
+        <strong>WebM (VP9)</strong> plays natively in Chrome, Firefox, Edge, and Android. For Instagram/TikTok upload, convert to MP4 using <strong>CloudConvert</strong>, <strong>Handbrake</strong>, or <strong>ffmpeg -i input.webm output.mp4</strong>. Most modern social platforms also accept WebM directly via web upload.
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
