@@ -459,13 +459,6 @@ function typo_render(){
     ctx.restore();
   }
 
-  // Glow
-  if(T.glow>0){
-    const g=ctx.createRadialGradient(TW/2,TH/2,0,TW/2,TH/2,Math.max(TW,TH)*.7);
-    g.addColorStop(0,`rgba(229,0,125,${T.glow/400})`);g.addColorStop(1,'transparent');
-    ctx.fillStyle=g;ctx.fillRect(0,0,TW,TH);
-  }
-
   // Texture
   if(T.bgTex!=='none'){
     ctx.save();ctx.globalAlpha=T.texOp/100;
@@ -486,9 +479,6 @@ function typo_render(){
     ctx.globalCompositeOperation=layer.blend;
     drawLayer(ctx,layer,t);ctx.restore();
   });
-
-  // Accents
-  drawAccent(ctx,TW,TH);
 
   // Post FX (halftone + riso — after all content, before grain)
   if(T.htMode&&T.htMode!=='none')applyHalftone(ctx,TW,TH);
