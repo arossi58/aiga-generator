@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIGA KC — The Living Brand System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:ital,opsz,wdth,wght,GRAD@0,8..144,25..151,100..900,-200..150;1,8..144,25..151,100..900,-200..150&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Recursive:wght@300..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════
+  NAV
+══════════════════════════════════════ -->
+<nav id="nav">
+  <div class="nav-logo">AIGA KC <span class="tag">Living System</span></div>
+  <ul class="nav-links">
+    <li><a href="#color-section" class="active">Color</a></li>
+    <li><a href="#type-section">Typography</a></li>
+  </ul>
+  <div class="nav-spacer"></div>
+  <div class="nav-version">Brand System v3.0</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+  COLOR GENERATOR
+══════════════════════════════════════ -->
+<div class="section" id="color-section">
+  <div class="eyebrow"><span>01 — Generator</span></div>
+  <h2 class="sec-title">Color Palette<br>Generator</h2>
+  <p class="sec-lead">Input any seed color. The system generates a full AIGA KC–compliant palette — Magenta always anchored, always harmonious. Generated colors sync instantly to the Typography Playground.</p>
+
+  <div class="gen-card reveal">
+    <div class="gen-card-head">
+      <div class="gen-card-title">Palette Engine <span class="gtag">Live</span></div>
+      <span style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.25);">#E5007D always present</span>
+    </div>
+    <div class="gen-body">
+      <div class="color-gen-grid">
+
+        <div class="color-controls">
+          <div>
+            <label class="ctrl-label">Seed Color</label>
+            <div class="color-input-row">
+              <input type="color" id="colorPicker" value="#002fa7" oninput="syncHex(this.value)">
+              <input type="text" id="colorHex" value="#002FA7" maxlength="7" oninput="syncPicker(this.value)" placeholder="#000000">
+            </div>
+          </div>
+          <div>
+            <label class="ctrl-label">Harmony Mode</label>
+            <div class="harm-row">
+              <button class="harm-btn active" onclick="setHarmony(this,'split')">Split</button>
+              <button class="harm-btn" onclick="setHarmony(this,'analogous')">Analog</button>
+              <button class="harm-btn" onclick="setHarmony(this,'triadic')">Triadic</button>
+            </div>
+          </div>
+          <div class="compat-block">
+            <span class="ctrl-label" style="margin-bottom:4px;">Magenta Compatibility</span>
+            <div class="compat-bar-track"><div class="compat-bar-fill" id="compatBar"></div></div>
+            <div class="compat-score" id="compatScore">—</div>
+          </div>
+          <button class="btn btn-primary" onclick="generatePalette()" style="width:100%;">Generate Palette</button>
+          <button class="btn btn-ghost" onclick="randomSeed()" style="width:100%;">↻ Random Seed</button>
+          <button class="push-palette-btn" id="pushBtn" onclick="pushToPlayground()">⬆ Push Palette to Typography Playground</button>
+          <button class="push-palette-btn" style="border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);" onclick="exportPaletteImage()">↓ Export Palette PNG</button>
+          <div style="position:relative;">
+            <div class="css-box" id="cssBox">
+              <button class="copy-btn" id="cssBtn" onclick="copyCss()">Copy</button>
+              <div id="cssVars" style="font-size:10px;">-- Click Generate --</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-out">
+          <div class="swatch-row" id="paletteSwatches"></div>
+
+          <!-- OKLCH Shade Panel — injected below swatches on click -->
+          <div id="oklch-panel">
+            <div class="oklch-head">
+              <div class="oklch-title">
+                OKLCH Shades
+                <span class="oklch-source-chip" id="oklchSourceChip">
+                  <span class="oklch-source-dot" id="oklchSourceDot"></span>
+                  <span id="oklchSourceLabel">—</span>
+                </span>
+              </div>
+              <div class="oklch-actions">
+                <button class="oklch-copy-btn" onclick="copyOklchCss()">Copy CSS Vars</button>
+                <button class="oklch-x" onclick="closeOklchPanel()" title="Close">✕</button>
+              </div>
+            </div>
+            <div class="oklch-shades" id="oklchShades"></div>
+            <div class="oklch-detail" id="oklchDetail"></div>
+            <div class="oklch-copy-row" id="oklchCopyRow"></div>
+          </div>
+          <div class="preview-card" id="previewCard">
+            <svg id="pcTex" style="position:absolute;inset:0;width:100%;height:100%;opacity:.1;pointer-events:none;" preserveAspectRatio="xMidYMid slice"></svg>
+            <div class="cm tl"></div><div class="cm br"></div>
+            <div class="pc-bar" id="pcBar"></div>
+            <div class="pc-kc">KC</div>
+            <div class="pc-tag" id="pcTag">Campaign Identity</div>
+            <div class="pc-headline" id="pcHead">AIGA KC<br>2025 Season</div>
+            <div class="pc-sub" id="pcSub">Kansas City's Design Community</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  TYPOGRAPHY PLAYGROUND
+══════════════════════════════════════ -->
+<div id="type-section">
+  <div class="type-section-header">
+    <div class="type-section-header-left">
+      <div class="eyebrow" style="margin-bottom:12px;"><span>02 — Generator</span></div>
+      <h2 class="sec-title">Typography<br>Playground</h2>
+      <p class="sec-lead" style="margin-bottom:0;">Three independent layers. Eight distortion modes per layer. Blend modes, scale, tracking, rotation. Generate palettes above and push them here — or build freely. Export PNG.</p>
+    </div>
+    <div class="type-section-actions">
+      <button class="btn btn-ghost btn-sm" onclick="typo_chaos()">⚡ Chaos</button>
+      <button class="btn btn-ghost btn-sm" onclick="typo_shuffle()">↻ Shuffle</button>
+      <button class="btn btn-ghost btn-sm" onclick="typo_exportJSON()">↓ Save JSON</button>
+      <label class="btn btn-ghost btn-sm" style="cursor:pointer;" title="Import a saved JSON composition">↑ Load JSON<input type="file" accept=".json,application/json" style="display:none;" onchange="typo_importJSON(this)"></label>
+      <button class="btn btn-primary btn-sm" onclick="openExport()">↓ Export</button>
+    </div>
+  </div>
+
+  <!-- The sticky tool -->
+  <div id="type-tool">
+
+    <!-- Topbar -->
+    <div id="type-tb">
+      <div class="tb-item">
+        <span class="tb-label">Canvas</span>
+        <select class="tb-select" id="canvasSize" onchange="typo_resize()">
+          <option value="800,800">Square 1:1</option>
+          <option value="1200,630">Social 16:9</option>
+          <option value="630,1200">Story 9:16</option>
+          <option value="1200,450">Banner 8:3</option>
+          <option value="800,1000">Poster 4:5</option>
+        </select>
+      </div>
+      <div class="tb-item">
+        <span class="tb-label">Animate</span>
+        <div class="tb-toggle">
+          <button class="active" id="animOff" onclick="typo_setAnim(false,this)">Off</button>
+          <button id="animOn" onclick="typo_setAnim(true,this)">Live</button>
+        </div>
+      </div>
+      <div class="tb-item">
+        <button class="tb-btn" id="tplToggleBtn" onclick="toggleTplDrawer()">☰ Templates</button>
+      </div>
+      <div class="tb-item">
+        <button class="tb-btn" onclick="typo_reset()">Reset All</button>
+      </div>
+      <!-- Quick FX -->
+      <div class="tb-item" style="gap:3px;">
+        <span class="tb-label">Quick FX</span>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;">
+          <button class="tb-btn" title="Film Grain" onclick="quickFX('grain')" style="font-size:10px;padding:3px 6px;">⬛ Grain</button>
+          <button class="tb-btn" title="Gradient overlay" onclick="quickFX('gradient')" style="font-size:10px;padding:3px 6px;">🎨 Grad</button>
+          <button class="tb-btn" title="Paper texture" onclick="quickFX('paper')" style="font-size:10px;padding:3px 6px;">📄 Paper</button>
+          <button class="tb-btn" title="Halftone dots" onclick="quickFX('halftone')" style="font-size:10px;padding:3px 6px;">◉ HT</button>
+          <button class="tb-btn" title="Risograph" onclick="quickFX('riso')" style="font-size:10px;padding:3px 6px;">⊕ Riso</button>
+          <button class="tb-btn" title="Noise overlay" onclick="quickFX('noise')" style="font-size:10px;padding:3px 6px;">📡 Noise</button>
+          <button class="tb-btn mag" title="Clear all FX" onclick="quickFX('clear')" style="font-size:10px;padding:3px 6px;">✕ Clear</button>
+        </div>
+      </div>
+      <!-- Palette sync strip -->
+      <div id="palette-sync-strip">
+        <span class="ps-label">↳ Palette:</span>
+        <!-- swatches injected here by JS -->
+      </div>
+    </div><!-- /#type-tb -->
+
+    <!-- Template Drawer -->
+    <div id="tpl-drawer">
+      <div class="tpl-drawer-inner">
+        <div class="tpl-drawer-header">
+          <span class="tpl-drawer-title">Premade Templates</span>
+          <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
+        </div>
+        <div class="tpl-grid" id="tplGrid"><!-- cards injected by JS --></div>
+      </div>
+    </div>
+
+    <!-- Left panel -->
+    <div id="type-panel">
+    <!-- Panel mode: BG vs Layers -->
+    <div id="panel-mode-tabs">
+      <button class="panel-mode-tab mode-bg active" onclick="switchPanelMode('bg',this)">
+        <span class="l-dot" style="background:rgba(255,255,255,.3);"></span>Background
+      </button>
+      <button class="panel-mode-tab mode-layers" onclick="switchPanelMode('layers',this)">
+        <span class="l-dot" style="background:var(--mag);"></span>Layers
+      </button>
+    </div>
+
+    <!-- Layer stack (always visible in Layers mode) -->
+    <div id="layer-stack" style="display:none;">
+      <!-- rows injected by buildLayerStack() -->
+      <div class="layer-add-picker" id="layerAddPicker">
+        <button class="lap-btn" onclick="addLayer('text')">＋ Text</button>
+        <button class="lap-btn" onclick="addLayer('image')">＋ Image</button>
+      </div>
+      <div id="layer-stack-footer">
+        <span class="lsf-count" id="layerVisCount">1 of 1 visible</span>
+        <div style="display:flex;gap:4px;">
+          <button class="lsf-btn" onclick="setAllLayersVisible(true)">Show All</button>
+          <button class="lsf-btn mag" onclick="setAllLayersVisible(false)">Hide All</button>
+          <button class="lsf-btn" style="color:rgba(229,0,125,.6);" onclick="toggleAddLayerPicker()">＋ Add</button>
+        </div>
+      </div>
+    </div>
+      <div id="panel-body">
+        <!-- BG pane -->
+        <div class="tab-pane" id="pane-bg">
+          <div class="cg">
+            <div class="cg-title">Background Color</div>
+            <div class="color-row" id="bg-colors">
+              <div class="cdot active" style="background:#080808;" data-c="#080808" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#f4f1ea;" data-c="#f4f1ea" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#e5007d;" data-c="#e5007d" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#002fa7;" data-c="#002fa7" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#00a878;" data-c="#00a878" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#1a0830;" data-c="#1a0830" onclick="setBG(this)"></div>
+              <input type="color" class="cust-color" value="#080808" oninput="T.bg=this.value;typo_render();">
+            </div>
+            <!-- palette colors injected here -->
+            <div class="palette-colors" id="bg-palette-colors">
+              <span class="ps-label">From palette</span>
+            </div>
+          </div>
+          <div class="cg">
+            <div class="cg-title">Texture</div>
+            <div class="bg-opts-col" id="bgTexOpts">
+              <div class="bg-opt active" data-tex="none" onclick="setBGTex(this)"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+              <div class="bg-opt" data-tex="paper" onclick="setBGTex(this)"><span class="sw" style="background:white;background-image:repeating-linear-gradient(rgba(100,160,220,.35) 1px,transparent 1px),repeating-linear-gradient(90deg,rgba(100,160,220,.35) 1px,transparent 1px);background-size:8px 8px;"></span>Paper</div>
+              <div class="bg-opt" data-tex="grid" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(rgba(229,0,125,.4) 1px,transparent 1px),repeating-linear-gradient(90deg,rgba(229,0,125,.4) 1px,transparent 1px);background-size:5px 5px;"></span>Grid Mag</div>
+              <div class="bg-opt" data-tex="dot" onclick="setBGTex(this)"><span class="sw" style="background:radial-gradient(circle,rgba(229,0,125,.5) 1px,transparent 1px);background-size:5px 5px;"></span>Dot</div>
+              <div class="bg-opt" data-tex="diagonal" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(45deg,rgba(229,0,125,.4) 0,rgba(229,0,125,.4) 1px,transparent 1px,transparent 5px);"></span>Diagonal</div>
+              <div class="bg-opt" data-tex="scan" onclick="setBGTex(this)"><span class="sw" style="background:repeating-linear-gradient(180deg,rgba(0,0,0,.18) 0,rgba(0,0,0,.18) 1px,transparent 1px,transparent 3px);"></span>Scan Lines</div>
+              <div class="bg-opt" data-tex="noise" onclick="setBGTex(this)"><span class="sw" style="background:#888;filter:url(#noise-filter) contrast(170%) brightness(100%);background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.8%22/></svg>');background-size:64px 64px;"></span>Noise</div>
+            </div>
+          </div>
+          <div class="cg">
+            <div class="cg-title">Texture Opacity</div>
+            <div class="sl-row">
+              <span class="sl-label">Opacity</span>
+              <div class="sl-wrap"><input type="range" min="3" max="35" value="12" oninput="T.texOp=+this.value;document.getElementById('texOpVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="texOpVal">12%</span>
+            </div>
+          </div>
+
+          <!-- GRADIENT -->
+          <div class="cg">
+            <div class="cg-title">Gradient Overlay</div>
+            <div class="bg-opts-col" id="gradTypeOpts">
+              <div class="bg-opt active" data-g="none" onclick="setGrad(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+              <div class="bg-opt" data-g="linear" onclick="setGrad(this,'linear')"><span class="sw" style="background:linear-gradient(135deg,#e5007d,#002fa7);"></span>Linear</div>
+              <div class="bg-opt" data-g="radial" onclick="setGrad(this,'radial')"><span class="sw" style="background:radial-gradient(circle,#e5007d,#002fa7);"></span>Radial</div>
+              <div class="bg-opt" data-g="split" onclick="setGrad(this,'split')"><span class="sw" style="background:linear-gradient(90deg,#00a878 50%,#e5007d 50%);"></span>Split</div>
+              <div class="bg-opt" data-g="vignette" onclick="setGrad(this,'vignette')"><span class="sw" style="background:radial-gradient(circle,transparent 30%,rgba(0,0,0,.8));"></span>Vignette</div>
+              <div class="bg-opt" data-g="sunset" onclick="setGrad(this,'sunset')"><span class="sw" style="background:linear-gradient(180deg,#ffb347,#e5007d,#002fa7);"></span>Sunset</div>
+              <div class="bg-opt" data-g="glow-corner" onclick="setGrad(this,'glow-corner')"><span class="sw" style="background:radial-gradient(circle at 0% 100%,#e5007d 0%,transparent 60%);"></span>Corner Glow</div>
+              <div class="bg-opt" data-g="conic" onclick="setGrad(this,'conic')"><span class="sw" style="background:conic-gradient(#e5007d,#8800cc,#002fa7,#e5007d);"></span>Conic</div>
+              <div class="bg-opt" data-g="mesh" onclick="setGrad(this,'mesh')"><span class="sw" style="background:radial-gradient(ellipse at 20% 30%,#e5007daa 0%,transparent 60%),radial-gradient(ellipse at 80% 70%,#002fa7aa 0%,transparent 60%),radial-gradient(ellipse at 60% 20%,#8800ccaa 0%,transparent 50%);"></span>Mesh</div>
+            </div>
+            <div class="grad-color-section">
+              <!-- Slot row -->
+              <div class="grad-slots">
+                <div class="grad-slot active" id="gradSlot1" onclick="selectGradSlot(1)" title="Select C1 to edit">
+                  <div class="grad-slot-swatch" id="gradSlot1Swatch" style="background:#e5007d;"></div>
+                  <div class="grad-slot-info">
+                    <span class="grad-slot-label">C1</span>
+                    <span class="grad-slot-hex" id="gradSlot1Hex">#E5007D</span>
+                  </div>
+                </div>
+                <div class="grad-slot-arrow">→</div>
+                <div class="grad-slot" id="gradSlot3" onclick="selectGradSlot(3)" title="Select mid color to edit">
+                  <div class="grad-slot-swatch" id="gradSlot3Swatch" style="background:#8800cc;"></div>
+                  <div class="grad-slot-info">
+                    <span class="grad-slot-label">Mid</span>
+                    <span class="grad-slot-hex" id="gradSlot3Hex">#8800CC</span>
+                  </div>
+                </div>
+                <div class="grad-slot-arrow">→</div>
+                <div class="grad-slot" id="gradSlot2" onclick="selectGradSlot(2)" title="Select C2 to edit">
+                  <div class="grad-slot-swatch" id="gradSlot2Swatch" style="background:#002fa7;"></div>
+                  <div class="grad-slot-info">
+                    <span class="grad-slot-label">C2</span>
+                    <span class="grad-slot-hex" id="gradSlot2Hex">#002FA7</span>
+                  </div>
+                </div>
+                <input type="color" id="gradC1" value="#e5007d" style="display:none;" oninput="applyGradColorInput(1,this.value)">
+                <input type="color" id="gradC2" value="#002fa7" style="display:none;" oninput="applyGradColorInput(2,this.value)">
+                <input type="color" id="gradC3" value="#8800cc" style="display:none;" oninput="applyGradColorInput(3,this.value)">
+              </div>
+
+              <!-- Palette swatches for gradient -->
+              <div class="grad-palette-row" id="gradPaletteRow">
+                <span class="grad-pal-label">Palette</span>
+                <!-- injected by updateGradPaletteSwatches -->
+              </div>
+
+              <!-- Live preview strip -->
+              <div class="grad-preview-strip" id="gradPreviewStrip"></div>
+            </div>
+            <div class="sl-row" style="margin-top:8px;">
+              <span class="sl-label">Angle</span>
+              <div class="sl-wrap"><input type="range" min="0" max="360" value="135" id="gradAngle" oninput="T.gradAngle=+this.value;document.getElementById('gradAngleVal').textContent=this.value+'°';typo_render();"></div>
+              <span class="sl-val" id="gradAngleVal">135°</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Opacity</span>
+              <div class="sl-wrap"><input type="range" min="5" max="100" value="80" id="gradOpacity" oninput="T.gradOpacity=+this.value;document.getElementById('gradOpacityVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="gradOpacityVal">80%</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Mid Pos</span>
+              <div class="sl-wrap"><input type="range" min="0" max="100" value="50" id="gradMid" oninput="T.gradMid=+this.value;document.getElementById('gradMidVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="gradMidVal">50%</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Grad Grain</span>
+              <div class="sl-wrap"><input type="range" min="0" max="100" value="0" id="gradGrain" oninput="T.gradGrain=+this.value;document.getElementById('gradGrainVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="gradGrainVal">0%</span>
+            </div>
+            <div class="sl-row" id="gradBlobsRow" style="display:none;">
+              <span class="sl-label">Blobs</span>
+              <div class="sl-wrap"><input type="range" min="2" max="8" value="4" step="1" id="gradBlobs" oninput="T.gradBlobs=+this.value;document.getElementById('gradBlobsVal').textContent=this.value;typo_render();"></div>
+              <span class="sl-val" id="gradBlobsVal">4</span>
+            </div>
+          </div>
+
+          <!-- GRAIN -->
+          <div class="cg">
+            <div class="cg-title">Film Grain / Noise
+              <button class="align-btn on" id="grainAnimToggle" title="Toggle grain animation" onclick="T.grainAnim=!T.grainAnim;_grainCanvas=null;this.classList.toggle('on',T.grainAnim);this.textContent=T.grainAnim?'Animated':'Static';typo_render();">Animated</button>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Amount</span>
+              <div class="sl-wrap"><input type="range" min="0" max="100" value="0" id="grainAmount" oninput="T.grain=+this.value;document.getElementById('grainVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="grainVal">0%</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Grain Size</span>
+              <div class="sl-wrap"><input type="range" min="1" max="4" value="1" step="0.5" id="grainSize" oninput="T.grainSize=+this.value;document.getElementById('grainSizeVal').textContent=this.value+'×';typo_render();"></div>
+              <span class="sl-val" id="grainSizeVal">1×</span>
+            </div>
+            <div class="bg-opts-col" id="grainStyleOpts" style="margin-top:6px;">
+              <div class="bg-opt active" data-gs="overlay" onclick="setGrainStyle(this,'overlay')"><span class="sw" style="background:rgba(255,255,255,.15);"></span>Overlay</div>
+              <div class="bg-opt" data-gs="monochrome" onclick="setGrainStyle(this,'monochrome')"><span class="sw" style="background:rgba(255,255,255,.08);"></span>Mono</div>
+              <div class="bg-opt" data-gs="color" onclick="setGrainStyle(this,'color')"><span class="sw" id="grainColorSw" style="background:#ec008c;"></span>Color</div>
+            </div>
+            <!-- Grain color palette — only visible when color grain is active -->
+            <div class="grad-palette-row" id="grainColorPaletteRow" style="display:none;">
+              <span class="grad-pal-label">Color</span>
+              <!-- injected by updateGrainPaletteSwatches -->
+            </div>
+          </div>
+
+          <!-- HALFTONE -->
+          <div class="cg">
+            <div class="cg-title">Halftone
+              <button class="align-btn" id="htBgToggle" title="Toggle halftone on background" onclick="T.htBg=!T.htBg;this.classList.toggle('on',!T.htBg);this.textContent=T.htBg?'All':'Text only';typo_render();">All</button>
+            </div>
+            <div class="bg-opts-col" id="htModeOpts">
+              <div class="bg-opt active" data-ht="none" onclick="setHTMode(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+              <div class="bg-opt" data-ht="dots" onclick="setHTMode(this,'dots')"><span class="sw" style="background:radial-gradient(circle,rgba(255,255,255,.85) 1.5px,transparent 1.5px) 0 0/5px 5px,radial-gradient(circle,rgba(255,255,255,.4) 0.8px,transparent 0.8px) 2.5px 2.5px/5px 5px;"></span>Dots</div>
+              <div class="bg-opt" data-ht="lines" onclick="setHTMode(this,'lines')"><span class="sw" style="background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0,rgba(255,255,255,.7) 1.5px,transparent 1.5px,transparent 4px);"></span>Lines</div>
+              <div class="bg-opt" data-ht="color" onclick="setHTMode(this,'color')"><span class="sw" style="background:#fff;background-image:radial-gradient(circle,#00b4f0 1.2px,transparent 1.2px) 0 0/5px 5px,radial-gradient(circle,#ec008c 1.2px,transparent 1.2px) 1px 2.5px/5px 5px,radial-gradient(circle,#ffee00 1.2px,transparent 1.2px) 3px 1px/5px 5px;"></span>CMYK</div>
+            </div>
+            <div class="sl-row" style="margin-top:8px;">
+              <span class="sl-label">Spacing</span>
+              <div class="sl-wrap"><input type="range" min="1" max="24" value="8" id="htSpacing" oninput="T.htSpacing=+this.value;document.getElementById('htSpacingVal').textContent=this.value+'px';if(!T.animating)typo_render();"></div>
+              <span class="sl-val" id="htSpacingVal">8px</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Angle</span>
+              <div class="sl-wrap"><input type="range" min="0" max="90" value="45" id="htAngle" oninput="T.htAngle=+this.value;document.getElementById('htAngleVal').textContent=this.value+'°';typo_render();"></div>
+              <span class="sl-val" id="htAngleVal">45°</span>
+            </div>
+          </div>
+
+          <!-- RISOGRAPH -->
+          <div class="cg">
+            <div class="cg-title">Risograph</div>
+            <div class="sl-row">
+              <span class="sl-label">Intensity</span>
+              <div class="sl-wrap"><input type="range" min="0" max="100" value="0" id="risoAmt" oninput="T.riso=+this.value;document.getElementById('risoAmtVal').textContent=this.value+'%';typo_render();"></div>
+              <span class="sl-val" id="risoAmtVal">0%</span>
+            </div>
+            <div class="sl-row">
+              <span class="sl-label">Offset</span>
+              <div class="sl-wrap"><input type="range" min="1" max="12" value="3" id="risoOff" oninput="T.risoOffset=+this.value;document.getElementById('risoOffVal').textContent=this.value+'px';typo_render();"></div>
+              <span class="sl-val" id="risoOffVal">3px</span>
+            </div>
+            <div class="sl-row" style="align-items:flex-start;flex-direction:column;gap:6px;">
+              <span class="sl-label">Ink Color</span>
+              <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+                <div class="cdot active" data-riso-preset="#e5007d" style="background:#e5007d;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#e5007d',this)"></div>
+                <div class="cdot" data-riso-preset="#002fa7" style="background:#002fa7;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#002fa7',this)"></div>
+                <div class="cdot" data-riso-preset="#00a878" style="background:#00a878;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#00a878',this)"></div>
+                <div class="cdot" data-riso-preset="#ff6b1a" style="background:#ff6b1a;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#ff6b1a',this)"></div>
+                <div class="cdot" data-riso-preset="#ffd600" style="background:#ffd600;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#ffd600',this)"></div>
+                <div class="cdot" data-riso-preset="#7b2fff" style="background:#7b2fff;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#7b2fff',this)"></div>
+                <input type="color" id="risoC1Pick" class="cust-color" value="#e5007d" oninput="setRisoColor(this.value,null);typo_render();" style="margin-left:2px;">
+              </div>
+              <div id="riso-pal-colors" class="palette-colors" style="width:100%;margin-bottom:0;padding:6px 8px;">
+                <span class="ps-label">From palette</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- Layer panes — l1 is static, l2+ are created dynamically -->
+        <div class="tab-pane active" id="pane-l1"></div>
+        <!-- Hidden global file input for image layer upload -->
+        <input type="file" id="imgLayerFileInput" accept="image/*" style="display:none;" onchange="uploadLayerImage(this.files[0])">
+      </div>
+    </div>
+
+    <!-- Canvas area -->
+    <div id="type-canvas-area">
+      <div id="stage"><canvas id="typeCanvas" width="800" height="800"></canvas></div>
+      <div id="canvas-info-bar">
+        <span class="c-info" id="canvasInfo">800 × 800px</span>
+        <button class="tb-btn" onclick="typo_resetLayer()">Reset Layer</button>
+        <button class="tb-btn mag" style="margin-left:4px;" onclick="openExport()">↓ Export</button>
+      </div>
+    </div>
+
+    <!-- Right panel: accents + kc mark -->
+    <div id="type-rpanel">
+      <div class="cg">
+        <div class="cg-title">Magenta Accent</div>
+        <div class="bg-opts-col" id="accentOpts">
+          <div class="bg-opt active" data-a="none" onclick="setAccent(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+          <div class="bg-opt" data-a="bar-top" onclick="setAccent(this,'bar-top')"><span class="sw" style="background:linear-gradient(180deg,#e5007d 3px,transparent 3px);"></span>Bar Top</div>
+          <div class="bg-opt" data-a="bar-bottom" onclick="setAccent(this,'bar-bottom')"><span class="sw" style="background:linear-gradient(0deg,#e5007d 3px,transparent 3px);"></span>Bar Bottom</div>
+          <div class="bg-opt" data-a="bar-left" onclick="setAccent(this,'bar-left')"><span class="sw" style="background:linear-gradient(90deg,#e5007d 3px,transparent 3px);"></span>Bar Left</div>
+          <div class="bg-opt" data-a="corners" onclick="setAccent(this,'corners')"><span class="sw" style="border:1px solid rgba(229,0,125,.5);"></span>Corners</div>
+          <div class="bg-opt" data-a="rule" onclick="setAccent(this,'rule')"><span class="sw" style="background:linear-gradient(180deg,transparent 47%,#e5007d 47%,#e5007d 53%,transparent 53%);"></span>H-Rule</div>
+          <div class="bg-opt" data-a="dot" onclick="setAccent(this,'dot')"><span class="sw" style="display:flex;align-items:center;justify-content:center;"><span style="width:7px;height:7px;background:#e5007d;border-radius:50%;display:block;"></span></span>Dot</div>
+        </div>
+      </div>
+      <div class="cg">
+        <div class="cg-title">Canvas Glow</div>
+        <div class="sl-row">
+          <span class="sl-label">Intensity</span>
+          <div class="sl-wrap"><input type="range" min="0" max="100" value="0" oninput="T.glow=+this.value;document.getElementById('glowVal').textContent=this.value+'%';typo_render();"></div>
+          <span class="sl-val" id="glowVal">0%</span>
+        </div>
+      </div>
+      <div class="cg">
+        <div class="cg-title">AIGA Logo</div>
+        <div class="bg-opts-col" id="logoVariantOpts">
+          <div class="bg-opt active" data-logo="none" onclick="setLogoVariant(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
+          <div class="bg-opt" data-logo="full" onclick="setLogoVariant(this,'full')"><span class="sw" style="display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#EC008C;">AIGA</span>Full Brand</div>
+          <div class="bg-opt" data-logo="white" onclick="setLogoVariant(this,'white')"><span class="sw" style="display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#fff;">AIGA</span>White</div>
+          <div class="bg-opt" data-logo="magenta" onclick="setLogoVariant(this,'magenta')"><span class="sw" style="display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#EC008C;">AIGA</span>Magenta</div>
+          <div class="bg-opt" data-logo="black" onclick="setLogoVariant(this,'black')"><span class="sw" style="display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#222;background:#fff;">AIGA</span>Black</div>
+        </div>
+        <div id="logoControls" style="margin-top:8px;display:none;flex-direction:column;gap:8px;">
+          <div class="bg-opts-col" id="logoDockOpts">
+            <div class="bg-opt active" data-dock="tr" onclick="setLogoDock(this,'tr')"><span class="sw" style="display:flex;align-items:flex-start;justify-content:flex-end;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Top Right</div>
+            <div class="bg-opt" data-dock="bl" onclick="setLogoDock(this,'bl')"><span class="sw" style="display:flex;align-items:flex-end;justify-content:flex-start;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Bottom Left</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /type-tool -->
+</div><!-- /type-section -->
+
+<!-- ══════════════════════════════════════
+  VECTOR MARK GENERATOR
+══════════════════════════════════════ -->
+<footer>
+  <span>AIGA Kansas City</span>
+  <span>Brand System v3.0 — The Living System</span>
+  <span>kc.aiga.org</span>
+</footer>
+
+
+<!-- ══════════════════════════════════════
+  EXPORT MODAL
+══════════════════════════════════════ -->
+<div id="export-overlay" onclick="if(event.target===this)closeExport()">
+  <div id="export-panel">
+
+    <div class="exp-head">
+      <div class="exp-title">Export <span class="gtag">Image &amp; Video</span></div>
+      <button class="exp-x" onclick="closeExport()">✕ Close</button>
+    </div>
+
+    <!-- Platform presets -->
+    <div class="exp-platforms">
+      <div class="exp-plat-label">Platform Preset — sets canvas dimensions at export time</div>
+      <div class="plat-grid" id="platGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="exp-tabs">
+      <button class="exp-tab active" onclick="switchExpTab('image',this)">Image</button>
+      <button class="exp-tab" onclick="switchExpTab('video',this)">Video</button>
+    </div>
+
+    <!-- IMAGE pane -->
+    <div class="exp-pane active" id="exp-pane-image">
+      <div class="exp-row">
+        <div class="exp-field">
+          <div class="exp-field-label">Format</div>
+          <div class="exp-segs" id="expFmtSegs">
+            <button class="exp-seg active" data-v="png" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">PNG</button>
+            <button class="exp-seg" data-v="jpeg" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">JPEG</button>
+            <button class="exp-seg" data-v="webp" onclick="selExpSeg(this,'expFmtSegs');EX.format=this.dataset.v;updateExpSummary();">WebP</button>
+          </div>
+        </div>
+        <div class="exp-field">
+          <div class="exp-field-label">Scale</div>
+          <div class="exp-segs" id="expScaleSegs">
+            <button class="exp-seg" data-v="1" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">1×</button>
+            <button class="exp-seg active" data-v="2" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">2× Retina</button>
+            <button class="exp-seg" data-v="3" onclick="selExpSeg(this,'expScaleSegs');EX.scale=+this.dataset.v;updateExpSummary();">3×</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-field" id="qualityField">
+        <div class="exp-field-label">Quality <span id="qualityNote" style="color:rgba(255,255,255,.2);font-size:8px;"> — PNG is lossless, quality not applicable</span></div>
+        <div class="exp-quality-row">
+          <div class="sl-wrap"><input type="range" min="50" max="100" value="92" id="qualitySlider" oninput="EX.quality=+this.value/100;document.getElementById('qualityVal').textContent=this.value+'%';updateExpSummary();"></div>
+          <span class="sl-val" id="qualityVal">92%</span>
+        </div>
+      </div>
+
+      <div class="exp-summary" id="exp-img-summary">
+        <div class="exp-stat"><div class="exp-stat-val" id="sumW">—</div><div class="exp-stat-key">Width px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumH">—</div><div class="exp-stat-key">Height px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumFmt">PNG</div><div class="exp-stat-key">Format</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumPlat">Custom</div><div class="exp-stat-key">Platform</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="sumColor">sRGB</div><div class="exp-stat-key">Color space</div></div>
+      </div>
+
+      <div class="exp-actions">
+        <button class="exp-btn exp-btn-ghost" onclick="exportCopy()">⎘ Copy to Clipboard</button>
+        <button class="exp-btn exp-btn-primary" onclick="exportImage()">↓ Download Image</button>
+      </div>
+    </div>
+
+    <!-- VIDEO pane -->
+    <div class="exp-pane" id="exp-pane-video">
+      <div class="exp-row">
+        <div class="exp-field">
+          <div class="exp-field-label">Duration</div>
+          <div class="exp-segs" id="expDurSegs">
+            <button class="exp-seg" data-v="2" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">2s</button>
+            <button class="exp-seg active" data-v="4" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">4s</button>
+            <button class="exp-seg" data-v="6" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">6s</button>
+            <button class="exp-seg" data-v="8" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">8s</button>
+            <button class="exp-seg" data-v="12" onclick="selExpSeg(this,'expDurSegs');EX.duration=+this.dataset.v;updateExpSummary();">12s</button>
+          </div>
+        </div>
+        <div class="exp-field">
+          <div class="exp-field-label">Frame Rate</div>
+          <div class="exp-segs" id="expFpsSegs">
+            <button class="exp-seg" data-v="24" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">24 fps</button>
+            <button class="exp-seg active" data-v="30" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">30 fps</button>
+            <button class="exp-seg" data-v="60" onclick="selExpSeg(this,'expFpsSegs');EX.fps=+this.dataset.v;updateExpSummary();">60 fps</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-field" style="margin-bottom:14px;">
+        <div class="exp-field-label">Loop</div>
+        <div class="exp-segs" id="expLoopSegs">
+          <button class="exp-seg active" data-v="loop" onclick="selExpSeg(this,'expLoopSegs');EX.loop='loop';">Loop</button>
+          <button class="exp-seg" data-v="once" onclick="selExpSeg(this,'expLoopSegs');EX.loop='once';">Play Once</button>
+        </div>
+      </div>
+
+      <div class="exp-summary">
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumW">—</div><div class="exp-stat-key">Width px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumH">—</div><div class="exp-stat-key">Height px</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumDur">4s</div><div class="exp-stat-key">Duration</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val" id="vidSumFps">30</div><div class="exp-stat-key">FPS</div></div>
+        <div class="exp-stat-sep"></div>
+        <div class="exp-stat"><div class="exp-stat-val">WebM</div><div class="exp-stat-key">Format</div></div>
+      </div>
+
+      <div id="rec-progress">
+        <div class="rec-label"><div class="rec-dot"></div><span id="recLabel">Recording… 0s / 4s</span></div>
+        <div class="rec-bar-track"><div class="rec-bar-fill" id="recBarFill"></div></div>
+      </div>
+
+      <div class="exp-actions">
+        <button class="exp-btn exp-btn-primary" id="recBtn" onclick="recordVideo()">● Record &amp; Export WebM</button>
+      </div>
+
+      <div class="exp-note">
+        <strong>WebM (VP9)</strong> plays natively in Chrome, Firefox, Edge, and Android. For Instagram/TikTok upload, convert to MP4 using <strong>CloudConvert</strong>, <strong>Handbrake</strong>, or <strong>ffmpeg -i input.webm output.mp4</strong>. Most modern social platforms also accept WebM directly via web upload.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/color.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/app.js"></script>
+<script src="js/palette.js"></script>
+</body>
+</html>
