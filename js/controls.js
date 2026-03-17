@@ -1109,33 +1109,85 @@ function toggleTplDrawer() {
   btn.textContent = drawerOpen ? '✕ Close' : '☰ Templates';
 }
 
+function getUserTemplates() {
+  try { return JSON.parse(localStorage.getItem('aigakc_userTemplates') || '[]'); } catch(e) { return []; }
+}
+
+function saveAsTemplate() {
+  const name = prompt('Template name:', 'My Template');
+  if (!name || !name.trim()) return;
+  const snap = JSON.parse(JSON.stringify(T));
+  delete snap.frame; delete snap.animating;
+  snap.layers.forEach(l => delete l.img);
+  const tpl = {
+    ...snap,
+    id: 'user-' + Date.now(),
+    name: name.trim(),
+    cat: 'Saved',
+    desc: `${TW}×${TH} · ${snap.layers.length} layer${snap.layers.length !== 1 ? 's' : ''}`,
+    canvas: `${TW},${TH}`,
+    user: true,
+  };
+  const userTemplates = getUserTemplates();
+  userTemplates.unshift(tpl);
+  localStorage.setItem('aigakc_userTemplates', JSON.stringify(userTemplates));
+  buildTplCards();
+  toast(`Saved: "${tpl.name}"`);
+}
+
+function deleteUserTemplate(id, e) {
+  e.stopPropagation();
+  const filtered = getUserTemplates().filter(t => t.id !== id);
+  localStorage.setItem('aigakc_userTemplates', JSON.stringify(filtered));
+  if (activeTplId === id) activeTplId = null;
+  buildTplCards();
+  toast('Template deleted');
+}
+
 function buildTplCards() {
   const grid = document.getElementById('tplGrid');
-  const cats = [...new Set(TEMPLATES.map(t => t.cat))];
+  const userTpls = getUserTemplates();
 
-  grid.innerHTML = TEMPLATES.map(tpl => {
+  function userCard(tpl) {
+    const [cw, ch] = tpl.canvas.split(',');
+    const ratio = parseInt(cw) > parseInt(ch) ? '16:9' : parseInt(cw) < parseInt(ch) ? '9:16' : '1:1';
+    const l0 = tpl.layers && tpl.layers[0];
+    const txt = l0 ? l0.text.replace(/\n/g,' ').substring(0, 20) : '';
+    const col = l0 ? l0.color : '#fff';
+    const sz = l0 ? Math.min(Math.round(l0.size / 8), 28) : 18;
+    const font = l0 ? l0.font : 'Roboto Flex';
+    const serif = (font === 'Fraunces' || font === 'Playfair Display') ? 'serif' : 'sans-serif';
+    const gradOverlay = tpl.grad && tpl.grad !== 'none'
+      ? `<div style="position:absolute;inset:0;background:linear-gradient(135deg,${tpl.gradC1}66,${tpl.gradC2}66);pointer-events:none;"></div>` : '';
+    return `<div class="tpl-card${activeTplId === tpl.id ? ' active-tpl' : ''}" onclick="applyTemplate('${tpl.id}')" data-tpl="${tpl.id}">
+      <button class="tpl-user-delete" onclick="deleteUserTemplate('${tpl.id}',event)" title="Delete">✕</button>
+      <div class="tpl-preview" style="background:${tpl.bg};">
+        ${gradOverlay}
+        <div style="font-family:'${font}',${serif};font-size:${sz}px;line-height:1;color:${col};position:relative;">${txt}</div>
+      </div>
+      <div class="tpl-meta">
+        <span class="tpl-name">${tpl.name}</span>
+        <span class="tpl-desc">${tpl.desc}</span>
+        <span class="tpl-cat">Saved · ${ratio}</span>
+      </div>
+    </div>`;
+  }
+
+  function builtInCard(tpl) {
     const p = tpl.preview;
-    const lightBg = p.light;
-    const textColor = lightBg ? p.h1.color : p.h1.color;
-    const eyeColor = p.eyebrow.color;
-    const subColor = p.sub.color;
-
     const barHTML = p.barTop
       ? `<div style="position:absolute;top:0;left:0;right:0;height:2.5px;background:#e5007d;"></div>` : '';
     const cornerHTML = p.corners
       ? `<div style="position:absolute;top:5px;left:5px;width:8px;height:8px;border-top:1px solid rgba(229,0,125,0.55);border-left:1px solid rgba(229,0,125,0.55);"></div>
          <div style="position:absolute;bottom:5px;right:5px;width:8px;height:8px;border-bottom:1px solid rgba(229,0,125,0.55);border-right:1px solid rgba(229,0,125,0.55);"></div>` : '';
-
-    // Encode canvas size label
     const [cw, ch] = tpl.canvas.split(',');
     const ratio = parseInt(cw) > parseInt(ch) ? '16:9' : parseInt(cw) < parseInt(ch) ? '9:16' : '1:1';
-
     return `<div class="tpl-card${activeTplId === tpl.id ? ' active-tpl' : ''}" onclick="applyTemplate('${tpl.id}')" data-tpl="${tpl.id}">
       <div class="tpl-preview" style="background:${p.bg};">
         ${barHTML}${cornerHTML}
-        <div class="tp-ey" style="color:${eyeColor};font-size:${p.eyebrow.size}px;">${p.eyebrow.text}</div>
-        <div style="font-family:'${p.h1.font}',${p.h1.font==='Fraunces'?'serif':'sans-serif'};font-size:${p.h1.size}px;line-height:.95;letter-spacing:.02em;color:${textColor};}">${p.h1.text.replace(/\n/g,'<br>')}</div>
-        <div style="font-size:${p.sub.size}px;letter-spacing:.12em;text-transform:uppercase;color:${subColor};margin-top:4px;font-family:'DM Mono',monospace;">${p.sub.text}</div>
+        <div class="tp-ey" style="color:${p.eyebrow.color};font-size:${p.eyebrow.size}px;">${p.eyebrow.text}</div>
+        <div style="font-family:'${p.h1.font}',${p.h1.font==='Fraunces'?'serif':'sans-serif'};font-size:${p.h1.size}px;line-height:.95;letter-spacing:.02em;color:${p.h1.color};">${p.h1.text.replace(/\n/g,'<br>')}</div>
+        <div style="font-size:${p.sub.size}px;letter-spacing:.12em;text-transform:uppercase;color:${p.sub.color};margin-top:4px;font-family:'DM Mono',monospace;">${p.sub.text}</div>
       </div>
       <div class="tpl-meta">
         <span class="tpl-name">${tpl.name}</span>
@@ -1143,11 +1195,18 @@ function buildTplCards() {
         <span class="tpl-cat">${tpl.cat} · ${ratio}</span>
       </div>
     </div>`;
-  }).join('');
+  }
+
+  let html = '';
+  if (userTpls.length > 0) {
+    html += `<div class="tpl-section-label">Saved</div>` + userTpls.map(userCard).join('');
+  }
+  html += `<div class="tpl-section-label">Premade</div>` + TEMPLATES.map(builtInCard).join('');
+  grid.innerHTML = html;
 }
 
 function applyTemplate(id) {
-  const tpl = TEMPLATES.find(t => t.id === id);
+  const tpl = [...getUserTemplates(), ...TEMPLATES].find(t => t.id === id);
   if (!tpl) return;
 
   activeTplId = id;

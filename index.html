@@ -182,8 +182,11 @@
     <div id="tpl-drawer">
       <div class="tpl-drawer-inner">
         <div class="tpl-drawer-header">
-          <span class="tpl-drawer-title">Premade Templates</span>
-          <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
+          <span class="tpl-drawer-title">Templates</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="tpl-save-btn" onclick="saveAsTemplate()">+ Save Current</button>
+            <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
+          </div>
         </div>
         <div class="tpl-grid" id="tplGrid"><!-- cards injected by JS --></div>
       </div>
