@@ -313,6 +313,7 @@ function setGrad(el,v){
   document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(e=>e.classList.remove('active'));
   el.classList.add('active');T.grad=v;
   const br=document.getElementById('gradBlobsRow');if(br)br.style.display=v==='mesh'?'flex':'none';
+  document.querySelectorAll('.mesh-only').forEach(e=>e.style.display=v==='mesh'?'flex':'none');
   updateGradPreviewStrip();typo_render();
 }
 function setGrainStyle(el,v){
@@ -422,7 +423,7 @@ function typo_resetLayer(){
 }
 function typo_reset(){
   T.bg='#080808';T.bgTex='none';T.texOp=12;T.accent='none';T.kc='none';T.glow=0;
-  T.grad='none';T.gradC1='#e5007d';T.gradC2='#002fa7';T.gradC3='#8800cc';T.gradAngle=135;T.gradOpacity=80;T.gradMid=50;T.gradGrain=0;T.gradBlobs=4;
+  T.grad='none';T.gradC1='#e5007d';T.gradC2='#002fa7';T.gradC3='#8800cc';T.gradC4='#ff6600';T.gradC5='#00c878';T.gradAngle=135;T.gradOpacity=80;T.gradMid=50;T.gradGrain=0;T.gradBlobs=4;
   T.grain=0;T.grainSize=1;T.grainStyle='overlay';T.grainAnim=true;T.grainColor='#ec008c';
   const grAnimB=document.getElementById('grainAnimToggle');if(grAnimB){grAnimB.classList.add('on');grAnimB.textContent='Animated';}
   const gcpR=document.getElementById('grainColorPaletteRow');if(gcpR)gcpR.style.display='none';

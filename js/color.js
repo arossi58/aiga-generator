@@ -201,7 +201,7 @@ const T={
   bg:'#080808',bgTex:'none',texOp:12,
   accent:'none',kc:'none',glow:0,
   // Gradient
-  grad:'none', gradC1:'#e5007d', gradC2:'#002fa7', gradC3:'#8800cc',
+  grad:'none', gradC1:'#e5007d', gradC2:'#002fa7', gradC3:'#8800cc', gradC4:'#ff6600', gradC5:'#00c878',
   gradAngle:135, gradOpacity:80, gradMid:50, gradGrain:0, gradBlobs:4,
   // Grain
   grain:0, grainSize:1, grainAnim:true, grainColor:'#ec008c',

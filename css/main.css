@@ -929,31 +929,24 @@ textarea.ti:focus{border-color:var(--mag);}
   margin-top:10px;display:flex;flex-direction:column;gap:7px;
 }
 .grad-slots{
-  display:flex;align-items:center;gap:6px;
+  display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;
 }
 .grad-slot{
-  flex:1;display:flex;align-items:center;gap:7px;
-  padding:5px 7px;border:1.5px solid rgba(255,255,255,.08);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  width:44px;padding:4px;border:1.5px solid rgba(255,255,255,.08);
   cursor:pointer;transition:border-color .12s;
 }
 .grad-slot:hover{border-color:rgba(255,255,255,.22);}
 .grad-slot.active{border-color:var(--mag);}
 .grad-slot-swatch{
-  width:22px;height:22px;flex-shrink:0;
+  width:100%;aspect-ratio:1;
   border:1px solid rgba(255,255,255,.12);
 }
-.grad-slot-info{display:flex;flex-direction:column;gap:1px;min-width:0;}
 .grad-slot-label{
   font-size:7px;letter-spacing:.18em;text-transform:uppercase;
   color:rgba(255,255,255,.28);
 }
-.grad-slot-hex{
-  font-family:'DM Mono',monospace;font-size:9px;
-  color:rgba(255,255,255,.65);letter-spacing:.04em;text-transform:uppercase;
-}
-.grad-slot-arrow{
-  font-size:11px;color:rgba(255,255,255,.18);flex-shrink:0;
-}
+.mesh-only{display:none;}
 
 /* Palette row */
 .grad-palette-row{

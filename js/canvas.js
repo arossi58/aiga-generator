@@ -455,7 +455,7 @@ function typo_render(){
   // Gradient overlay
   if(T.grad!=='none'){
     ctx.save();ctx.globalAlpha=T.gradOpacity/100;
-    drawGradient(ctx,T.grad,TW,TH,T.gradC1,T.gradC2,T.gradC3||T.gradC1,T.gradAngle,T.gradMid??50,T.gradGrain??0,T.gradBlobs??4);
+    drawGradient(ctx,T.grad,TW,TH,T.gradC1,T.gradC2,T.gradC3||T.gradC1,T.gradAngle,T.gradMid??50,T.gradGrain??0,T.gradBlobs??4,T.gradC4||T.gradC1,T.gradC5||T.gradC2);
     ctx.restore();
   }
 
@@ -698,7 +698,7 @@ function drawBGTexture(ctx,type,W,H){
   }
 }
 
-function drawGradient(ctx,type,W,H,c1,c2,c3,angle,mid,grain,blobs){
+function drawGradient(ctx,type,W,H,c1,c2,c3,angle,mid,grain,blobs,c4,c5){
   c3=c3||c1;
   const midStop=Math.max(0.01,Math.min(0.99,(mid??50)/100));
   // Draw to offscreen canvas so grain stays isolated to gradient layer
@@ -746,11 +746,13 @@ function drawGradient(ctx,type,W,H,c1,c2,c3,angle,mid,grain,blobs){
     });
   }else if(type==='mesh'){
     const n=Math.max(2,Math.min(8,blobs||4));
-    const positions=[[0.15,0.20,c1],[0.85,0.15,c2],[0.50,0.50,c3],[0.10,0.80,c2],[0.90,0.85,c1],[0.50,0.10,c3],[0.30,0.65,c1],[0.70,0.40,c2]];
+    const meshCols=[c1,c2,c3,c4||c1,c5||c2];
+    const positions=[[0.15,0.20],[0.85,0.15],[0.50,0.50],[0.10,0.80],[0.90,0.85],[0.50,0.10],[0.30,0.65],[0.70,0.40]];
     const r=Math.max(W,H)*0.78;
     gc.save();
     for(let i=0;i<n;i++){
-      const [px,py,col]=positions[i%positions.length];
+      const [px,py]=positions[i%positions.length];
+      const col=meshCols[i%meshCols.length];
       const bx=px*W,by=py*H;
       const bg=gc.createRadialGradient(bx,by,0,bx,by,r);
       bg.addColorStop(0,col+'cc');bg.addColorStop(1,'rgba(0,0,0,0)');

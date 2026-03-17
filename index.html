@@ -274,32 +274,31 @@
             <div class="grad-color-section">
               <!-- Slot row -->
               <div class="grad-slots">
-                <div class="grad-slot active" id="gradSlot1" onclick="selectGradSlot(1)" title="Select C1 to edit">
+                <div class="grad-slot active" id="gradSlot1" onclick="selectGradSlot(1)" title="C1">
                   <div class="grad-slot-swatch" id="gradSlot1Swatch" style="background:#e5007d;"></div>
-                  <div class="grad-slot-info">
-                    <span class="grad-slot-label">C1</span>
-                    <span class="grad-slot-hex" id="gradSlot1Hex">#E5007D</span>
-                  </div>
+                  <span class="grad-slot-label">C1</span>
                 </div>
-                <div class="grad-slot-arrow">→</div>
-                <div class="grad-slot" id="gradSlot3" onclick="selectGradSlot(3)" title="Select mid color to edit">
+                <div class="grad-slot" id="gradSlot3" onclick="selectGradSlot(3)" title="Mid">
                   <div class="grad-slot-swatch" id="gradSlot3Swatch" style="background:#8800cc;"></div>
-                  <div class="grad-slot-info">
-                    <span class="grad-slot-label">Mid</span>
-                    <span class="grad-slot-hex" id="gradSlot3Hex">#8800CC</span>
-                  </div>
+                  <span class="grad-slot-label">Mid</span>
                 </div>
-                <div class="grad-slot-arrow">→</div>
-                <div class="grad-slot" id="gradSlot2" onclick="selectGradSlot(2)" title="Select C2 to edit">
+                <div class="grad-slot" id="gradSlot2" onclick="selectGradSlot(2)" title="C2">
                   <div class="grad-slot-swatch" id="gradSlot2Swatch" style="background:#002fa7;"></div>
-                  <div class="grad-slot-info">
-                    <span class="grad-slot-label">C2</span>
-                    <span class="grad-slot-hex" id="gradSlot2Hex">#002FA7</span>
-                  </div>
+                  <span class="grad-slot-label">C2</span>
+                </div>
+                <div class="grad-slot mesh-only" id="gradSlot4" onclick="selectGradSlot(4)" title="C4">
+                  <div class="grad-slot-swatch" id="gradSlot4Swatch" style="background:#ff6600;"></div>
+                  <span class="grad-slot-label">C4</span>
+                </div>
+                <div class="grad-slot mesh-only" id="gradSlot5" onclick="selectGradSlot(5)" title="C5">
+                  <div class="grad-slot-swatch" id="gradSlot5Swatch" style="background:#00c878;"></div>
+                  <span class="grad-slot-label">C5</span>
                 </div>
                 <input type="color" id="gradC1" value="#e5007d" style="display:none;" oninput="applyGradColorInput(1,this.value)">
                 <input type="color" id="gradC2" value="#002fa7" style="display:none;" oninput="applyGradColorInput(2,this.value)">
                 <input type="color" id="gradC3" value="#8800cc" style="display:none;" oninput="applyGradColorInput(3,this.value)">
+                <input type="color" id="gradC4" value="#ff6600" style="display:none;" oninput="applyGradColorInput(4,this.value)">
+                <input type="color" id="gradC5" value="#00c878" style="display:none;" oninput="applyGradColorInput(5,this.value)">
               </div>
 
               <!-- Palette swatches for gradient -->
@@ -438,18 +437,7 @@
 
     <!-- Right panel: accents + kc mark -->
     <div id="type-rpanel">
-      <div class="cg">
-        <div class="cg-title">Magenta Accent</div>
-        <div class="bg-opts-col" id="accentOpts">
-          <div class="bg-opt active" data-a="none" onclick="setAccent(this,'none')"><span class="sw" style="border:1px dashed rgba(255,255,255,.2);"></span>None</div>
-          <div class="bg-opt" data-a="bar-top" onclick="setAccent(this,'bar-top')"><span class="sw" style="background:linear-gradient(180deg,#e5007d 3px,transparent 3px);"></span>Bar Top</div>
-          <div class="bg-opt" data-a="bar-bottom" onclick="setAccent(this,'bar-bottom')"><span class="sw" style="background:linear-gradient(0deg,#e5007d 3px,transparent 3px);"></span>Bar Bottom</div>
-          <div class="bg-opt" data-a="bar-left" onclick="setAccent(this,'bar-left')"><span class="sw" style="background:linear-gradient(90deg,#e5007d 3px,transparent 3px);"></span>Bar Left</div>
-          <div class="bg-opt" data-a="corners" onclick="setAccent(this,'corners')"><span class="sw" style="border:1px solid rgba(229,0,125,.5);"></span>Corners</div>
-          <div class="bg-opt" data-a="rule" onclick="setAccent(this,'rule')"><span class="sw" style="background:linear-gradient(180deg,transparent 47%,#e5007d 47%,#e5007d 53%,transparent 53%);"></span>H-Rule</div>
-          <div class="bg-opt" data-a="dot" onclick="setAccent(this,'dot')"><span class="sw" style="display:flex;align-items:center;justify-content:center;"><span style="width:7px;height:7px;background:#e5007d;border-radius:50%;display:block;"></span></span>Dot</div>
-        </div>
-      </div>
+
       <div class="cg">
         <div class="cg-title">Canvas Glow</div>
         <div class="sl-row">

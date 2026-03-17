@@ -356,7 +356,7 @@ function renderAtRes(targetW, targetH) {
   // Gradient
   if (T.grad !== 'none') {
     ctx.save(); ctx.globalAlpha = T.gradOpacity/100;
-    drawGradient(ctx, T.grad, targetW, targetH, T.gradC1, T.gradC2, T.gradC3||T.gradC1, T.gradAngle, T.gradMid??50, T.gradGrain??0, T.gradBlobs??4);
+    drawGradient(ctx, T.grad, targetW, targetH, T.gradC1, T.gradC2, T.gradC3||T.gradC1, T.gradAngle, T.gradMid??50, T.gradGrain??0, T.gradBlobs??4, T.gradC4||T.gradC1, T.gradC5||T.gradC2);
     ctx.restore();
   }
 

@@ -309,11 +309,11 @@ function selectGradSlot(n) {
   document.getElementById('gradSlot1').classList.toggle('active', n === 1);
   document.getElementById('gradSlot2').classList.toggle('active', n === 2);
   document.getElementById('gradSlot3').classList.toggle('active', n === 3);
-  // Sync the hex input to the active slot's current color
-  const hex = n === 1 ? T.gradC1 : n === 3 ? (T.gradC3||'#8800cc') : T.gradC2;
+  const s4 = document.getElementById('gradSlot4'); if (s4) s4.classList.toggle('active', n === 4);
+  const s5 = document.getElementById('gradSlot5'); if (s5) s5.classList.toggle('active', n === 5);
+  const hex = n === 1 ? T.gradC1 : n === 3 ? (T.gradC3||'#8800cc') : n === 4 ? (T.gradC4||'#ff6600') : n === 5 ? (T.gradC5||'#00c878') : T.gradC2;
   const hexInput = document.getElementById('gradHexInput');
   if (hexInput) hexInput.value = hex.toUpperCase();
-  // Highlight any applied palette dot
   updateGradPaletteApplied();
 }
 
@@ -321,17 +321,22 @@ function applyGradColor(hex) {
   if (_activeGradSlot === 1) {
     T.gradC1 = hex;
     document.getElementById('gradSlot1Swatch').style.background = hex;
-    document.getElementById('gradSlot1Hex').textContent = hex.toUpperCase();
     document.getElementById('gradC1').value = hex;
   } else if (_activeGradSlot === 3) {
     T.gradC3 = hex;
     document.getElementById('gradSlot3Swatch').style.background = hex;
-    document.getElementById('gradSlot3Hex').textContent = hex.toUpperCase();
     document.getElementById('gradC3').value = hex;
+  } else if (_activeGradSlot === 4) {
+    T.gradC4 = hex;
+    const s = document.getElementById('gradSlot4Swatch'); if (s) s.style.background = hex;
+    const i = document.getElementById('gradC4'); if (i) i.value = hex;
+  } else if (_activeGradSlot === 5) {
+    T.gradC5 = hex;
+    const s = document.getElementById('gradSlot5Swatch'); if (s) s.style.background = hex;
+    const i = document.getElementById('gradC5'); if (i) i.value = hex;
   } else {
     T.gradC2 = hex;
     document.getElementById('gradSlot2Swatch').style.background = hex;
-    document.getElementById('gradSlot2Hex').textContent = hex.toUpperCase();
     document.getElementById('gradC2').value = hex;
   }
   const hexInput = document.getElementById('gradHexInput');
@@ -342,10 +347,11 @@ function applyGradColor(hex) {
 }
 
 function applyGradColorInput(slot, hex) {
-  // Called by the hidden native color input
-  if (slot === 1) { T.gradC1 = hex; document.getElementById('gradSlot1Swatch').style.background = hex; document.getElementById('gradSlot1Hex').textContent = hex.toUpperCase(); }
-  else if (slot === 3) { T.gradC3 = hex; document.getElementById('gradSlot3Swatch').style.background = hex; document.getElementById('gradSlot3Hex').textContent = hex.toUpperCase(); }
-  else { T.gradC2 = hex; document.getElementById('gradSlot2Swatch').style.background = hex; document.getElementById('gradSlot2Hex').textContent = hex.toUpperCase(); }
+  if (slot === 1) { T.gradC1 = hex; document.getElementById('gradSlot1Swatch').style.background = hex; }
+  else if (slot === 3) { T.gradC3 = hex; document.getElementById('gradSlot3Swatch').style.background = hex; }
+  else if (slot === 4) { T.gradC4 = hex; const s = document.getElementById('gradSlot4Swatch'); if (s) s.style.background = hex; }
+  else if (slot === 5) { T.gradC5 = hex; const s = document.getElementById('gradSlot5Swatch'); if (s) s.style.background = hex; }
+  else { T.gradC2 = hex; document.getElementById('gradSlot2Swatch').style.background = hex; }
   updateGradPreviewStrip();
   typo_render();
 }
@@ -355,7 +361,7 @@ function applyGradHexInput(val) {
 }
 
 function openGradColorPicker() {
-  const id = _activeGradSlot === 1 ? 'gradC1' : _activeGradSlot === 3 ? 'gradC3' : 'gradC2';
+  const id = _activeGradSlot === 1 ? 'gradC1' : _activeGradSlot === 3 ? 'gradC3' : _activeGradSlot === 4 ? 'gradC4' : _activeGradSlot === 5 ? 'gradC5' : 'gradC2';
   const picker = document.getElementById(id);
   if (picker) picker.click();
 }
@@ -363,8 +369,10 @@ function openGradColorPicker() {
 function updateGradPreviewStrip() {
   const strip = document.getElementById('gradPreviewStrip');
   if (!strip) return;
-  const c1=T.gradC1, c2=T.gradC2, c3=T.gradC3||c1, mid=T.gradMid??50;
-  if (T.grad === 'none' || T.grad === 'vignette') {
+  const c1=T.gradC1, c2=T.gradC2, c3=T.gradC3||c1, c4=T.gradC4||c1, c5=T.gradC5||c2, mid=T.gradMid??50;
+  if (T.grad === 'mesh') {
+    strip.style.background = `linear-gradient(90deg,${c1},${c3},${c2},${c4},${c5})`;
+  } else if (T.grad === 'none' || T.grad === 'vignette') {
     strip.style.background = `linear-gradient(90deg,${c1},${c3} 50%,${c2})`;
   } else if (T.grad === 'split') {
     strip.style.background = `linear-gradient(90deg,${c1} 50%,${c2} 50%)`;
@@ -379,7 +387,7 @@ function updateGradPreviewStrip() {
 }
 
 function updateGradPaletteApplied() {
-  const activeHex = (_activeGradSlot === 1 ? T.gradC1 : _activeGradSlot === 3 ? (T.gradC3||'#8800cc') : T.gradC2).toLowerCase();
+  const activeHex = (_activeGradSlot === 1 ? T.gradC1 : _activeGradSlot === 3 ? (T.gradC3||'#8800cc') : _activeGradSlot === 4 ? (T.gradC4||'#ff6600') : _activeGradSlot === 5 ? (T.gradC5||'#00c878') : T.gradC2).toLowerCase();
   document.querySelectorAll('#gradPaletteRow .grad-pal-dot').forEach(dot => {
     dot.classList.toggle('applied', dot.dataset.c.toLowerCase() === activeHex);
   });
@@ -464,19 +472,23 @@ function syncGradSlotsFromState() {
   const s1 = document.getElementById('gradSlot1Swatch');
   const s2 = document.getElementById('gradSlot2Swatch');
   const s3 = document.getElementById('gradSlot3Swatch');
-  const h1 = document.getElementById('gradSlot1Hex');
-  const h2 = document.getElementById('gradSlot2Hex');
-  const h3 = document.getElementById('gradSlot3Hex');
+  const s4 = document.getElementById('gradSlot4Swatch');
+  const s5 = document.getElementById('gradSlot5Swatch');
   const c3 = T.gradC3 || '#8800cc';
+  const c4 = T.gradC4 || '#ff6600';
+  const c5 = T.gradC5 || '#00c878';
   if (s1) s1.style.background = T.gradC1;
   if (s2) s2.style.background = T.gradC2;
   if (s3) s3.style.background = c3;
-  if (h1) h1.textContent = T.gradC1.toUpperCase();
-  if (h2) h2.textContent = T.gradC2.toUpperCase();
-  if (h3) h3.textContent = c3.toUpperCase();
+  if (s4) s4.style.background = c4;
+  if (s5) s5.style.background = c5;
   const gc1 = document.getElementById('gradC1'); if (gc1) gc1.value = T.gradC1;
   const gc2 = document.getElementById('gradC2'); if (gc2) gc2.value = T.gradC2;
   const gc3 = document.getElementById('gradC3'); if (gc3) gc3.value = c3;
+  const gc4 = document.getElementById('gradC4'); if (gc4) gc4.value = c4;
+  const gc5 = document.getElementById('gradC5'); if (gc5) gc5.value = c5;
+  // Show/hide mesh-only slots based on current grad type
+  document.querySelectorAll('.mesh-only').forEach(e => e.style.display = T.grad === 'mesh' ? 'flex' : 'none');
   updateGradPreviewStrip();
   updateGradPaletteApplied();
 }
