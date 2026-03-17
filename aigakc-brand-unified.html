@@ -1714,6 +1714,7 @@ function generatePalette(){
   renderPreviewCard();
   renderCssExport();
   firePaletteChange();
+  autosave();
   toast('Palette generated — use ⬆ Push to sync to Typography');
 }
 
@@ -2283,6 +2284,7 @@ function drawLogo(ctx,W,H){
    CANVAS RENDER ENGINE
 ════════════════════════════════════════════ */
 function typo_render(){
+  autosave();
   const canvas=document.getElementById('typeCanvas');
   const ctx=canvas.getContext('2d');
   const t=T.frame;
@@ -4449,7 +4451,95 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 /* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   AUTO-SAVE / RESTORE  (localStorage)
+════════════════════════════════════════════ */
+let _autosaveTimer = null;
+
+function _flushSave() {
+  try {
+    const tData = JSON.parse(JSON.stringify(T));
+    delete tData.frame; delete tData.animating;
+    tData.layers.forEach(l => { delete l.img; }); // Image objects aren't serialisable; imgSrc is kept
+    localStorage.setItem('aigakc_T', JSON.stringify(tData));
+    const hex = document.getElementById('colorHex')?.value || '#002FA7';
+    localStorage.setItem('aigakc_palette', JSON.stringify({ hex, harmonyMode, PALETTE: {...PALETTE} }));
+  } catch(e) { /* quota exceeded or private mode — silently skip */ }
+}
+
+function autosave() {
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer = setTimeout(_flushSave, 2000);
+}
+
+function restoreFromStorage() {
+  try {
+    // --- Palette ---
+    const palRaw = localStorage.getItem('aigakc_palette');
+    if (palRaw) {
+      const palData = JSON.parse(palRaw);
+      if (palData.hex) {
+        const cp = document.getElementById('colorPicker');
+        const ch = document.getElementById('colorHex');
+        if (cp) cp.value = palData.hex;
+        if (ch) ch.value = palData.hex.toUpperCase();
+      }
+      if (palData.harmonyMode) {
+        harmonyMode = palData.harmonyMode;
+        document.querySelectorAll('.harm-btn').forEach(btn => {
+          const oc = btn.getAttribute('onclick') || '';
+          btn.classList.toggle('active', oc.includes("'" + harmonyMode + "'"));
+        });
+      }
+      if (palData.PALETTE) Object.assign(PALETTE, palData.PALETTE);
+    }
+
+    // --- Composition (T) ---
+    const tRaw = localStorage.getItem('aigakc_T');
+    if (!tRaw) return false;
+    const data = JSON.parse(tRaw);
+    if (!data.layers || !Array.isArray(data.layers)) return false;
+    data.frame = 0; data.animating = false;
+    data.layers.forEach(layer => {
+      if (!layer.type) layer.type = 'text';
+      if (layer.type === 'image' && layer.imgSrc && !layer.img) {
+        const img = new Image(); img.src = layer.imgSrc; layer.img = img;
+      }
+      if (!layer.dists) layer.dists = [layer.dist || 'normal'];
+      if (!layer.varWghtPat) layer.varWghtPat = 'none';
+      if (!layer.varWidthPat) layer.varWidthPat = 'none';
+      if (!layer.varSkewPat) layer.varSkewPat = 'none';
+      if (layer.varSpd == null) layer.varSpd = 3;
+      if (!layer.varSoftPat) layer.varSoftPat = 'none';
+      if (layer.varSoftMin == null) layer.varSoftMin = 0;
+      if (layer.varSoftMax == null) layer.varSoftMax = 100;
+      if (!layer.varWonkPat) layer.varWonkPat = 'none';
+      if (layer.varWonkMin == null) layer.varWonkMin = 0;
+      if (layer.varWonkMax == null) layer.varWonkMax = 1;
+      ['Wght','Width','Skew','Soft','Wonk','ScaleX','ScaleY','Rot','Track'].forEach(a => {
+        if (layer[`var${a}Spd`] == null) layer[`var${a}Spd`] = 3;
+        if (!layer[`var${a}Ease`]) layer[`var${a}Ease`] = 'linear';
+        if (!layer[`var${a}Pat`]) layer[`var${a}Pat`] = 'none';
+      });
+      if (layer.circleRings == null) layer.circleRings = 1;
+      if (!layer.circleOrient) layer.circleOrient = 'tangent';
+      if (!layer.distSettings) {
+        const fb = {amt: layer.distAmt || 40, spd: layer.distSpd || 30};
+        layer.distSettings = {wave:{...fb},stagger:{...fb},explode:{...fb},arch:{...fb},tile:{...fb},mirror:{...fb},glitch:{...fb},circle:{amt:35,spd:20}};
+      } else if (!layer.distSettings.circle) {
+        layer.distSettings.circle = {amt:35,spd:20};
+      }
+    });
+    Object.assign(T, data);
+    return true;
+  } catch(e) { return false; }
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
+  const wasRestored = restoreFromStorage();
+
+  // Remove any stale extra panes
+  for(let i=2;i<=6;i++){const p=document.getElementById(`pane-l${i}`);if(p)p.remove();}
   T.layers.forEach((_,i)=>buildLayerPane(`l${i+1}`));
   buildTplCards();
 
@@ -4457,12 +4547,48 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane-bg').classList.add('active');
 
+  if (wasRestored) {
+    // Sync all panel controls to restored T state
+    document.querySelectorAll('#accentOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.a===T.accent));
+    document.querySelectorAll('#logoVariantOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.logo===(T.logo||'none')));
+    document.querySelectorAll('#logoDockOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.dock===(T.logoDock||'tr')));
+    const lc=document.getElementById('logoControls');if(lc)lc.style.display=(T.logo&&T.logo!=='none')?'flex':'none';
+    const lse=(id,v,suf)=>{const el=document.getElementById(id);if(el)el.value=v;const vl=document.getElementById(id+'Val');if(vl)vl.textContent=v+suf;};
+    lse('logoSize',T.logoSize||28,'%');lse('logoOpacity',T.logoOpacity!=null?T.logoOpacity:100,'%');
+    document.querySelectorAll('#bgTexOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.tex===T.bgTex));
+    document.querySelectorAll('#gradTypeOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.g===T.grad));
+    document.querySelectorAll('#grainStyleOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.gs===T.grainStyle));
+    const grAnimB=document.getElementById('grainAnimToggle');if(grAnimB){const ga=T.grainAnim!==false;grAnimB.classList.toggle('on',ga);grAnimB.textContent=ga?'Animated':'Static';}
+    const gcpR2=document.getElementById('grainColorPaletteRow');if(gcpR2)gcpR2.style.display=T.grainStyle==='color'?'flex':'none';
+    const gcSw2=document.getElementById('grainColorSw');if(gcSw2)gcSw2.style.background=T.grainColor||'#ec008c';
+    document.querySelectorAll('#htModeOpts .bg-opt').forEach(el=>el.classList.toggle('active',el.dataset.ht===T.htMode));
+    const se=(id,v,suf)=>{const el=document.getElementById(id);if(el)el.value=v;const vl=document.getElementById(id+'Val');if(vl)vl.textContent=v+suf;};
+    se('gradAngle',T.gradAngle,'°');se('gradOpacity',T.gradOpacity,'%');
+    se('gradMid',T.gradMid??50,'%');se('gradGrain',T.gradGrain??0,'%');se('gradBlobs',T.gradBlobs??4,'');
+    const gbr=document.getElementById('gradBlobsRow');if(gbr)gbr.style.display=T.grad==='mesh'?'flex':'none';
+    se('grainAmount',T.grain,'%');se('grainSize',T.grainSize,'×');
+    se('glowVal',T.glow,'%');
+    se('htSpacing',T.htSpacing,'');se('htAngle',T.htAngle,'°');
+    const htBgB=document.getElementById('htBgToggle');if(htBgB){htBgB.classList.toggle('on',T.htBg===false);htBgB.textContent=T.htBg===false?'Text only':'All';}
+    se('risoIntensity',T.riso,'');se('risoOffset',T.risoOffset,'');
+    const gc1=document.getElementById('gradC1');if(gc1)gc1.value=T.gradC1;
+    const gc2=document.getElementById('gradC2');if(gc2)gc2.value=T.gradC2;
+    syncGradSlotsFromState();
+    syncLayerUI();
+    renderSwatches(); renderPreviewCard(); renderCssExport();
+    updateGrainPaletteSwatches();
+  } else {
+    generatePalette();
+  }
+
   typo_fitCanvas();typo_render();
   initCanvasDrag();
-  generatePalette();
   updatePlaygroundPaletteSwatches();
   updateGradPaletteSwatches();
-  updateGrainPaletteSwatches();
+  if (!wasRestored) updateGrainPaletteSwatches();
+
+  // Flush save immediately before tab close
+  window.addEventListener('beforeunload', _flushSave);
 
   document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
   initScrollSpy();
