@@ -298,7 +298,7 @@ function buildLayerStack() {
           <div class="layer-op-bar">
             <div class="layer-op-bar-fill" style="width:${opPct}%;background:${color};"></div>
           </div>
-          <span style="font-size:7px;color:rgba(255,255,255,.2);width:22px;text-align:right;flex-shrink:0;">${opPct}%</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.2);width:22px;text-align:right;flex-shrink:0;">${opPct}%</span>
         </div>
       </div>
       <div class="layer-solo${isSoloed ? ' soloed' : ''}" title="Solo" onclick="toggleSolo('${lid}',event)">S</div>

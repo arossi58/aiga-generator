@@ -182,7 +182,7 @@ function buildLayerPane(lid){
       <div class="dist-grid" id="${lid}-dist-grid">
         ${imgDItems.map(item=>`<button class="dist-btn${imgDists.includes(item.d)?' active':''}" onclick="toggleImgDist('${lid}',${idx},'${item.d}')"><span class="di">${item.i}</span>${item.l}</button>`).join('')}
       </div>
-      <div style="font-size:7px;color:rgba(255,255,255,.2);margin-top:4px;letter-spacing:.1em;">Click multiple to stack</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.2);margin-top:4px;letter-spacing:.1em;">Click multiple to stack</div>
       <div style="margin-top:8px;" id="${lid}-dist-controls">${buildDistControls(lid,layer)}</div>
     </div>
     <div class="cg">
@@ -270,7 +270,7 @@ function buildLayerPane(lid){
       <div class="dist-grid" id="${lid}-dist-grid">
         ${distItems.map(d=>`<button class="dist-btn${(layer.dists||(layer.dist?[layer.dist]:['normal'])).includes(d.d)?' active':''}" onclick="toggleDist(${idx},'${d.d}','${lid}')"><span class="di">${d.i}</span>${d.l}</button>`).join('')}
       </div>
-      <div style="font-size:7px;color:rgba(255,255,255,.2);margin-top:4px;letter-spacing:.1em;">Click multiple to stack</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.2);margin-top:4px;letter-spacing:.1em;">Click multiple to stack</div>
     </div>
     <div class="cg" id="${lid}-dist-settings-cg">
       <div class="cg-title">Distortion Settings</div>
@@ -281,10 +281,10 @@ function buildLayerPane(lid){
       ${varAxisRow(lid,idx,'varWghtPat','varWghtMin','varWghtMax','varWghtSpd','varWghtEase','Wght',100,900,layer.varWghtPat||'none',layer.varWghtMin??200,layer.varWghtMax??800,layer.varWghtSpd??3,layer.varWghtEase||'linear')}
       ${varAxisRow(lid,idx,'varWidthPat','varWidthMin','varWidthMax','varWidthSpd','varWidthEase','Width',20,300,layer.varWidthPat||'none',layer.varWidthMin??60,layer.varWidthMax??140,layer.varWidthSpd??3,layer.varWidthEase||'linear')}
       ${varAxisRow(lid,idx,'varSkewPat','varSkewMin','varSkewMax','varSkewSpd','varSkewEase','Skew',-60,60,layer.varSkewPat||'none',layer.varSkewMin??-25,layer.varSkewMax??25,layer.varSkewSpd??3,layer.varSkewEase||'linear')}
-      <div style="font-size:7px;color:rgba(229,0,125,.5);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Fraunces Only</div>
+      <div style="font-size:11px;color:rgba(229,0,125,.5);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Fraunces Only</div>
       ${varAxisRow(lid,idx,'varSoftPat','varSoftMin','varSoftMax','varSoftSpd','varSoftEase','SOFT',0,100,layer.varSoftPat||'none',layer.varSoftMin??0,layer.varSoftMax??100,layer.varSoftSpd??3,layer.varSoftEase||'linear')}
       ${varAxisRow(lid,idx,'varWonkPat','varWonkMin','varWonkMax','varWonkSpd','varWonkEase','WONK',0,1,layer.varWonkPat||'none',layer.varWonkMin??0,layer.varWonkMax??1,layer.varWonkSpd??3,layer.varWonkEase||'linear',0.01)}
-      <div style="font-size:7px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Transform</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Transform</div>
       ${varAxisRow(lid,idx,'varScaleXPat','varScaleXMin','varScaleXMax','varScaleXSpd','varScaleXEase','Scale X',10,400,layer.varScaleXPat||'none',layer.varScaleXMin??50,layer.varScaleXMax??150,layer.varScaleXSpd??3,layer.varScaleXEase||'linear')}
       ${varAxisRow(lid,idx,'varScaleYPat','varScaleYMin','varScaleYMax','varScaleYSpd','varScaleYEase','Scale Y',10,400,layer.varScaleYPat||'none',layer.varScaleYMin??50,layer.varScaleYMax??150,layer.varScaleYSpd??3,layer.varScaleYEase||'linear')}
       ${varAxisRow(lid,idx,'varRotPat','varRotMin','varRotMax','varRotSpd','varRotEase','Rotate',-180,180,layer.varRotPat||'none',layer.varRotMin??-45,layer.varRotMax??45,layer.varRotSpd??3,layer.varRotEase||'linear')}
@@ -349,7 +349,7 @@ function buildDistControls(lid,layer){
   const idx=lidToIdx(lid);
   const dists=layer.dists||['normal'];
   const active=dists.filter(d=>d!=='normal');
-  if(!active.length)return '<div style="font-size:9px;color:rgba(255,255,255,.25);padding:4px 0;">Select a distortion above</div>';
+  if(!active.length)return '<div style="font-size:11px;color:rgba(255,255,255,.25);padding:4px 0;">Select a distortion above</div>';
   return active.map(d=>{
     if(d==='circle'){
       const s=layer.distSettings?.circle||{amt:35,spd:20};
@@ -357,7 +357,7 @@ function buildDistControls(lid,layer){
       const orient=layer.circleOrient||'tangent';
       const orientOpts=[['tangent','Tangent'],['radial-out','Radial ↑'],['radial-in','Radial ↓'],['upright','Upright']];
       return `<div style="margin-bottom:8px;">
-  <div style="font-size:8px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Circle</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Circle</div>
   <div class="sl-row"><span class="sl-label">Radius</span>
     <div class="sl-wrap"><input type="range" min="5" max="80" value="${s.amt}" oninput="setDistParam(${idx},'circle','amt',+this.value);document.getElementById('${lid}-circle-amtVal').textContent=this.value;typo_render();"></div>
     <span class="sl-val" id="${lid}-circle-amtVal">${s.amt}</span>
@@ -371,7 +371,7 @@ function buildDistControls(lid,layer){
     <span class="sl-val" id="${lid}-circleRingsVal">${rings}</span>
   </div>
   <div style="margin-top:6px;">
-    <div style="font-size:7px;color:rgba(255,255,255,.25);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Orientation</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.25);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Orientation</div>
     <div class="seg" style="flex-wrap:wrap;gap:2px;">
       ${orientOpts.map(([v,l])=>`<button class="seg-btn${orient===v?' active':''}" onclick="T.layers[${idx}].circleOrient='${v}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${l}</button>`).join('')}
     </div>
@@ -380,7 +380,7 @@ function buildDistControls(lid,layer){
     }
     const s=layer.distSettings?.[d]||{amt:layer.distAmt||40,spd:layer.distSpd||30};
     return `<div style="margin-bottom:8px;">
-  <div style="font-size:8px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">${_distLabels[d]||d}</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">${_distLabels[d]||d}</div>
   <div class="sl-row"><span class="sl-label">Amount</span>
     <div class="sl-wrap"><input type="range" min="0" max="100" value="${s.amt}" oninput="setDistParam(${idx},'${d}','amt',+this.value);document.getElementById('${lid}-${d}-amtVal').textContent=this.value;typo_render();"></div>
     <span class="sl-val" id="${lid}-${d}-amtVal">${s.amt}</span>
