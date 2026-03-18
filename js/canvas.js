@@ -35,11 +35,17 @@ function buildLayerPane(lid){
       </div>
       <div id="${lid}-circ-opts" style="display:${layer.arrangement==='circle'?'block':'none'}">
         <div class="sl-row"><span class="sl-label">Count</span>
-          <div class="sl-wrap"><input type="range" min="1" max="24" value="${layer.circleCount||8}" id="${lid}-circleCount" oninput="T.layers[${idx}].circleCount=+this.value;document.getElementById('${lid}-circleCountVal').textContent=this.value;typo_render();"></div>
+          <div class="sl-wrap"><input type="range" min="1" max="40" value="${layer.circleCount||8}" id="${lid}-circleCount" oninput="T.layers[${idx}].circleCount=+this.value;document.getElementById('${lid}-circleCountVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-circleCountVal">${layer.circleCount||8}</span></div>
         <div class="sl-row"><span class="sl-label">Radius</span>
-          <div class="sl-wrap"><input type="range" min="5" max="50" value="${layer.circleRadius||30}" id="${lid}-circleRadius" oninput="T.layers[${idx}].circleRadius=+this.value;document.getElementById('${lid}-circleRadiusVal').textContent=this.value+'%';typo_render();"></div>
+          <div class="sl-wrap"><input type="range" min="5" max="150" value="${layer.circleRadius||30}" id="${lid}-circleRadius" oninput="T.layers[${idx}].circleRadius=+this.value;document.getElementById('${lid}-circleRadiusVal').textContent=this.value+'%';typo_render();"></div>
           <span class="sl-val" id="${lid}-circleRadiusVal">${layer.circleRadius||30}%</span></div>
+        <div class="sl-row"><span class="sl-label">Rings</span>
+          <div class="sl-wrap"><input type="range" min="1" max="8" value="${layer.eyeRings||1}" id="${lid}-eyeRings" oninput="T.layers[${idx}].eyeRings=+this.value;document.getElementById('${lid}-eyeRingsVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-eyeRingsVal">${layer.eyeRings||1}</span></div>
+        <div class="sl-row"><span class="sl-label">Ring Gap</span>
+          <div class="sl-wrap"><input type="range" min="10" max="100" value="${layer.eyeRingGap||30}" id="${lid}-eyeRingGap" oninput="T.layers[${idx}].eyeRingGap=+this.value;document.getElementById('${lid}-eyeRingGapVal').textContent=this.value+'%';typo_render();"></div>
+          <span class="sl-val" id="${lid}-eyeRingGapVal">${layer.eyeRingGap||30}%</span></div>
       </div>
     </div>
     <div class="cg">
@@ -1081,13 +1087,20 @@ function drawEyeLayer(ctx,layer,t){
     }
   }else if(layer.arrangement==='circle'){
     const count=layer.circleCount||8;
-    const radius=(layer.circleRadius/100)*Math.min(TW,TH)*0.5;
-    for(let i=0;i<count;i++){
-      const angle=(i/count)*Math.PI*2-Math.PI/2;
-      const ex=cx+Math.cos(angle)*radius,ey=cy+Math.sin(angle)*radius;
-      ctx.save();ctx.translate(ex,ey);ctx.rotate(angle+Math.PI/2);ctx.translate(-ex,-ey);
-      drawEye(ctx,ex,ey,hw,layer,i,t);
-      ctx.restore();
+    const rings=Math.max(1,layer.eyeRings||1);
+    const baseRadius=(layer.circleRadius/100)*Math.min(TW,TH)*0.5;
+    const ringGap=(layer.eyeRingGap/100)*Math.min(TW,TH)*0.5||hw*2.4;
+    let eyeIdx=0;
+    for(let ring=0;ring<rings;ring++){
+      const radius=baseRadius+ring*ringGap;
+      const ringCount=ring===0?count:Math.round(count*(radius/baseRadius));
+      for(let i=0;i<ringCount;i++){
+        const angle=(i/ringCount)*Math.PI*2-Math.PI/2;
+        const ex=cx+Math.cos(angle)*radius,ey=cy+Math.sin(angle)*radius;
+        ctx.save();ctx.translate(ex,ey);ctx.rotate(angle+Math.PI/2);ctx.translate(-ex,-ey);
+        drawEye(ctx,ex,ey,hw,layer,eyeIdx++,t);
+        ctx.restore();
+      }
     }
   }else{
     drawEye(ctx,cx,cy,hw,layer,0,t);
