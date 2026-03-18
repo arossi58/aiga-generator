@@ -252,29 +252,20 @@ function quickFX(type) {
    EXPORT SYSTEM
 ════════════════════════════════════════════ */
 
+// Export presets mirror the canvas size presets 1:1.
+// canvasVal links each preset to the matching canvas dropdown option.
 const PLATFORMS_DEF = [
-  // Instagram
-  { id:'ig-post',    label:'Instagram',   sub:'Feed 1:1',    icon:'📷', w:1080, h:1080, group:'Instagram' },
-  { id:'ig-post-45', label:'Instagram',   sub:'Feed 4:5',    icon:'📷', w:1080, h:1350, group:'Instagram' },
-  { id:'ig-story',   label:'Instagram',   sub:'Story',       icon:'📱', w:1080, h:1920, group:'Instagram' },
-  { id:'ig-reel',    label:'Instagram',   sub:'Reel',        icon:'🎬', w:1080, h:1920, group:'Instagram' },
-  // Facebook
-  { id:'fb-feed',    label:'Facebook',    sub:'Feed 1.91:1', icon:'📘', w:1200, h:628,  group:'Facebook' },
-  { id:'fb-post',    label:'Facebook',    sub:'Feed 1:1',    icon:'📘', w:1080, h:1080, group:'Facebook' },
-  { id:'fb-story',   label:'Facebook',    sub:'Story',       icon:'📱', w:1080, h:1920, group:'Facebook' },
-  // LinkedIn
-  { id:'li-post',    label:'LinkedIn',    sub:'Post 1.91:1', icon:'💼', w:1200, h:627,  group:'LinkedIn' },
-  { id:'li-post-sq', label:'LinkedIn',    sub:'Post 1:1',    icon:'💼', w:1200, h:1200, group:'LinkedIn' },
-  { id:'li-post-45', label:'LinkedIn',    sub:'Post 4:5',    icon:'💼', w:1080, h:1350, group:'LinkedIn' },
-  // Other
-  { id:'tiktok',     label:'TikTok',      sub:'Video',       icon:'🎵', w:1080, h:1920, group:'TikTok' },
-  { id:'youtube',    label:'YouTube',     sub:'Thumbnail',   icon:'▶',  w:1280, h:720,  group:'YouTube' },
-  { id:'twitter',    label:'X / Twitter', sub:'Post',        icon:'𝕏',  w:1200, h:675,  group:'X / Twitter' },
-  { id:'custom',     label:'Canvas',      sub:'Current size',icon:'⬜', w:null, h:null, group:'Custom' },
+  { id:'square',       sub:'Square 1:1',       icon:'⬛', w:1080, h:1080, canvasVal:'800,800'   },
+  { id:'landscape',    sub:'Landscape 1.91:1', icon:'▬',  w:1200, h:628,  canvasVal:'1080,566'  },
+  { id:'portrait-45',  sub:'Portrait 4:5',     icon:'▮',  w:1080, h:1350, canvasVal:'800,1000'  },
+  { id:'story-reel',   sub:'Story / Reel 9:16',icon:'📱', w:1080, h:1920, canvasVal:'630,1120'  },
+  { id:'youtube',      sub:'YouTube 16:9',     icon:'▶',  w:1280, h:720,  canvasVal:'1280,720'  },
+  { id:'banner',       sub:'Banner 8:3',       icon:'▬',  w:1200, h:450,  canvasVal:'1200,450'  },
+  { id:'custom',       sub:'Current size',     icon:'⬜', w:null, h:null, canvasVal:null        },
 ];
 
 const EX = {
-  platform: 'ig-post',
+  platform: 'square',
   format: 'png',
   quality: 0.92,
   scale: 2,
@@ -305,20 +296,13 @@ function closeExport() {
 
 function buildPlatformGrid() {
   const grid = document.getElementById('platGrid');
-  // Build ordered group list preserving insertion order
-  const groupOrder = [];
-  PLATFORMS_DEF.forEach(p => { if (!groupOrder.includes(p.group)) groupOrder.push(p.group); });
-  grid.innerHTML = groupOrder.map(grp => {
-    const platforms = PLATFORMS_DEF.filter(p => p.group === grp);
-    const btns = platforms.map(p => {
-      const dims = p.w ? `${p.w}×${p.h}` : `${TW}×${TH}`;
-      return `<button class="plat-btn${EX.platform===p.id?' active':''}" onclick="selPlatform('${p.id}',this)">
-        <span class="plat-icon">${p.icon}</span>
-        <span class="plat-name">${p.sub}</span>
-        <span class="plat-dim">${dims}</span>
-      </button>`;
-    }).join('');
-    return `<div class="plat-group-label">${grp}</div>${btns}`;
+  grid.innerHTML = PLATFORMS_DEF.map(p => {
+    const dims = p.w ? `${p.w}×${p.h}` : `${TW}×${TH}`;
+    return `<button class="plat-btn${EX.platform===p.id?' active':''}" onclick="selPlatform('${p.id}',this)">
+      <span class="plat-icon">${p.icon}</span>
+      <span class="plat-name">${p.sub}</span>
+      <span class="plat-dim">${dims}</span>
+    </button>`;
   }).join('');
 }
 
@@ -326,6 +310,15 @@ function selPlatform(id, btn) {
   EX.platform = id;
   document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  // Sync canvas size dropdown to match the selected export preset
+  const p = PLATFORMS_DEF.find(x => x.id === id);
+  if (p && p.canvasVal) {
+    const sel = document.getElementById('canvasSize');
+    if (sel && sel.value !== p.canvasVal) {
+      sel.value = p.canvasVal;
+      typo_resize();
+    }
+  }
   updateExpSummary();
   updateSafeZone();
 }
@@ -350,7 +343,7 @@ function updateExpSummary() {
   document.getElementById('sumH').textContent = d.h.toLocaleString();
   document.getElementById('sumFmt').textContent = EX.format.toUpperCase();
   const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
-  document.getElementById('sumPlat').textContent = p ? `${p.group} ${p.sub}` : 'Custom';
+  document.getElementById('sumPlat').textContent = p ? p.sub : 'Custom';
   // Show/hide quality slider
   const isPNG = EX.format === 'png';
   document.getElementById('qualitySlider').disabled = isPNG;

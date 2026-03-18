@@ -1562,109 +1562,53 @@ window.addEventListener('resize',typo_fitCanvas);
    SAFE ZONE OVERLAY
 ════════════════════════════════════════════ */
 // Safe zone data sourced from Jon Loomer (jonloomer.com/qvt/safe-zones-template-meta-ads/)
-// 9:16 vertical (1080×1920): top=270px=14%, bottom varies, sides=65px=6%
-// Story bottom=380px=20%, Reel bottom=670px=35%
+// 9:16 vertical (1080×1920): top=270px=14%, sides=65px=6%
+// Story bottom=380px=20%  |  Reel bottom=670px=35%
+// Keys match PLATFORMS_DEF ids in app.js
 const SAFE_ZONE_DEFS = {
-  // ── Instagram ──────────────────────────────────────────────
-  'ig-post': {
-    name: 'Instagram Feed', hint: '1:1 · 1080×1080',
+  'square': {
+    name: 'Square 1:1', hint: '1080×1080',
     zones: [],
     safe: { x:.06, y:.06, w:.88, h:.88 },
   },
-  'ig-post-45': {
-    // Feed crops to 4:5 max portrait — margins ~250px top/bottom of 1350px
-    name: 'Instagram Feed', hint: '4:5 · 1080×1350',
-    zones: [
-      { label:'May crop on older clients', x:0, y:0,   w:1, h:.185 },
-      { label:'May crop on older clients', x:0, y:.815, w:1, h:.185 },
-    ],
-    safe: { x:.06, y:.185, w:.88, h:.63 },
+  'landscape': {
+    name: 'Landscape 1.91:1', hint: '1200×628',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
   },
-  'ig-story': {
-    // Top 14% (270px): status bar + story progress strips + profile/close
-    // Bottom 20% (380px): reply bar + engagement row
-    // Sides 6% (65px): edge clearance
-    name: 'Instagram Story', hint: '9:16 · 1080×1920',
-    zones: [
-      { label:'Progress Bar + Profile',  x:0, y:0,   w:1, h:.14 },
-      { label:'Reply + Engagement Zone', x:0, y:.80, w:1, h:.20 },
-    ],
-    safe: { x:.06, y:.14, w:.88, h:.66 },
+  'portrait-45': {
+    name: 'Portrait 4:5', hint: '1080×1350',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
   },
-  'ig-reel': {
-    // Top 14% (270px): profile header
-    // Bottom 35% (670px): caption, audio, nav bar, engagement
-    // Right 18%: action buttons column (like, comment, share, audio disc)
-    // Left 6%, Right safe up to 82%
-    name: 'Instagram Reel', hint: '9:16 · 1080×1920',
+  'story-reel': {
+    // Story: top 14%, bottom 20% — Reel: top 14%, bottom 35%
+    // Show the stricter Reel bottom zone + Story end line; right-side action buttons
+    // Source: Jon Loomer safe zone template for Meta ads
+    name: 'Story / Reel 9:16', hint: '1080×1920',
     zones: [
-      { label:'Profile + Top Bar',         x:0,   y:0,   w:1,   h:.14 },
-      { label:'Action Buttons',            x:.82, y:.14, w:.18, h:.51 },
-      { label:'Caption + Audio + Nav Bar', x:0,   y:.65, w:1,   h:.35 },
+      { label:'Top Bar + Profile',         x:0,   y:0,   w:1,   h:.14  },
+      { label:'Action Buttons (Reel)',     x:.82, y:.14, w:.18, h:.51  },
+      { label:'Story ends — Reel caption', x:0,   y:.80, w:1,   h:.05  },
+      { label:'Caption + Audio + Nav Bar', x:0,   y:.85, w:1,   h:.15  },
     ],
+    // Conservative safe zone: stays clear of all Story AND Reel UI
     safe: { x:.06, y:.14, w:.76, h:.51 },
+    // Extra marker: where Story engagement begins (dashed line at 80%)
+    storyLine: .80,
   },
-  // ── Facebook ───────────────────────────────────────────────
-  'fb-feed': {
-    name: 'Facebook Feed', hint: '1.91:1 · 1200×628',
-    zones: [],
-    safe: { x:.10, y:.10, w:.80, h:.80 },
-  },
-  'fb-post': {
-    name: 'Facebook Post', hint: '1:1 · 1080×1080',
-    zones: [],
-    safe: { x:.06, y:.06, w:.88, h:.88 },
-  },
-  'fb-story': {
-    // Same safe zone spec as Instagram Story (both Meta platforms)
-    name: 'Facebook Story', hint: '9:16 · 1080×1920',
-    zones: [
-      { label:'Progress Bar + Profile',  x:0, y:0,   w:1, h:.14 },
-      { label:'Reply + Engagement Zone', x:0, y:.80, w:1, h:.20 },
-    ],
-    safe: { x:.06, y:.14, w:.88, h:.66 },
-  },
-  // ── LinkedIn ───────────────────────────────────────────────
-  'li-post': {
-    name: 'LinkedIn Post', hint: '1.91:1 · 1200×627',
-    zones: [],
-    safe: { x:.06, y:.06, w:.88, h:.88 },
-  },
-  'li-post-sq': {
-    name: 'LinkedIn Post', hint: '1:1 · 1200×1200',
-    zones: [],
-    safe: { x:.06, y:.06, w:.88, h:.88 },
-  },
-  'li-post-45': {
-    name: 'LinkedIn Post', hint: '4:5 · 1080×1350',
-    zones: [],
-    safe: { x:.06, y:.06, w:.88, h:.88 },
-  },
-  // ── TikTok ─────────────────────────────────────────────────
-  'tiktok': {
-    name: 'TikTok', hint: '9:16 · 1080×1920',
-    zones: [
-      { label:'Top Bar',               x:0,   y:0,   w:1,   h:.08 },
-      { label:'Action Buttons',        x:.85, y:.18, w:.15, h:.57 },
-      { label:'Caption + Audio + Nav', x:0,   y:.75, w:1,   h:.25 },
-    ],
-    safe: { x:.06, y:.08, w:.79, h:.67 },
-  },
-  // ── YouTube ────────────────────────────────────────────────
   'youtube': {
-    name: 'YouTube Thumbnail', hint: '16:9 · 1280×720',
+    name: 'YouTube 16:9', hint: '1280×720',
     zones: [
       { label:'Title Overlay', x:0, y:.78, w:1, h:.22 },
     ],
     safe: { x:.05, y:.05, w:.90, h:.73 },
   },
-  // ── X / Twitter ────────────────────────────────────────────
-  'twitter': {
-    name: 'X / Twitter Post', hint: '16:9 · 1200×675',
+  'banner': {
+    name: 'Banner 8:3', hint: '1200×450',
     zones: [],
     safe: { x:.05, y:.05, w:.90, h:.90 },
   },
-  // ── Fallback ───────────────────────────────────────────────
   'custom': {
     name: 'Custom Canvas', hint: 'current size',
     zones: [],
@@ -1739,6 +1683,22 @@ function updateSafeZone() {
       letter-spacing="0.08em" fill="rgba(10,30,15,0.95)">SAFE ZONE</text>
   `;
 
+  // Optional story/reel split line
+  const splitLine = def.storyLine ? (() => {
+    const ly = def.storyLine * H;
+    const pillW = fs * 7, pillH = fs + 6;
+    return `
+      <line x1="0" y1="${ly}" x2="${W}" y2="${ly}"
+        stroke="rgba(80,220,130,0.5)" stroke-width="${sw}"
+        stroke-dasharray="${Math.round(W*0.008)},${Math.round(W*0.004)}"/>
+      <rect x="${W/2 - pillW/2}" y="${ly - pillH/2}" width="${pillW}" height="${pillH}"
+        fill="rgba(20,20,20,0.8)" rx="${pillH/2}"/>
+      <text x="${W/2}" y="${ly + 1}" text-anchor="middle" dominant-baseline="middle"
+        font-family="'DM Mono',monospace" font-size="${fs - 2}" fill="rgba(80,220,130,0.9)">
+        ← Story safe end
+      </text>`;
+  })() : '';
+
   // Platform label — bottom center, outside safe zone
   const labelY = Math.min(H - 6, sy + ssh + fs * 1.6);
   const platLabel = `
@@ -1750,7 +1710,7 @@ function updateSafeZone() {
   overlay.style.cssText = `display:block;position:absolute;top:0;left:0;width:${W}px;height:${H}px;pointer-events:none;z-index:10;`;
   overlay.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;">
-    ${defs}${zonesHTML}${safeHTML}${platLabel}
+    ${defs}${zonesHTML}${safeHTML}${splitLine}${platLabel}
   </svg>`;
 }
 

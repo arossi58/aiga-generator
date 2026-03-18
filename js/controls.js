@@ -5,6 +5,12 @@ function typo_resize(){
   document.getElementById('canvasInfo').textContent=`${TW} × ${TH}px`;
   typo_fitCanvas();typo_render();
   updateSafeZone();
+  // Sync export preset to match canvas size
+  if(typeof PLATFORMS_DEF!=='undefined'&&typeof EX!=='undefined'){
+    const match=PLATFORMS_DEF.find(p=>p.canvasVal===v);
+    if(match){EX.platform=match.id;}
+    if(typeof buildPlatformGrid==='function')buildPlatformGrid();
+  }
 }
 
 /* ── Tab switching ── */
