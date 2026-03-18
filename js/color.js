@@ -211,6 +211,7 @@ const defEyeLayer=(x,y)=>({
   lookSpeed:1,
   lookAmt:1,
   lookStagger:true,
+  wanderRandom:0,
   arrangement:'single',   // 'single' | 'tile' | 'circle'
   tileRows:3,tileCols:4,tileSpacingX:1.8,tileSpacingY:1.5,
   circleCount:8,circleRadius:30,

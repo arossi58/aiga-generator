@@ -49,12 +49,17 @@ function buildLayerPane(lid){
       </div>
       <div class="cg-title" style="margin-top:10px;">Animate</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px;" id="${lid}-look-modes">
-        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan'],['toward-center','→ Center']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';typo_render();">${lbl}</button>`).join('')}
+        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan'],['toward-center','→ Center']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';document.getElementById('${lid}-look-random-row').style.display='${'wander'===m?'block':'none'}';typo_render();">${lbl}</button>`).join('')}
       </div>
       <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan','toward-center'].includes(layer.lookMode)?'block':'none'}">
         <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Speed</span>
           <div class="sl-wrap"><input type="range" min="0.1" max="10" step="0.1" value="${layer.lookSpeed??1}" id="${lid}-lookSpd" oninput="T.layers[${idx}].lookSpeed=+this.value;document.getElementById('${lid}-lookSpdVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-lookSpdVal">${layer.lookSpeed??1}</span></div>
+        <div id="${lid}-look-random-row" style="display:${layer.lookMode==='wander'?'block':'none'}">
+          <div class="sl-row"><span class="sl-label">Randomness</span>
+            <div class="sl-wrap"><input type="range" min="0" max="1" step="0.05" value="${layer.wanderRandom??0}" id="${lid}-wanderRandom" oninput="T.layers[${idx}].wanderRandom=+this.value;document.getElementById('${lid}-wanderRandomVal').textContent=Math.round(this.value*100)+'%';typo_render();"></div>
+            <span class="sl-val" id="${lid}-wanderRandomVal">${Math.round((layer.wanderRandom??0)*100)}%</span></div>
+        </div>
         <div class="sl-row"><span class="sl-label">Amount</span>
           <div class="sl-wrap"><input type="range" min="0" max="1" step="0.05" value="${layer.lookAmt??1}" id="${lid}-lookAmt" oninput="T.layers[${idx}].lookAmt=+this.value;document.getElementById('${lid}-lookAmtVal').textContent=Math.round(this.value*100)+'%';typo_render();"></div>
           <span class="sl-val" id="${lid}-lookAmtVal">${Math.round((layer.lookAmt??1)*100)}%</span></div>
@@ -952,8 +957,13 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
   const ph=(layer.lookStagger!==false)?eyeIdx*0.618:0;
   let gx=cx,gy=cy;
   if(layer.lookMode==='wander'){
-    gx=cx+Math.sin(t*spd*0.31+ph*4.9)*Math.cos(t*spd*0.19+ph*2.3)*maxOffset*amt;
-    gy=cy+Math.sin(t*spd*0.23+ph*7.3+1.4)*Math.cos(t*spd*0.17+ph*3.1)*maxOffset*amt;
+    const rand=layer.wanderRandom??0;
+    const smoothX=Math.sin(t*spd*0.021+ph*4.9)*Math.cos(t*spd*0.013+ph*2.3);
+    const smoothY=Math.sin(t*spd*0.016+ph*7.3+1.4)*Math.cos(t*spd*0.011+ph*3.1);
+    const chaoticX=(Math.sin(t*spd*0.047+ph*3.1)+Math.sin(t*spd*0.009+ph*6.2)*0.7+Math.sin(t*spd*0.031+ph*1.7)*0.5)/2.2;
+    const chaoticY=(Math.sin(t*spd*0.059+ph*4.4+1)+Math.sin(t*spd*0.011+ph*5.1+2)*0.7+Math.sin(t*spd*0.037+ph*2.9)*0.5)/2.2;
+    gx=cx+(smoothX*(1-rand)+chaoticX*rand)*maxOffset*amt;
+    gy=cy+(smoothY*(1-rand)+chaoticY*rand)*maxOffset*amt;
   }else if(layer.lookMode==='circle'){
     const a=t*spd*Math.PI*2+ph*Math.PI*2;
     gx=cx+Math.cos(a)*maxOffset*amt;gy=cy+Math.sin(a)*maxOffset*amt;
