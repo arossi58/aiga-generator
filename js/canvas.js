@@ -565,7 +565,7 @@ function drawLogo(ctx,W,H){
   const img=_logoImgs[T.logo];
   if(!img||!img.complete||img.naturalWidth===0)return;
   const pad=W*.03;
-  const logoW=120;
+  const logoW=180;
   const logoH=logoW*(207/604);
   const dock=T.logoDock||'tr';
   const x=dock==='tr'?W-pad-logoW:pad;
