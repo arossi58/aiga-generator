@@ -1,16 +1,19 @@
 /* ════════════════════════════════════════════
    SUPABASE — Community Templates
-   Uses the official Supabase JS SDK (loaded via CDN in index.html)
+   Uses the official Supabase JS SDK (loaded via CDN in index.html).
+   The anon key is intentionally public — RLS policies protect the data.
 ════════════════════════════════════════════ */
 
-const SUPABASE_TABLE = 'templates';
+const SUPABASE_URL      = 'https://danukrioxidctbbapscj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhbnVrcmlveGlkY3RiYmFwc2NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MDM0ODMsImV4cCI6MjA4OTM3OTQ4M30.MqPR9WIqbvMb17FcIXSTpP6TAAypn09zkmckJ3127V0';
+const SUPABASE_TABLE    = 'templates';
 
-/* ── Init client (lazy to avoid TDZ if CDN loads async) ── */
+/* ── Init client (lazy so SDK has time to load) ── */
 let _sb = null;
 function _getSb() {
   if (_sb) return _sb;
-  if (typeof supabase === 'undefined') throw new Error('Supabase SDK not loaded — check CDN connection.');
-  _sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  if (typeof supabase === 'undefined') throw new Error('Supabase SDK not loaded — check CDN.');
+  _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   return _sb;
 }
 
@@ -36,7 +39,7 @@ async function sbSaveTemplate(name, userName, data) {
   return rows && rows[0];
 }
 
-/** Delete a template by id (only works if RLS allows it) */
+/** Delete a template by id */
 async function sbDeleteTemplate(id) {
   const { error } = await _getSb().from(SUPABASE_TABLE).delete().eq('id', id);
   if (error) throw new Error(`sbDeleteTemplate: ${error.message}`);
