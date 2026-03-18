@@ -242,7 +242,7 @@ function buildLayerPane(lid){
     <div class="cg">
       <div class="cg-title">Typeface</div>
       <div class="seg">
-        ${[['Roboto Flex','Flex'],['Fraunces','Fraunces'],['DM Mono','Mono'],['Recursive','Recursive']].map(([f,l])=>`<button class="seg-btn${layer.font===f?' active':''}" onclick="T.layers[${idx}].font='${f}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${l}</button>`).join('')}
+        ${[['Roboto Flex','Flex'],['Fraunces','Fraunces']].map(([f,l])=>`<button class="seg-btn${layer.font===f?' active':''}" onclick="T.layers[${idx}].font='${f}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${l}</button>`).join('')}
       </div>
     </div>
     <div class="cg">
@@ -302,17 +302,21 @@ function buildLayerPane(lid){
     </div>
     <div class="cg">
       <div class="cg-title">Variable Type <span class="var-badge">AXIS</span></div>
-      ${varAxisRow(lid,idx,'varWghtPat','varWghtMin','varWghtMax','varWghtSpd','varWghtEase','Wght',100,900,layer.varWghtPat||'none',layer.varWghtMin??200,layer.varWghtMax??800,layer.varWghtSpd??3,layer.varWghtEase||'linear')}
-      ${varAxisRow(lid,idx,'varWidthPat','varWidthMin','varWidthMax','varWidthSpd','varWidthEase','Width',20,300,layer.varWidthPat||'none',layer.varWidthMin??60,layer.varWidthMax??140,layer.varWidthSpd??3,layer.varWidthEase||'linear')}
-      ${varAxisRow(lid,idx,'varSkewPat','varSkewMin','varSkewMax','varSkewSpd','varSkewEase','Skew',-60,60,layer.varSkewPat||'none',layer.varSkewMin??-25,layer.varSkewMax??25,layer.varSkewSpd??3,layer.varSkewEase||'linear')}
-      <div style="font-size:11px;color:rgba(229,0,125,.5);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Fraunces Only</div>
-      ${varAxisRow(lid,idx,'varSoftPat','varSoftMin','varSoftMax','varSoftSpd','varSoftEase','SOFT',0,100,layer.varSoftPat||'none',layer.varSoftMin??0,layer.varSoftMax??100,layer.varSoftSpd??3,layer.varSoftEase||'linear')}
-      ${varAxisRow(lid,idx,'varWonkPat','varWonkMin','varWonkMax','varWonkSpd','varWonkEase','WONK',0,1,layer.varWonkPat||'none',layer.varWonkMin??0,layer.varWonkMax??1,layer.varWonkSpd??3,layer.varWonkEase||'linear',0.01)}
-      <div style="font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin:8px 0 2px;">Transform</div>
-      ${varAxisRow(lid,idx,'varScaleXPat','varScaleXMin','varScaleXMax','varScaleXSpd','varScaleXEase','Scale X',10,400,layer.varScaleXPat||'none',layer.varScaleXMin??50,layer.varScaleXMax??150,layer.varScaleXSpd??3,layer.varScaleXEase||'linear')}
-      ${varAxisRow(lid,idx,'varScaleYPat','varScaleYMin','varScaleYMax','varScaleYSpd','varScaleYEase','Scale Y',10,400,layer.varScaleYPat||'none',layer.varScaleYMin??50,layer.varScaleYMax??150,layer.varScaleYSpd??3,layer.varScaleYEase||'linear')}
-      ${varAxisRow(lid,idx,'varRotPat','varRotMin','varRotMax','varRotSpd','varRotEase','Rotate',-180,180,layer.varRotPat||'none',layer.varRotMin??-45,layer.varRotMax??45,layer.varRotSpd??3,layer.varRotEase||'linear')}
-      ${varAxisRow(lid,idx,'varTrackPat','varTrackMin','varTrackMax','varTrackSpd','varTrackEase','Track',-20,120,layer.varTrackPat||'none',layer.varTrackMin??-5,layer.varTrackMax??60,layer.varTrackSpd??3,layer.varTrackEase||'linear')}
+      <div class="var-section-label">Font Axes</div>
+      ${varAxisRow(lid,idx,'varWght','Weight',100,900,400,200,800,3,1,layer)}
+      ${varAxisRow(lid,idx,'varOpsz','Opt. Size',9,144,Math.min(144,Math.max(9,Math.round(layer.size))),9,144,3,1,layer)}
+      ${varAxisRow(lid,idx,'varWidth','Width %',25,151,100,60,140,3,1,layer)}
+      <div class="var-section-sub">Roboto Flex only</div>
+      ${varAxisRow(lid,idx,'varGrad','GRAD',-200,150,0,-100,100,3,1,layer)}
+      <div class="var-section-sub">Fraunces only</div>
+      ${varAxisRow(lid,idx,'varSoft','SOFT',0,100,0,0,100,3,1,layer)}
+      ${varAxisRow(lid,idx,'varWonk','WONK',0,1,0,0,1,3,0.01,layer)}
+      <div class="var-section-label">Transform</div>
+      ${varAxisRow(lid,idx,'varSkew','Skew',-60,60,0,-25,25,3,1,layer)}
+      ${varAxisRow(lid,idx,'varScaleX','Scale X',10,400,100,50,150,3,1,layer)}
+      ${varAxisRow(lid,idx,'varScaleY','Scale Y',10,400,100,50,150,3,1,layer)}
+      ${varAxisRow(lid,idx,'varRot','Rotate',-180,180,0,-45,45,3,1,layer)}
+      ${varAxisRow(lid,idx,'varTrack','Track',-20,120,0,-5,60,3,1,layer)}
     </div>`;
 }
 
@@ -422,32 +426,51 @@ function setDistParam(idx,dist,param,val){
   layer.distSettings[dist][param]=val;
 }
 
-function varAxisRow(lid,idx,patProp,minProp,maxProp,spdProp,easeProp,label,min,max,pat,minVal,maxVal,spd,ease,step){
+// varAxisRow(lid, idx, axisId, label, min, max, defVal, defAnimMin, defAnimMax, defSpd, step, layer)
+// axisId e.g. 'varWght' → uses layer.varWghtVal (static), layer.varWghtAnim (toggle), layer.varWghtPat/Min/Max/Spd/Ease
+function varAxisRow(lid,idx,axisId,label,min,max,defVal,defAnimMin,defAnimMax,defSpd,step,layer){
   const pats=[['none','Off'],['gradient','→ Grad'],['gradient-r','← Grad'],['wave','Wave'],['bounce','Bounce'],['random','Rnd'],['stagger','Alt'],['pulse','Pulse'],['seq-lr','→ Seq'],['seq-rl','← Seq']];
   const eases=[['linear','Linear'],['ease-in','Ease In'],['ease-out','Ease Out'],['ease-in-out','In-Out'],['back','Back'],['elastic','Elastic']];
   const st=step||1;
+  const val=layer[axisId+'Val']??defVal;
+  // Backward compat: if no Anim flag but pattern is set, treat as animated
+  const anim=layer[axisId+'Anim']!=null?layer[axisId+'Anim']:!!(layer[axisId+'Pat']&&layer[axisId+'Pat']!=='none');
+  const pat=layer[axisId+'Pat']||'none';
+  const minVal=layer[axisId+'Min']??defAnimMin;
+  const maxVal=layer[axisId+'Max']??defAnimMax;
+  const spd=layer[axisId+'Spd']??defSpd??3;
+  const ease=layer[axisId+'Ease']||'linear';
+  const animId=`${lid}-${axisId}-anim`;
   return `<div class="var-axis-block">
-  <div class="var-row">
+  <div class="var-static-row">
     <span class="var-row-label">${label}</span>
-    <select class="var-sel" onchange="T.layers[${idx}].${patProp}=this.value;typo_render();">
-      ${pats.map(([v,l])=>`<option value="${v}"${pat===v?' selected':''}>${l}</option>`).join('')}
-    </select>
+    <input type="range" class="var-mini-sl" min="${min}" max="${max}" step="${st}" value="${val}" oninput="T.layers[${idx}].${axisId}Val=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
+    <span class="var-mini-val">${val}</span>
+    <button class="var-anim-btn${anim?' active':''}" onclick="var a=T.layers[${idx}].${axisId}Anim;T.layers[${idx}].${axisId}Anim=(a==null?${!anim}:!a);this.classList.toggle('active',T.layers[${idx}].${axisId}Anim);document.getElementById('${animId}').style.display=T.layers[${idx}].${axisId}Anim?'block':'none';typo_render();" title="Animate">↻</button>
   </div>
-  <div class="var-range-row">
-    <span class="var-mini-label">Min</span>
-    <input type="range" class="var-mini-sl" min="${min}" max="${max}" step="${st}" value="${minVal}" oninput="T.layers[${idx}].${minProp}=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
-    <span class="var-mini-val">${minVal}</span>
-    <span class="var-mini-label">Max</span>
-    <input type="range" class="var-mini-sl" min="${min}" max="${max}" step="${st}" value="${maxVal}" oninput="T.layers[${idx}].${maxProp}=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
-    <span class="var-mini-val">${maxVal}</span>
-  </div>
-  <div class="var-ease-row">
-    <span class="var-mini-label">Spd</span>
-    <input type="range" class="var-mini-sl" min="0" max="30" step="0.5" value="${spd}" oninput="T.layers[${idx}].${spdProp}=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
-    <span class="var-mini-val">${spd}</span>
-    <select class="var-ease-sel" onchange="T.layers[${idx}].${easeProp}=this.value;typo_render();">
-      ${eases.map(([v,l])=>`<option value="${v}"${ease===v?' selected':''}>${l}</option>`).join('')}
-    </select>
+  <div id="${animId}" class="var-anim-settings" style="display:${anim?'block':'none'}">
+    <div class="var-row" style="margin-top:4px;">
+      <span class="var-mini-label">Pat</span>
+      <select class="var-sel" onchange="T.layers[${idx}].${axisId}Pat=this.value;typo_render();">
+        ${pats.map(([v,l])=>`<option value="${v}"${pat===v?' selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>
+    <div class="var-range-row">
+      <span class="var-mini-label">Min</span>
+      <input type="range" class="var-mini-sl" min="${min}" max="${max}" step="${st}" value="${minVal}" oninput="T.layers[${idx}].${axisId}Min=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
+      <span class="var-mini-val">${minVal}</span>
+      <span class="var-mini-label">Max</span>
+      <input type="range" class="var-mini-sl" min="${min}" max="${max}" step="${st}" value="${maxVal}" oninput="T.layers[${idx}].${axisId}Max=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
+      <span class="var-mini-val">${maxVal}</span>
+    </div>
+    <div class="var-ease-row">
+      <span class="var-mini-label">Spd</span>
+      <input type="range" class="var-mini-sl" min="0" max="30" step="0.5" value="${spd}" oninput="T.layers[${idx}].${axisId}Spd=+this.value;this.nextElementSibling.textContent=this.value;typo_render();">
+      <span class="var-mini-val">${spd}</span>
+      <select class="var-ease-sel" onchange="T.layers[${idx}].${axisId}Ease=this.value;typo_render();">
+        ${eases.map(([v,l])=>`<option value="${v}"${ease===v?' selected':''}>${l}</option>`).join('')}
+      </select>
+    </div>
   </div>
 </div>`;
 }
@@ -1189,8 +1212,40 @@ function drawLayer(ctx,layer,t){
   }
   const text=layer.text||'';if(!text.trim())return;
   const italicW=layer.style==='italic'?'italic ':'';
-  const boldW=layer.bold?'bold ':'';
-  const baseFstr=`${italicW}${boldW}${layer.size}px '${layer.font}'`.trim();
+  // Var type anim flags — backward compat: active if Anim===true OR (Anim===null/undefined AND Pat is set)
+  const _va=(prop)=>layer[prop+'Anim']===true||(layer[prop+'Anim']==null&&!!(layer[prop+'Pat']&&layer[prop+'Pat']!=='none'));
+  const hasVarWghtAnim=_va('varWght');
+  const hasVarWidthAnim=_va('varWidth');
+  const hasVarSkewAnim=_va('varSkew');
+  const hasVarSoftAnim=_va('varSoft');
+  const hasVarWonkAnim=_va('varWonk');
+  const hasVarGradAnim=_va('varGrad');
+  const hasVarOpszAnim=_va('varOpsz');
+  const hasVarScaleXAnim=_va('varScaleX');
+  const hasVarScaleYAnim=_va('varScaleY');
+  const hasVarRotAnim=_va('varRot');
+  const hasVarTrackAnim=_va('varTrack');
+  // Static axis values (uniform application when not animated)
+  const staticWght=hasVarWghtAnim?null:(layer.varWghtVal??(layer.bold?700:400));
+  const staticWidth=hasVarWidthAnim?null:(layer.varWidthVal??100);
+  const staticSkew=hasVarSkewAnim?null:(layer.varSkewVal??0);
+  const staticScaleX=hasVarScaleXAnim?null:(layer.varScaleXVal??100);
+  const staticScaleY=hasVarScaleYAnim?null:(layer.varScaleYVal??100);
+  const staticRot=hasVarRotAnim?null:(layer.varRotVal??0);
+  const staticSoft=hasVarSoftAnim?null:(layer.varSoftVal??0);
+  const staticWonk=hasVarWonkAnim?null:(layer.varWonkVal??0);
+  const staticGrad=hasVarGradAnim?null:(layer.varGradVal??0);
+  const staticOpsz=hasVarOpszAnim?null:(layer.varOpszVal??Math.min(144,Math.max(9,layer.size)));
+  // Base font string with static weight
+  const baseFstr=`${italicW}${staticWght!==null?staticWght:(layer.bold?'bold':'')} ${layer.size}px '${layer.font}'`.trim();
+  // Pre-compute static font-variation-settings (applies uniformly; fast path uses this too)
+  const _fvsParts=[];
+  if(staticSoft!==null&&staticSoft>0)_fvsParts.push(`'SOFT' ${Math.round(staticSoft)}`);
+  if(staticWonk!==null&&staticWonk>0)_fvsParts.push(`'WONK' ${staticWonk.toFixed(2)}`);
+  if(staticGrad!==null&&staticGrad!==0)_fvsParts.push(`'GRAD' ${Math.round(staticGrad)}`);
+  if(staticOpsz!==null)_fvsParts.push(`'opsz' ${Math.round(staticOpsz)}`);
+  const _hasFvsAnim=hasVarSoftAnim||hasVarWonkAnim||hasVarGradAnim||hasVarOpszAnim;
+  if(!_hasFvsAnim)ctx.canvas.style.fontVariationSettings=_fvsParts.length?_fvsParts.join(', '):'normal';
   const lines=text.split('\n');
   // Normalize dists — backward compat with old dist: string property
   const dists=layer.dists||(layer.dist?[layer.dist]:['normal']);
@@ -1211,14 +1266,8 @@ function drawLayer(ctx,layer,t){
   const arAmt=(_ds.arch?.amt??_fb.amt), arSpd=(_ds.arch?.spd??_fb.spd)/100;
   const glAmt=(_ds.glitch?.amt??_fb.amt), glSpd=(_ds.glitch?.spd??_fb.spd)/100;
   const miAmt=(_ds.mirror?.amt??_fb.amt);
-  const hasVarSoft=!!(layer.varSoftPat&&layer.varSoftPat!=='none');
-  const hasVarWonk=!!(layer.varWonkPat&&layer.varWonkPat!=='none');
-  const hasVarScaleX=!!(layer.varScaleXPat&&layer.varScaleXPat!=='none');
-  const hasVarScaleY=!!(layer.varScaleYPat&&layer.varScaleYPat!=='none');
-  const hasVarRot=!!(layer.varRotPat&&layer.varRotPat!=='none');
-  const hasVarTrack=!!(layer.varTrackPat&&layer.varTrackPat!=='none');
-  const hasVarType=(layer.varWghtPat&&layer.varWghtPat!=='none')||(layer.varWidthPat&&layer.varWidthPat!=='none')||(layer.varSkewPat&&layer.varSkewPat!=='none')||hasVarSoft||hasVarWonk||hasVarScaleX||hasVarScaleY||hasVarRot||hasVarTrack;
-  const vspd=layer.varSpd||30;
+  // hasVarType: per-char mode needed for animated axes or non-default static transforms
+  const hasVarType=hasVarWghtAnim||hasVarWidthAnim||hasVarSkewAnim||_hasFvsAnim||hasVarScaleXAnim||hasVarScaleYAnim||hasVarRotAnim||hasVarTrackAnim||(staticWidth!==100)||(staticSkew!==0)||(staticScaleX!==100)||(staticScaleY!==100)||(staticRot!==0);
   // Tile: render repeating background pattern, then fall through to normal text if other dists active
   if(hasTile){drawTile(ctx,layer,baseFstr,lines,t,dists);return;}
   if(hasCircle){drawCircle(ctx,layer,baseFstr,lines,t);return;}
@@ -1245,30 +1294,29 @@ function drawLayer(ctx,layer,t){
     ctx.font=baseFstr;
     ctx.save();ctx.translate(px,yOff);ctx.rotate(layer.rot*Math.PI/180);ctx.scale(layer.sx/100,layer.sy/100);
     let totalW=0;
-    const vTracks=hasVarTrack?chars.map((_,i)=>computeVariation(i,chars.length,layer.varTrackPat,layer.varTrackMin??-5,layer.varTrackMax??60,t,layer.varTrackSpd??layer.varSpd??3,layer.varTrackEase||'linear')):null;
-    const widths=chars.map((c,i)=>{const w=ctx.measureText(c).width+(hasVarTrack?vTracks[i]:layer.ls);totalW+=w;return w;});
+    const vTracks=hasVarTrackAnim?chars.map((_,i)=>computeVariation(i,chars.length,layer.varTrackPat,layer.varTrackMin??-5,layer.varTrackMax??60,t,layer.varTrackSpd??layer.varSpd??3,layer.varTrackEase||'linear')):null;
+    const widths=chars.map((c,i)=>{const w=ctx.measureText(c).width+(hasVarTrackAnim?vTracks[i]:layer.ls);totalW+=w;return w;});
     let cx=-totalW/2;
     chars.forEach((ch,i)=>{
       ctx.save();
-      // Variable type axis values (per-axis speed + easing)
-      const vWght=computeVariation(i,chars.length,layer.varWghtPat,layer.varWghtMin??200,layer.varWghtMax??800,t,layer.varWghtSpd??layer.varSpd??3,layer.varWghtEase||'linear');
-      const vWidth=computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear');
-      const vSkew=computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear');
-      const vSoft=computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear');
-      const vWonk=computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear');
-      const vScaleX=hasVarScaleX?computeVariation(i,chars.length,layer.varScaleXPat,layer.varScaleXMin??50,layer.varScaleXMax??150,t,layer.varScaleXSpd??layer.varSpd??3,layer.varScaleXEase||'linear'):100;
-      const vScaleY=hasVarScaleY?computeVariation(i,chars.length,layer.varScaleYPat,layer.varScaleYMin??50,layer.varScaleYMax??150,t,layer.varScaleYSpd??layer.varSpd??3,layer.varScaleYEase||'linear'):100;
-      const vRot=hasVarRot?computeVariation(i,chars.length,layer.varRotPat,layer.varRotMin??-45,layer.varRotMax??45,t,layer.varRotSpd??layer.varSpd??3,layer.varRotEase||'linear'):0;
-      // Apply SOFT/WONK/opsz via CSS font-variation-settings (must set before ctx.font)
-      if(hasVarSoft||hasVarWonk){
-        const opsz=Math.min(144,Math.max(9,layer.size));
-        const fvp=[`'opsz' ${opsz}`];
-        if(hasVarSoft)fvp.push(`'SOFT' ${Math.round(vSoft)}`);
-        if(hasVarWonk)fvp.push(`'WONK' ${vWonk.toFixed(2)}`);
-        ctx.canvas.style.fontVariationSettings=fvp.join(', ');
+      // Per-char axis values — animated or static fallback
+      const vWidth=hasVarWidthAnim?computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear'):(staticWidth??100);
+      const vSkew=hasVarSkewAnim?computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear'):(staticSkew??0);
+      const vScaleX=hasVarScaleXAnim?computeVariation(i,chars.length,layer.varScaleXPat,layer.varScaleXMin??50,layer.varScaleXMax??150,t,layer.varScaleXSpd??layer.varSpd??3,layer.varScaleXEase||'linear'):(staticScaleX??100);
+      const vScaleY=hasVarScaleYAnim?computeVariation(i,chars.length,layer.varScaleYPat,layer.varScaleYMin??50,layer.varScaleYMax??150,t,layer.varScaleYSpd??layer.varSpd??3,layer.varScaleYEase||'linear'):(staticScaleY??100);
+      const vRot=hasVarRotAnim?computeVariation(i,chars.length,layer.varRotPat,layer.varRotMin??-45,layer.varRotMax??45,t,layer.varRotSpd??layer.varSpd??3,layer.varRotEase||'linear'):(staticRot??0);
+      // Per-char font-variation-settings (animated axes override static base)
+      if(_hasFvsAnim){
+        const fvp=[..._fvsParts];
+        if(hasVarSoftAnim)fvp.push(`'SOFT' ${Math.round(computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear'))}`);
+        if(hasVarWonkAnim)fvp.push(`'WONK' ${computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear').toFixed(2)}`);
+        if(hasVarGradAnim)fvp.push(`'GRAD' ${Math.round(computeVariation(i,chars.length,layer.varGradPat,layer.varGradMin??-100,layer.varGradMax??100,t,layer.varGradSpd??layer.varSpd??3,layer.varGradEase||'linear'))}`);
+        if(hasVarOpszAnim)fvp.push(`'opsz' ${Math.round(computeVariation(i,chars.length,layer.varOpszPat,layer.varOpszMin??9,layer.varOpszMax??144,t,layer.varOpszSpd??layer.varSpd??3,layer.varOpszEase||'linear'))}`);
+        ctx.canvas.style.fontVariationSettings=fvp.join(', ')||'normal';
       }
-      // Variable weight via font-weight (re-setting ctx.font also picks up fontVariationSettings)
-      if(layer.varWghtPat&&layer.varWghtPat!=='none'){
+      // Variable weight via ctx.font (animated or static from baseFstr)
+      if(hasVarWghtAnim){
+        const vWght=computeVariation(i,chars.length,layer.varWghtPat,layer.varWghtMin??200,layer.varWghtMax??800,t,layer.varWghtSpd??layer.varSpd??3,layer.varWghtEase||'linear');
         ctx.font=`${italicW}${Math.round(vWght)} ${layer.size}px '${layer.font}'`.trim();
       }else{
         ctx.font=baseFstr;
@@ -1285,10 +1333,10 @@ function drawLayer(ctx,layer,t){
         if(hasStagger){const stT=t*stSpd+i*.3;ctx.translate(0,Math.sin(stT*1.5+i*1.1)*(stAmt/100)*layer.size*.35);}
         if(hasExplode){const exT=t*exSpd+i*.3;const ea=(exAmt/100)*layer.size*.6;ctx.rotate(Math.sin(i*2.7+exT*.5)*(exAmt/100)*.5);ctx.translate(Math.sin(i*5.1)*ea*.3,Math.cos(i*3.7)*ea*.2);}
         if(hasVarType){
-          if(hasVarRot)ctx.rotate(vRot*Math.PI/180);
-          if(hasVarScaleX||hasVarScaleY)ctx.scale(hasVarScaleX?vScaleX/100:1,hasVarScaleY?vScaleY/100:1);
-          if(layer.varWidthPat&&layer.varWidthPat!=='none')ctx.scale(vWidth/100,1);
-          if(layer.varSkewPat&&layer.varSkewPat!=='none')ctx.transform(1,0,Math.tan(vSkew*Math.PI/180),1,0,0);
+          if(vRot!==0)ctx.rotate(vRot*Math.PI/180);
+          if(vScaleX!==100||vScaleY!==100)ctx.scale(vScaleX/100,vScaleY/100);
+          if(vWidth!==100)ctx.scale(vWidth/100,1);
+          if(vSkew!==0)ctx.transform(1,0,Math.tan(vSkew*Math.PI/180),1,0,0);
         }
         ctx.translate(-widths[i]/2,0);
         if(hasGlitch){const glT=t*glSpd;const ga=(glAmt/100)*layer.size,gx=Math.sin(glT*3+i)*ga*.25;ctx.save();ctx.fillStyle='#e5007d';ctx.globalAlpha*=.65;ctx.fillText(ch,gx,Math.sin(glT*2+i*1.3)*ga*.1);ctx.restore();ctx.save();ctx.fillStyle='#00e5ff';ctx.globalAlpha*=.45;ctx.fillText(ch,-gx*.5,0);ctx.restore();}
@@ -1310,10 +1358,10 @@ function drawLayer(ctx,layer,t){
       if(extraRot)ctx.rotate(extraRot);
       // Variable transform axes
       if(hasVarType){
-        if(hasVarRot)ctx.rotate(vRot*Math.PI/180);
-        if(hasVarScaleX||hasVarScaleY)ctx.scale(hasVarScaleX?vScaleX/100:1,hasVarScaleY?vScaleY/100:1);
-        if(layer.varWidthPat&&layer.varWidthPat!=='none')ctx.scale(vWidth/100,1);
-        if(layer.varSkewPat&&layer.varSkewPat!=='none')ctx.transform(1,0,Math.tan(vSkew*Math.PI/180),1,0,0);
+        if(vRot!==0)ctx.rotate(vRot*Math.PI/180);
+        if(vScaleX!==100||vScaleY!==100)ctx.scale(vScaleX/100,vScaleY/100);
+        if(vWidth!==100)ctx.scale(vWidth/100,1);
+        if(vSkew!==0)ctx.transform(1,0,Math.tan(vSkew*Math.PI/180),1,0,0);
       }
       // Glitch effect (before main draw — chromatic aberration layers)
       if(hasGlitch){
@@ -1330,7 +1378,7 @@ function drawLayer(ctx,layer,t){
     ctx.restore();
     yOff+=lineH;
   });
-  if(hasVarSoft||hasVarWonk)ctx.canvas.style.fontVariationSettings='normal';
+  ctx.canvas.style.fontVariationSettings='normal';
 }
 
 function drawTile(ctx,layer,fstr,lines,t,dists){
@@ -1365,13 +1413,28 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
   const vBase=layer.opacity/100;
   // Variable type
   const italicW=layer.style==='italic'?'italic ':'';
-  const vspd=layer.varSpd||30;
-  const hasVarWght=layer.varWghtPat&&layer.varWghtPat!=='none';
-  const hasVarWidth=layer.varWidthPat&&layer.varWidthPat!=='none';
-  const hasVarSkew=layer.varSkewPat&&layer.varSkewPat!=='none';
-  const hasVarSoft=!!(layer.varSoftPat&&layer.varSoftPat!=='none');
-  const hasVarWonk=!!(layer.varWonkPat&&layer.varWonkPat!=='none');
-  const hasVarType=hasVarWght||hasVarWidth||hasVarSkew||hasVarSoft||hasVarWonk;
+  const _va=(prop)=>layer[prop+'Anim']===true||(layer[prop+'Anim']==null&&!!(layer[prop+'Pat']&&layer[prop+'Pat']!=='none'));
+  const hasVarWghtAnim=_va('varWght');
+  const hasVarWidthAnim=_va('varWidth');
+  const hasVarSkewAnim=_va('varSkew');
+  const hasVarSoftAnim=_va('varSoft');
+  const hasVarWonkAnim=_va('varWonk');
+  const hasVarGradAnim=_va('varGrad');
+  const hasVarOpszAnim=_va('varOpsz');
+  const staticWidth=hasVarWidthAnim?null:(layer.varWidthVal??100);
+  const staticSkew=hasVarSkewAnim?null:(layer.varSkewVal??0);
+  const staticSoft=hasVarSoftAnim?null:(layer.varSoftVal??0);
+  const staticWonk=hasVarWonkAnim?null:(layer.varWonkVal??0);
+  const staticGrad=hasVarGradAnim?null:(layer.varGradVal??0);
+  const staticOpsz=hasVarOpszAnim?null:(layer.varOpszVal??Math.min(144,Math.max(9,layer.size)));
+  const _fvsParts=[];
+  if(staticSoft!==null&&staticSoft>0)_fvsParts.push(`'SOFT' ${Math.round(staticSoft)}`);
+  if(staticWonk!==null&&staticWonk>0)_fvsParts.push(`'WONK' ${staticWonk.toFixed(2)}`);
+  if(staticGrad!==null&&staticGrad!==0)_fvsParts.push(`'GRAD' ${Math.round(staticGrad)}`);
+  if(staticOpsz!==null)_fvsParts.push(`'opsz' ${Math.round(staticOpsz)}`);
+  const _hasFvsAnim=hasVarSoftAnim||hasVarWonkAnim||hasVarGradAnim||hasVarOpszAnim;
+  if(!_hasFvsAnim)ctx.canvas.style.fontVariationSettings=_fvsParts.length?_fvsParts.join(', '):'normal';
+  const hasVarType=hasVarWghtAnim||hasVarWidthAnim||hasVarSkewAnim||_hasFvsAnim||((staticWidth??100)!==100)||((staticSkew??0)!==0);
   // Draw with letter spacing + per-char variable type, centered horizontally
   const drawLS=(xOff,yOff)=>{
     let cx=-rawW/2+xOff;
@@ -1379,29 +1442,22 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
       if(hasVarType){
         ctx.save();
         ctx.translate(cx,yOff);
-        if(hasVarSoft||hasVarWonk){
-          const vSoft=computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear');
-          const vWonk=computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear');
-          const opsz=Math.min(144,Math.max(9,layer.size));
-          const fvp=[`'opsz' ${opsz}`];
-          if(hasVarSoft)fvp.push(`'SOFT' ${Math.round(vSoft)}`);
-          if(hasVarWonk)fvp.push(`'WONK' ${vWonk.toFixed(2)}`);
-          ctx.canvas.style.fontVariationSettings=fvp.join(', ');
+        if(_hasFvsAnim){
+          const fvp=[..._fvsParts];
+          if(hasVarSoftAnim)fvp.push(`'SOFT' ${Math.round(computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear'))}`);
+          if(hasVarWonkAnim)fvp.push(`'WONK' ${computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear').toFixed(2)}`);
+          if(hasVarGradAnim)fvp.push(`'GRAD' ${Math.round(computeVariation(i,chars.length,layer.varGradPat,layer.varGradMin??-100,layer.varGradMax??100,t,layer.varGradSpd??layer.varSpd??3,layer.varGradEase||'linear'))}`);
+          if(hasVarOpszAnim)fvp.push(`'opsz' ${Math.round(computeVariation(i,chars.length,layer.varOpszPat,layer.varOpszMin??9,layer.varOpszMax??144,t,layer.varOpszSpd??layer.varSpd??3,layer.varOpszEase||'linear'))}`);
+          ctx.canvas.style.fontVariationSettings=fvp.join(', ')||'normal';
         }
-        if(hasVarWght){
+        if(hasVarWghtAnim){
           const vW=computeVariation(i,chars.length,layer.varWghtPat,layer.varWghtMin??200,layer.varWghtMax??800,t,layer.varWghtSpd??layer.varSpd??3,layer.varWghtEase||'linear');
           ctx.font=`${italicW}${Math.round(vW)} ${layer.size}px '${layer.font}'`.trim();
-        }else if(hasVarSoft||hasVarWonk){
-          ctx.font=fstr.trim();
-        }
-        if(hasVarWidth){
-          const vWd=computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear');
-          ctx.scale(vWd/100,1);
-        }
-        if(hasVarSkew){
-          const vSk=computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear');
-          ctx.transform(1,0,Math.tan(vSk*Math.PI/180),1,0,0);
-        }
+        }else{ctx.font=fstr.trim();}
+        const vWd=hasVarWidthAnim?computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear'):(staticWidth??100);
+        if(vWd!==100)ctx.scale(vWd/100,1);
+        const vSk=hasVarSkewAnim?computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear'):(staticSkew??0);
+        if(vSk!==0)ctx.transform(1,0,Math.tan(vSk*Math.PI/180),1,0,0);
         ctx.fillText(ch,0,0);
         ctx.restore();
       }else{
@@ -1435,7 +1491,7 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
     }
   }
   ctx.restore();
-  if(hasVarSoft||hasVarWonk)ctx.canvas.style.fontVariationSettings='normal';
+  ctx.canvas.style.fontVariationSettings='normal';
 }
 
 function drawCircle(ctx,layer,fstr,lines,t){
@@ -1444,12 +1500,28 @@ function drawCircle(ctx,layer,fstr,lines,t){
   if(!chars.length)return;
   const italicW=layer.style==='italic'?'italic ':'';
   // Variable type setup
-  const hasVarSoft=!!(layer.varSoftPat&&layer.varSoftPat!=='none');
-  const hasVarWonk=!!(layer.varWonkPat&&layer.varWonkPat!=='none');
-  const hasVarWght=!!(layer.varWghtPat&&layer.varWghtPat!=='none');
-  const hasVarWidth=!!(layer.varWidthPat&&layer.varWidthPat!=='none');
-  const hasVarSkew=!!(layer.varSkewPat&&layer.varSkewPat!=='none');
-  const hasVarType=hasVarWght||hasVarWidth||hasVarSkew||hasVarSoft||hasVarWonk;
+  const _va=(prop)=>layer[prop+'Anim']===true||(layer[prop+'Anim']==null&&!!(layer[prop+'Pat']&&layer[prop+'Pat']!=='none'));
+  const hasVarWghtAnim=_va('varWght');
+  const hasVarWidthAnim=_va('varWidth');
+  const hasVarSkewAnim=_va('varSkew');
+  const hasVarSoftAnim=_va('varSoft');
+  const hasVarWonkAnim=_va('varWonk');
+  const hasVarGradAnim=_va('varGrad');
+  const hasVarOpszAnim=_va('varOpsz');
+  const staticWidth=hasVarWidthAnim?null:(layer.varWidthVal??100);
+  const staticSkew=hasVarSkewAnim?null:(layer.varSkewVal??0);
+  const staticSoft=hasVarSoftAnim?null:(layer.varSoftVal??0);
+  const staticWonk=hasVarWonkAnim?null:(layer.varWonkVal??0);
+  const staticGrad=hasVarGradAnim?null:(layer.varGradVal??0);
+  const staticOpsz=hasVarOpszAnim?null:(layer.varOpszVal??Math.min(144,Math.max(9,layer.size)));
+  const _fvsParts=[];
+  if(staticSoft!==null&&staticSoft>0)_fvsParts.push(`'SOFT' ${Math.round(staticSoft)}`);
+  if(staticWonk!==null&&staticWonk>0)_fvsParts.push(`'WONK' ${staticWonk.toFixed(2)}`);
+  if(staticGrad!==null&&staticGrad!==0)_fvsParts.push(`'GRAD' ${Math.round(staticGrad)}`);
+  if(staticOpsz!==null)_fvsParts.push(`'opsz' ${Math.round(staticOpsz)}`);
+  const _hasFvsAnim=hasVarSoftAnim||hasVarWonkAnim||hasVarGradAnim||hasVarOpszAnim;
+  if(!_hasFvsAnim)ctx.canvas.style.fontVariationSettings=_fvsParts.length?_fvsParts.join(', '):'normal';
+  const hasVarType=hasVarWghtAnim||hasVarWidthAnim||hasVarSkewAnim||_hasFvsAnim||((staticWidth??100)!==100)||((staticSkew??0)!==0);
   ctx.save();
   ctx.font=fstr.trim();ctx.fillStyle=layer.color;ctx.textBaseline='middle';ctx.textAlign='center';
   const cx=(layer.x/100)*TW, cy=(layer.y/100)*TH;
@@ -1482,32 +1554,22 @@ function drawCircle(ctx,layer,fstr,lines,t){
         else if(orient==='radial-out')ctx.rotate(midAngle);
         else if(orient==='radial-in')ctx.rotate(midAngle+Math.PI);
         if(hasVarType){
-          // Apply SOFT/WONK via font-variation-settings (must precede ctx.font)
-          if(hasVarSoft||hasVarWonk){
-            const vSoft=computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear');
-            const vWonk=computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear');
-            const opsz=Math.min(144,Math.max(9,layer.size));
-            const fvp=[`'opsz' ${opsz}`];
-            if(hasVarSoft)fvp.push(`'SOFT' ${Math.round(vSoft)}`);
-            if(hasVarWonk)fvp.push(`'WONK' ${vWonk.toFixed(2)}`);
-            ctx.canvas.style.fontVariationSettings=fvp.join(', ');
+          if(_hasFvsAnim){
+            const fvp=[..._fvsParts];
+            if(hasVarSoftAnim)fvp.push(`'SOFT' ${Math.round(computeVariation(i,chars.length,layer.varSoftPat,layer.varSoftMin??0,layer.varSoftMax??100,t,layer.varSoftSpd??layer.varSpd??3,layer.varSoftEase||'linear'))}`);
+            if(hasVarWonkAnim)fvp.push(`'WONK' ${computeVariation(i,chars.length,layer.varWonkPat,layer.varWonkMin??0,layer.varWonkMax??1,t,layer.varWonkSpd??layer.varSpd??3,layer.varWonkEase||'linear').toFixed(2)}`);
+            if(hasVarGradAnim)fvp.push(`'GRAD' ${Math.round(computeVariation(i,chars.length,layer.varGradPat,layer.varGradMin??-100,layer.varGradMax??100,t,layer.varGradSpd??layer.varSpd??3,layer.varGradEase||'linear'))}`);
+            if(hasVarOpszAnim)fvp.push(`'opsz' ${Math.round(computeVariation(i,chars.length,layer.varOpszPat,layer.varOpszMin??9,layer.varOpszMax??144,t,layer.varOpszSpd??layer.varSpd??3,layer.varOpszEase||'linear'))}`);
+            ctx.canvas.style.fontVariationSettings=fvp.join(', ')||'normal';
           }
-          // Variable weight via ctx.font
-          if(hasVarWght){
+          if(hasVarWghtAnim){
             const vW=computeVariation(i,chars.length,layer.varWghtPat,layer.varWghtMin??200,layer.varWghtMax??800,t,layer.varWghtSpd??layer.varSpd??3,layer.varWghtEase||'linear');
             ctx.font=`${italicW}${Math.round(vW)} ${layer.size}px '${layer.font}'`.trim();
-          }else if(hasVarSoft||hasVarWonk){
-            ctx.font=fstr.trim();
-          }
-          // Variable width (x-scale) and skew applied after orientation rotate
-          if(hasVarWidth){
-            const vWd=computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear');
-            ctx.scale(vWd/100,1);
-          }
-          if(hasVarSkew){
-            const vSk=computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear');
-            ctx.transform(1,0,Math.tan(vSk*Math.PI/180),1,0,0);
-          }
+          }else{ctx.font=fstr.trim();}
+          const vWd=hasVarWidthAnim?computeVariation(i,chars.length,layer.varWidthPat,layer.varWidthMin??60,layer.varWidthMax??140,t,layer.varWidthSpd??layer.varSpd??3,layer.varWidthEase||'linear'):(staticWidth??100);
+          if(vWd!==100)ctx.scale(vWd/100,1);
+          const vSk=hasVarSkewAnim?computeVariation(i,chars.length,layer.varSkewPat,layer.varSkewMin??-25,layer.varSkewMax??25,t,layer.varSkewSpd??layer.varSpd??3,layer.varSkewEase||'linear'):(staticSkew??0);
+          if(vSk!==0)ctx.transform(1,0,Math.tan(vSk*Math.PI/180),1,0,0);
         }
         ctx.fillText(ch,0,0);
         ctx.restore();
@@ -1515,7 +1577,7 @@ function drawCircle(ctx,layer,fstr,lines,t){
       });
     }
   }
-  if(hasVarSoft||hasVarWonk)ctx.canvas.style.fontVariationSettings='normal';
+  ctx.canvas.style.fontVariationSettings='normal';
   ctx.restore();
 }
 

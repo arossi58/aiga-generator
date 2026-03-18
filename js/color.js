@@ -143,7 +143,7 @@ function pushToPlayground(){
   // Push palette colors into the type playground
   updatePlaygroundPaletteSwatches();
   // Also apply deep color as bg option
-  toast('Palette pushed to Typography Playground — check L1/L2/L3 color rows');
+  toast('Palette pushed to Canvas Generator — check L1/L2/L3 color rows');
 }
 
 /* ════════════════════════════════════════════

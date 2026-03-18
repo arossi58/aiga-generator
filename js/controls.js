@@ -242,7 +242,7 @@ function updateLayerVisCount() {
 
 function buildLayerStack() {
   const LAYER_COLORS = ['#e5007d', '#4a9fff', '#00c896', '#d4af37', '#9b59b6', '#e67e22'];
-  const FONT_SHORT   = { 'Roboto Flex': 'Flex', 'Fraunces': 'Fraunces', 'DM Mono': 'Mono', 'Recursive': 'Recursive' };
+  const FONT_SHORT   = { 'Roboto Flex': 'Flex', 'Fraunces': 'Fraunces' };
 
   const stack = document.getElementById('layer-stack');
   stack.querySelectorAll('.layer-row').forEach(r => r.remove());
@@ -372,7 +372,7 @@ function typo_setAnim(on,btn){
 
 /* ── Shuffle & Chaos ── */
 function typo_shuffle(){
-  const fonts=['Roboto Flex','Fraunces','DM Mono'];
+  const fonts=['Roboto Flex','Fraunces'];
   const dists=['normal','wave','stagger','explode','arch','tile','mirror','glitch'];
   const bgs=['#080808','#0a0e1a','#1a0010','#0f1a0a','#f4f1ea','#1a1a0a'];
   const blends=['source-over','source-over','multiply','screen','overlay'];

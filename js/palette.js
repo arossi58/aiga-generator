@@ -128,7 +128,7 @@ function pushShadeToPlayground(hex) {
   // Add the color to the palette and push to playground
   PALETTE.primary = hex;
   updatePlaygroundPaletteSwatches();
-  toast(`${hex.toUpperCase()} pushed to Typography Playground`);
+  toast(`${hex.toUpperCase()} pushed to Canvas Generator`);
 }
 
 function exportShadesImage() {

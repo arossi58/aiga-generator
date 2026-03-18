@@ -18,7 +18,7 @@
   <div class="nav-logo">AIGA KC <span class="tag">Living System</span></div>
   <ul class="nav-links">
     <li><a href="#color-section" class="active">Color</a></li>
-    <li><a href="#type-section">Typography</a></li>
+    <li><a href="#type-section">Canvas</a></li>
   </ul>
   <div class="nav-spacer"></div>
   <div class="nav-version">Brand System v3.0</div>
@@ -30,7 +30,7 @@
 <div class="section" id="color-section">
   <div class="eyebrow"><span>01 — Generator</span></div>
   <h2 class="sec-title">Color Palette<br>Generator</h2>
-  <p class="sec-lead">Input any seed color. The system generates a full AIGA KC–compliant palette — Magenta always anchored, always harmonious. Generated colors sync instantly to the Typography Playground.</p>
+  <p class="sec-lead">Input any seed color. The system generates a full AIGA KC–compliant palette — Magenta always anchored, always harmonious. Generated colors sync instantly to the Canvas Generator.</p>
 
   <div class="gen-card reveal">
     <div class="gen-card-head">
@@ -63,7 +63,7 @@
           </div>
           <button class="btn btn-primary" onclick="generatePalette()" style="width:100%;">Generate Palette</button>
           <button class="btn btn-ghost" onclick="randomSeed()" style="width:100%;">↻ Random Seed</button>
-          <button class="push-palette-btn" id="pushBtn" onclick="pushToPlayground()">⬆ Push Palette to Typography Playground</button>
+          <button class="push-palette-btn" id="pushBtn" onclick="pushToPlayground()">⬆ Push Palette to Canvas Generator</button>
           <button class="push-palette-btn" style="border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);" onclick="exportPaletteImage()">↓ Export Palette PNG</button>
           <div style="position:relative;">
             <div class="css-box" id="cssBox">
@@ -118,7 +118,7 @@
   <div class="type-section-header">
     <div class="type-section-header-left">
       <div class="eyebrow" style="margin-bottom:12px;"><span>02 — Generator</span></div>
-      <h2 class="sec-title">Typography<br>Playground</h2>
+      <h2 class="sec-title">Canvas<br>Generator</h2>
       <p class="sec-lead" style="margin-bottom:0;">Three independent layers. Eight distortion modes per layer. Blend modes, scale, tracking, rotation. Generate palettes above and push them here — or build freely. Export PNG.</p>
     </div>
     <div class="type-section-actions">
@@ -206,7 +206,7 @@
     <!-- Panel mode: BG vs Layers -->
     <div id="panel-mode-tabs">
       <button class="panel-mode-tab mode-bg active" onclick="switchPanelMode('bg',this)">
-        <span class="l-dot" style="background:rgba(255,255,255,.3);"></span>Background
+        <span class="l-dot" style="background:rgba(255,255,255,.3);"></span>Canvas
       </button>
       <button class="panel-mode-tab mode-layers" onclick="switchPanelMode('layers',this)">
         <span class="l-dot" style="background:var(--mag);"></span>Layers
