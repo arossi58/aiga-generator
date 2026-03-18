@@ -43,21 +43,25 @@ function buildLayerPane(lid){
       </div>
     </div>
     <div class="cg">
-      <div class="cg-title">Look</div>
+      <div class="cg-title">Look Direction</div>
       <div class="gaze-grid" id="${lid}-gaze">
-        ${gazeDirs.map(([lx,ly,icon])=>`<button class="gaze-btn${layer.lookMode==='center'&&layer.lookX===lx&&layer.lookY===ly?' active':''}" onclick="T.layers[${idx}].lookX=${lx};T.layers[${idx}].lookY=${ly};T.layers[${idx}].lookMode='center';this.closest('.gaze-grid').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${icon}</button>`).join('')}
+        ${gazeDirs.map(([lx,ly,icon])=>`<button class="gaze-btn${layer.lookMode==='center'&&layer.lookX===lx&&layer.lookY===ly?' active':''}" onclick="T.layers[${idx}].lookX=${lx};T.layers[${idx}].lookY=${ly};T.layers[${idx}].lookMode='center';this.closest('.gaze-grid').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-look-anim').style.display='none';document.getElementById('${lid}-look-modes').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));typo_render();">${icon}</button>`).join('')}
       </div>
-      <button class="seg-btn${layer.lookMode==='wander'?' active':''}" style="width:100%;margin-top:6px;" onclick="T.layers[${idx}].lookMode=T.layers[${idx}].lookMode==='wander'?'center':'wander';this.classList.toggle('active',T.layers[${idx}].lookMode==='wander');typo_render();">Wander</button>
-    </div>
-    <div class="cg">
-      <div class="cg-title">Blink</div>
-      <div class="seg">
-        <button class="seg-btn${layer.blinkMode==='none'?' active':''}" onclick="T.layers[${idx}].blinkMode='none';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Off</button>
-        <button class="seg-btn${layer.blinkMode==='auto'?' active':''}" onclick="T.layers[${idx}].blinkMode='auto';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Auto</button>
+      <div class="cg-title" style="margin-top:10px;">Animate</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px;" id="${lid}-look-modes">
+        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';typo_render();">${lbl}</button>`).join('')}
       </div>
-      <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Interval</span>
-        <div class="sl-wrap"><input type="range" min="1" max="15" step="0.5" value="${layer.blinkSpeed||5}" id="${lid}-blinkSpd" oninput="T.layers[${idx}].blinkSpeed=+this.value;document.getElementById('${lid}-blinkSpdVal').textContent=this.value+'s';typo_render();"></div>
-        <span class="sl-val" id="${lid}-blinkSpdVal">${layer.blinkSpeed||5}s</span></div>
+      <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan'].includes(layer.lookMode)?'block':'none'}">
+        <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Speed</span>
+          <div class="sl-wrap"><input type="range" min="0.1" max="5" step="0.1" value="${layer.lookSpeed??1}" id="${lid}-lookSpd" oninput="T.layers[${idx}].lookSpeed=+this.value;document.getElementById('${lid}-lookSpdVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-lookSpdVal">${layer.lookSpeed??1}</span></div>
+        <div class="sl-row"><span class="sl-label">Amount</span>
+          <div class="sl-wrap"><input type="range" min="0" max="1" step="0.05" value="${layer.lookAmt??1}" id="${lid}-lookAmt" oninput="T.layers[${idx}].lookAmt=+this.value;document.getElementById('${lid}-lookAmtVal').textContent=Math.round(this.value*100)+'%';typo_render();"></div>
+          <span class="sl-val" id="${lid}-lookAmtVal">${Math.round((layer.lookAmt??1)*100)}%</span></div>
+        <div class="sl-row"><span class="sl-label">Stagger</span>
+          <button class="seg-btn${layer.lookStagger!==false?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].lookStagger=!T.layers[${idx}].lookStagger;this.classList.toggle('active',T.layers[${idx}].lookStagger);typo_render();">${layer.lookStagger!==false?'On':'Off'}</button>
+        </div>
+      </div>
     </div>
     <div class="cg">
       <div class="cg-title">Color</div>
@@ -929,11 +933,10 @@ function drawGrain(ctx,W,H,intensity,size,style){
 /* ════════════════════════════════════════════
    EYE LAYER
 ════════════════════════════════════════════ */
-function eyePath(ctx,cx,cy,hw,hh,blinkT){
-  const topHH=hh*(1-blinkT);
+function eyePath(ctx,cx,cy,hw,hh){
   const c=hw*0.42;
   ctx.moveTo(cx-hw,cy);
-  ctx.bezierCurveTo(cx-c,cy-topHH,cx+c,cy-topHH,cx+hw,cy);
+  ctx.bezierCurveTo(cx-c,cy-hh,cx+c,cy-hh,cx+hw,cy);
   ctx.bezierCurveTo(cx+c,cy+hh,cx-c,cy+hh,cx-hw,cy);
   ctx.closePath();
 }
@@ -944,22 +947,22 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
   const irisR=hw*0.363;
   const pupilR=hw*0.174;
   const maxOffset=hw*0.22;
+  const spd=layer.lookSpeed??1;
+  const amt=layer.lookAmt??1;
+  const ph=(layer.lookStagger!==false)?eyeIdx*0.618:0;
   let gx=cx,gy=cy;
   if(layer.lookMode==='wander'){
-    gx=cx+Math.sin(t*0.31+eyeIdx*1.7)*Math.cos(t*0.19+eyeIdx)*maxOffset;
-    gy=cy+Math.sin(t*0.23+eyeIdx*2.1+1.4)*Math.cos(t*0.17+eyeIdx*0.8)*maxOffset;
+    gx=cx+Math.sin(t*spd*0.31+ph*4.9)*Math.cos(t*spd*0.19+ph*2.3)*maxOffset*amt;
+    gy=cy+Math.sin(t*spd*0.23+ph*7.3+1.4)*Math.cos(t*spd*0.17+ph*3.1)*maxOffset*amt;
+  }else if(layer.lookMode==='circle'){
+    const a=t*spd*Math.PI*2+ph*Math.PI*2;
+    gx=cx+Math.cos(a)*maxOffset*amt;gy=cy+Math.sin(a)*maxOffset*amt;
+  }else if(layer.lookMode==='h-scan'){
+    gx=cx+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;gy=cy;
+  }else if(layer.lookMode==='v-scan'){
+    gx=cx;gy=cy+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;
   }else{
-    gx=cx+(layer.lookX||0)*maxOffset;
-    gy=cy+(layer.lookY||0)*maxOffset;
-  }
-  let blinkT=0;
-  if(layer.blinkMode==='auto'){
-    const period=layer.blinkSpeed||5;
-    const phase=((t/period+eyeIdx*0.37)%1+1)%1;
-    if(phase>0.88){
-      if(phase<0.93)blinkT=(phase-0.88)/0.05;
-      else if(phase<0.97)blinkT=1-(phase-0.93)/0.04;
-    }
+    gx=cx+(layer.lookX||0)*maxOffset;gy=cy+(layer.lookY||0)*maxOffset;
   }
   const palCols=[PALETTE.magenta,PALETTE.primary,PALETTE.h1,PALETTE.h2,PALETTE.muted,PALETTE.surface];
   let irisColor;
@@ -969,17 +972,13 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
   const outlineColor=layer.outlineColor||'#080808';
   const scleraColor=layer.scleraColor||'#ffffff';
   const pupilColor=layer.pupilColor||'#080808';
-  // 1. Sclera
-  ctx.beginPath();eyePath(ctx,cx,cy,hwi,hhi,blinkT);
-  ctx.fillStyle=scleraColor;ctx.fill();
-  // 2. Iris + pupil clipped to inner almond
+  ctx.beginPath();eyePath(ctx,cx,cy,hwi,hhi);ctx.fillStyle=scleraColor;ctx.fill();
   ctx.save();
-  ctx.beginPath();eyePath(ctx,cx,cy,hwi,hhi,blinkT);ctx.clip();
+  ctx.beginPath();eyePath(ctx,cx,cy,hwi,hhi);ctx.clip();
   ctx.beginPath();ctx.arc(gx,gy,irisR,0,Math.PI*2);ctx.fillStyle=irisColor;ctx.fill();
   ctx.beginPath();ctx.arc(gx,gy,pupilR,0,Math.PI*2);ctx.fillStyle=pupilColor;ctx.fill();
   ctx.restore();
-  // 3. Eyelid outline (outer minus inner, evenodd)
-  ctx.beginPath();eyePath(ctx,cx,cy,hw,hh,blinkT);eyePath(ctx,cx,cy,hwi,hhi,blinkT);
+  ctx.beginPath();eyePath(ctx,cx,cy,hw,hh);eyePath(ctx,cx,cy,hwi,hhi);
   ctx.fillStyle=outlineColor;ctx.fill('evenodd');
 }
 function drawEyeLayer(ctx,layer,t){

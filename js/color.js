@@ -206,10 +206,11 @@ const defEyeLayer=(x,y)=>({
   scleraColor:'#ffffff',
   outlineColor:'#080808',
   colorMode:'fixed',      // 'fixed' | 'palette' | 'random'
-  lookMode:'center',      // 'center' | 'wander'
+  lookMode:'center',      // 'center' | 'wander' | 'circle' | 'h-scan' | 'v-scan'
   lookX:0,lookY:0,
-  blinkMode:'none',       // 'none' | 'auto'
-  blinkSpeed:5,
+  lookSpeed:1,
+  lookAmt:1,
+  lookStagger:true,
   arrangement:'single',   // 'single' | 'tile' | 'circle'
   tileRows:3,tileCols:4,tileSpacingX:1.8,tileSpacingY:1.5,
   circleCount:8,circleRadius:30,
