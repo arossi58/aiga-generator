@@ -599,7 +599,6 @@ async function recordVideo() {
   const ctx = canvas.getContext('2d');
   const origW = TW, origH = TH;
   const startFrame = T.frame;
-  TW = d.w; TH = d.h;
   canvas.width = d.w; canvas.height = d.h;
   typo_fitCanvas();
 
@@ -649,11 +648,13 @@ async function recordVideo() {
   for (let i = 0; i < totalFrames; i++) {
     T.frame = startFrame + i;
 
-    // T.animating must be true so grain and gradient-grain caches regenerate
-    // each frame exactly as they do during live playback — without this, every
-    // pre-rendered frame would have identical static grain.
+    // Use renderAtRes so layer font sizes / letter-spacing scale correctly
+    // (typo_render uses raw layer.size which is unscaled).
+    // T.animating = true ensures grain/gradient-grain regenerate each frame.
     T.animating = true;
-    typo_render();
+    const off = renderAtRes(d.w, d.h);
+    ctx.clearRect(0, 0, d.w, d.h);
+    ctx.drawImage(off, 0, 0);
     T.animating = false;
 
     // Await one animation frame before snapshotting.
@@ -734,7 +735,10 @@ async function recordVideo() {
 
     let nextF = performance.now() + frameDuration;
     function pumpFrame() {
-      T.frame++; typo_render();
+      T.frame++;
+      const off = renderAtRes(d.w, d.h);
+      ctx.clearRect(0, 0, d.w, d.h);
+      ctx.drawImage(off, 0, 0);
       nextF += frameDuration;
       pump = setTimeout(pumpFrame, Math.max(0, nextF - performance.now()));
     }
