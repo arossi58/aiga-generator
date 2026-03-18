@@ -163,8 +163,8 @@ const defLayer=(text,color,size,x,y,font)=>({
   type:'text',
   text,color,size,x,y,font:font||'Roboto Flex',
   style:'normal',bold:false,sx:100,sy:100,rot:0,ls:2,
-  opacity:100,blend:'source-over',
-  dists:['normal'],distAmt:40,distSpd:30,visible:true,
+  opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
+  dists:['normal'],distAmt:40,distSpd:30,
   distSettings:{wave:{amt:40,spd:30},stagger:{amt:40,spd:30},explode:{amt:40,spd:30},arch:{amt:40,spd:30},tile:{amt:40,spd:30},mirror:{amt:40,spd:30},glitch:{amt:40,spd:30},circle:{amt:35,spd:20}},
   circleRings:1,circleOrient:'tangent',
   varWghtPat:'none',varWghtMin:200,varWghtMax:800,varWghtSpd:3,varWghtEase:'linear',
@@ -181,7 +181,7 @@ const defLayer=(text,color,size,x,y,font)=>({
 const defImageLayer=(x,y)=>({
   type:'image',
   x:x??50,y:y??50,imgSrc:null,img:null,imgScale:100,
-  opacity:100,blend:'source-over',visible:true,
+  opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
   text:'',color:'#fff',size:16,font:'Roboto Flex',
   style:'normal',bold:false,sx:100,sy:100,rot:0,ls:2,
   dists:['normal'],distAmt:40,distSpd:30,
@@ -215,7 +215,7 @@ const defEyeLayer=(x,y)=>({
   arrangement:'single',   // 'single' | 'tile' | 'circle'
   tileRows:3,tileCols:4,tileSpacingX:1.8,tileSpacingY:1.5,
   circleCount:8,circleRadius:30,
-  opacity:100,blend:'source-over',visible:true,
+  opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
   rot:0,sx:100,sy:100,
   // compat fields for serialization / layer stack
   text:'',color:'#e5007d',size:100,font:'Roboto Flex',

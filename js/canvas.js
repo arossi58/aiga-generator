@@ -117,6 +117,9 @@ function buildLayerPane(lid){
       <div class="seg" style="flex-wrap:wrap;gap:4px;">
         ${blendModes.map(m=>`<button class="seg-btn${layer.blend===m?' active':''}" onclick="T.layers[${idx}].blend='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${m}</button>`).join('')}
       </div>
+      <div class="sl-row" style="margin-top:8px;"><span class="sl-label">FX</span>
+        <button class="seg-btn${layer.excludeFromFX?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].excludeFromFX=!T.layers[${idx}].excludeFromFX;this.classList.toggle('active',T.layers[${idx}].excludeFromFX);typo_render();">Above Effects</button>
+      </div>
     </div>`;
     updatePlaygroundPaletteSwatches();
     return;
@@ -185,6 +188,9 @@ function buildLayerPane(lid){
       <div class="seg" style="flex-wrap:wrap;gap:4px;">
         ${blendModes.map(m=>`<button class="seg-btn${layer.blend===m?' active':''}" onclick="T.layers[${idx}].blend='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${m}</button>`).join('')}
       </div>
+      <div class="sl-row" style="margin-top:8px;"><span class="sl-label">FX</span>
+        <button class="seg-btn${layer.excludeFromFX?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].excludeFromFX=!T.layers[${idx}].excludeFromFX;this.classList.toggle('active',T.layers[${idx}].excludeFromFX);typo_render();">Above Effects</button>
+      </div>
     </div>`;
     return;
   }
@@ -248,6 +254,9 @@ function buildLayerPane(lid){
       <div class="cg-title">Blend Mode</div>
       <div class="blend-seg seg">
         ${blendModes.map(b=>`<button class="seg-btn${layer.blend===b?' active':''}" onclick="T.layers[${idx}].blend='${b}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">${b==='source-over'?'Normal':b.replace('-',' ')}</button>`).join('')}
+      </div>
+      <div class="sl-row" style="margin-top:8px;"><span class="sl-label">FX</span>
+        <button class="seg-btn${layer.excludeFromFX?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].excludeFromFX=!T.layers[${idx}].excludeFromFX;this.classList.toggle('active',T.layers[${idx}].excludeFromFX);typo_render();">Above Effects</button>
       </div>
     </div>
     <div class="cg">
@@ -593,9 +602,9 @@ function typo_render(){
     _htBgSnap=null;
   }
 
-  // Layers
+  // Layers — first pass: layers subject to post FX
   T.layers.forEach(layer=>{
-    if(!layer.visible)return;
+    if(!layer.visible||layer.excludeFromFX)return;
     ctx.save();ctx.globalAlpha=layer.opacity/100;
     ctx.globalCompositeOperation=layer.blend;
     drawLayer(ctx,layer,t);ctx.restore();
@@ -607,6 +616,14 @@ function typo_render(){
 
   // Grain
   if(T.grain>0) drawGrain(ctx,TW,TH,T.grain,T.grainSize,T.grainStyle||'overlay');
+
+  // Layers — second pass: layers excluded from FX (render clean on top)
+  T.layers.forEach(layer=>{
+    if(!layer.visible||!layer.excludeFromFX)return;
+    ctx.save();ctx.globalAlpha=layer.opacity/100;
+    ctx.globalCompositeOperation=layer.blend;
+    drawLayer(ctx,layer,t);ctx.restore();
+  });
 
   // AIGA Logo — always last, unaffected by any FX
   drawLogo(ctx,TW,TH);

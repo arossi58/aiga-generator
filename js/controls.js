@@ -251,6 +251,7 @@ function buildLayerStack() {
     const isImg = layer.type === 'image';
     const isEye = layer.type === 'eye';
     const typeBadge = isImg ? 'IMG' : isEye ? '◉' : 'T';
+    const aboveFX = !!layer.excludeFromFX;
     const textPrev = isImg
       ? (layer.imgSrc ? '📷 image' : '📷 no image')
       : isEye
@@ -286,6 +287,7 @@ function buildLayerStack() {
         </div>
         <div class="layer-body-meta">
           ${fontShort ? `<span class="layer-font-badge">${fontShort}</span>` : ''}
+          ${aboveFX ? `<span class="layer-font-badge" style="color:#e5007d;border-color:rgba(229,0,125,.3);">↑FX</span>` : ''}
           <div class="layer-op-bar">
             <div class="layer-op-bar-fill" style="width:${opPct}%;background:${color};"></div>
           </div>
