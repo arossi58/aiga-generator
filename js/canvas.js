@@ -1561,51 +1561,110 @@ window.addEventListener('resize',typo_fitCanvas);
 /* ════════════════════════════════════════════
    SAFE ZONE OVERLAY
 ════════════════════════════════════════════ */
+// Safe zone data sourced from Jon Loomer (jonloomer.com/qvt/safe-zones-template-meta-ads/)
+// 9:16 vertical (1080×1920): top=270px=14%, bottom varies, sides=65px=6%
+// Story bottom=380px=20%, Reel bottom=670px=35%
 const SAFE_ZONE_DEFS = {
+  // ── Instagram ──────────────────────────────────────────────
   'ig-post': {
-    name: 'Instagram Post', hint: '1:1',
+    name: 'Instagram Feed', hint: '1:1 · 1080×1080',
     zones: [],
-    safe: { x:.05, y:.05, w:.90, h:.90 },
+    safe: { x:.06, y:.06, w:.88, h:.88 },
+  },
+  'ig-post-45': {
+    // Feed crops to 4:5 max portrait — margins ~250px top/bottom of 1350px
+    name: 'Instagram Feed', hint: '4:5 · 1080×1350',
+    zones: [
+      { label:'May crop on older clients', x:0, y:0,   w:1, h:.185 },
+      { label:'May crop on older clients', x:0, y:.815, w:1, h:.185 },
+    ],
+    safe: { x:.06, y:.185, w:.88, h:.63 },
   },
   'ig-story': {
-    name: 'Instagram Story / Reel', hint: '9:16',
+    // Top 14% (270px): status bar + story progress strips + profile/close
+    // Bottom 20% (380px): reply bar + engagement row
+    // Sides 6% (65px): edge clearance
+    name: 'Instagram Story', hint: '9:16 · 1080×1920',
     zones: [
-      { label:'Progress Bar + Profile', x:0, y:0,   w:1, h:.13 },
-      { label:'Engagement + Reply Zone',  x:0, y:.65, w:1, h:.35 },
+      { label:'Progress Bar + Profile',  x:0, y:0,   w:1, h:.14 },
+      { label:'Reply + Engagement Zone', x:0, y:.80, w:1, h:.20 },
     ],
-    safe: { x:.06, y:.13, w:.88, h:.52 },
+    safe: { x:.06, y:.14, w:.88, h:.66 },
   },
-  'tiktok': {
-    name: 'TikTok', hint: '9:16',
+  'ig-reel': {
+    // Top 14% (270px): profile header
+    // Bottom 35% (670px): caption, audio, nav bar, engagement
+    // Right 18%: action buttons column (like, comment, share, audio disc)
+    // Left 6%, Right safe up to 82%
+    name: 'Instagram Reel', hint: '9:16 · 1080×1920',
     zones: [
-      { label:'Top Bar',                x:0,   y:0,   w:1,   h:.08 },
-      { label:'Action Buttons',         x:.85, y:.18, w:.15, h:.57 },
-      { label:'Caption + Audio + Nav',  x:0,   y:.75, w:1,   h:.25 },
+      { label:'Profile + Top Bar',         x:0,   y:0,   w:1,   h:.14 },
+      { label:'Action Buttons',            x:.82, y:.14, w:.18, h:.51 },
+      { label:'Caption + Audio + Nav Bar', x:0,   y:.65, w:1,   h:.35 },
+    ],
+    safe: { x:.06, y:.14, w:.76, h:.51 },
+  },
+  // ── Facebook ───────────────────────────────────────────────
+  'fb-feed': {
+    name: 'Facebook Feed', hint: '1.91:1 · 1200×628',
+    zones: [],
+    safe: { x:.10, y:.10, w:.80, h:.80 },
+  },
+  'fb-post': {
+    name: 'Facebook Post', hint: '1:1 · 1080×1080',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
+  },
+  'fb-story': {
+    // Same safe zone spec as Instagram Story (both Meta platforms)
+    name: 'Facebook Story', hint: '9:16 · 1080×1920',
+    zones: [
+      { label:'Progress Bar + Profile',  x:0, y:0,   w:1, h:.14 },
+      { label:'Reply + Engagement Zone', x:0, y:.80, w:1, h:.20 },
+    ],
+    safe: { x:.06, y:.14, w:.88, h:.66 },
+  },
+  // ── LinkedIn ───────────────────────────────────────────────
+  'li-post': {
+    name: 'LinkedIn Post', hint: '1.91:1 · 1200×627',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
+  },
+  'li-post-sq': {
+    name: 'LinkedIn Post', hint: '1:1 · 1200×1200',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
+  },
+  'li-post-45': {
+    name: 'LinkedIn Post', hint: '4:5 · 1080×1350',
+    zones: [],
+    safe: { x:.06, y:.06, w:.88, h:.88 },
+  },
+  // ── TikTok ─────────────────────────────────────────────────
+  'tiktok': {
+    name: 'TikTok', hint: '9:16 · 1080×1920',
+    zones: [
+      { label:'Top Bar',               x:0,   y:0,   w:1,   h:.08 },
+      { label:'Action Buttons',        x:.85, y:.18, w:.15, h:.57 },
+      { label:'Caption + Audio + Nav', x:0,   y:.75, w:1,   h:.25 },
     ],
     safe: { x:.06, y:.08, w:.79, h:.67 },
   },
-  'twitter': {
-    name: 'X / Twitter', hint: '16:9',
-    zones: [],
-    safe: { x:.05, y:.05, w:.90, h:.90 },
-  },
-  'linkedin': {
-    name: 'LinkedIn', hint: '~1.91:1',
-    zones: [],
-    safe: { x:.05, y:.05, w:.90, h:.90 },
-  },
-  'facebook': {
-    name: 'Facebook', hint: '~1.91:1',
-    zones: [],
-    safe: { x:.05, y:.05, w:.90, h:.90 },
-  },
+  // ── YouTube ────────────────────────────────────────────────
   'youtube': {
-    name: 'YouTube Thumbnail', hint: '16:9',
+    name: 'YouTube Thumbnail', hint: '16:9 · 1280×720',
     zones: [
-      { label:'Title Overlay Area', x:0, y:.78, w:1, h:.22 },
+      { label:'Title Overlay', x:0, y:.78, w:1, h:.22 },
     ],
     safe: { x:.05, y:.05, w:.90, h:.73 },
   },
+  // ── X / Twitter ────────────────────────────────────────────
+  'twitter': {
+    name: 'X / Twitter Post', hint: '16:9 · 1200×675',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+  // ── Fallback ───────────────────────────────────────────────
   'custom': {
     name: 'Custom Canvas', hint: 'current size',
     zones: [],

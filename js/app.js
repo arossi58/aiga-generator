@@ -253,14 +253,24 @@ function quickFX(type) {
 ════════════════════════════════════════════ */
 
 const PLATFORMS_DEF = [
-  { id:'ig-post',    label:'Instagram',  sub:'Post',    icon:'📷', w:1080, h:1080 },
-  { id:'ig-story',   label:'Instagram',  sub:'Story',   icon:'📱', w:1080, h:1920 },
-  { id:'tiktok',     label:'TikTok',     sub:'Video',   icon:'🎵', w:1080, h:1920 },
-  { id:'twitter',    label:'X / Twitter',sub:'Post',    icon:'𝕏',  w:1200, h:675  },
-  { id:'linkedin',   label:'LinkedIn',   sub:'Post',    icon:'💼', w:1200, h:628  },
-  { id:'facebook',   label:'Facebook',   sub:'Post',    icon:'📘', w:1200, h:630  },
-  { id:'youtube',    label:'YouTube',    sub:'Thumb',   icon:'▶',  w:1280, h:720  },
-  { id:'custom',     label:'Canvas',     sub:'Current', icon:'⬜', w:null, h:null },
+  // Instagram
+  { id:'ig-post',    label:'Instagram',   sub:'Feed 1:1',    icon:'📷', w:1080, h:1080, group:'Instagram' },
+  { id:'ig-post-45', label:'Instagram',   sub:'Feed 4:5',    icon:'📷', w:1080, h:1350, group:'Instagram' },
+  { id:'ig-story',   label:'Instagram',   sub:'Story',       icon:'📱', w:1080, h:1920, group:'Instagram' },
+  { id:'ig-reel',    label:'Instagram',   sub:'Reel',        icon:'🎬', w:1080, h:1920, group:'Instagram' },
+  // Facebook
+  { id:'fb-feed',    label:'Facebook',    sub:'Feed 1.91:1', icon:'📘', w:1200, h:628,  group:'Facebook' },
+  { id:'fb-post',    label:'Facebook',    sub:'Feed 1:1',    icon:'📘', w:1080, h:1080, group:'Facebook' },
+  { id:'fb-story',   label:'Facebook',    sub:'Story',       icon:'📱', w:1080, h:1920, group:'Facebook' },
+  // LinkedIn
+  { id:'li-post',    label:'LinkedIn',    sub:'Post 1.91:1', icon:'💼', w:1200, h:627,  group:'LinkedIn' },
+  { id:'li-post-sq', label:'LinkedIn',    sub:'Post 1:1',    icon:'💼', w:1200, h:1200, group:'LinkedIn' },
+  { id:'li-post-45', label:'LinkedIn',    sub:'Post 4:5',    icon:'💼', w:1080, h:1350, group:'LinkedIn' },
+  // Other
+  { id:'tiktok',     label:'TikTok',      sub:'Video',       icon:'🎵', w:1080, h:1920, group:'TikTok' },
+  { id:'youtube',    label:'YouTube',     sub:'Thumbnail',   icon:'▶',  w:1280, h:720,  group:'YouTube' },
+  { id:'twitter',    label:'X / Twitter', sub:'Post',        icon:'𝕏',  w:1200, h:675,  group:'X / Twitter' },
+  { id:'custom',     label:'Canvas',      sub:'Current size',icon:'⬜', w:null, h:null, group:'Custom' },
 ];
 
 const EX = {
@@ -295,13 +305,20 @@ function closeExport() {
 
 function buildPlatformGrid() {
   const grid = document.getElementById('platGrid');
-  grid.innerHTML = PLATFORMS_DEF.map(p => {
-    const dims = p.w ? `${p.w}×${p.h}` : `${TW}×${TH}`;
-    return `<button class="plat-btn${EX.platform===p.id?' active':''}" onclick="selPlatform('${p.id}',this)">
-      <span class="plat-icon">${p.icon}</span>
-      <span class="plat-name">${p.label}</span>
-      <span class="plat-dim">${p.sub} · ${dims}</span>
-    </button>`;
+  // Build ordered group list preserving insertion order
+  const groupOrder = [];
+  PLATFORMS_DEF.forEach(p => { if (!groupOrder.includes(p.group)) groupOrder.push(p.group); });
+  grid.innerHTML = groupOrder.map(grp => {
+    const platforms = PLATFORMS_DEF.filter(p => p.group === grp);
+    const btns = platforms.map(p => {
+      const dims = p.w ? `${p.w}×${p.h}` : `${TW}×${TH}`;
+      return `<button class="plat-btn${EX.platform===p.id?' active':''}" onclick="selPlatform('${p.id}',this)">
+        <span class="plat-icon">${p.icon}</span>
+        <span class="plat-name">${p.sub}</span>
+        <span class="plat-dim">${dims}</span>
+      </button>`;
+    }).join('');
+    return `<div class="plat-group-label">${grp}</div>${btns}`;
   }).join('');
 }
 
@@ -333,7 +350,7 @@ function updateExpSummary() {
   document.getElementById('sumH').textContent = d.h.toLocaleString();
   document.getElementById('sumFmt').textContent = EX.format.toUpperCase();
   const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
-  document.getElementById('sumPlat').textContent = p ? p.label.split('/')[0].trim() : 'Custom';
+  document.getElementById('sumPlat').textContent = p ? `${p.group} ${p.sub}` : 'Custom';
   // Show/hide quality slider
   const isPNG = EX.format === 'png';
   document.getElementById('qualitySlider').disabled = isPNG;
