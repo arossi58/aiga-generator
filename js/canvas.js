@@ -1266,8 +1266,9 @@ function drawLayer(ctx,layer,t){
   const arAmt=(_ds.arch?.amt??_fb.amt), arSpd=(_ds.arch?.spd??_fb.spd)/100;
   const glAmt=(_ds.glitch?.amt??_fb.amt), glSpd=(_ds.glitch?.spd??_fb.spd)/100;
   const miAmt=(_ds.mirror?.amt??_fb.amt);
+  const staticTrack=hasVarTrackAnim?null:(layer.varTrackVal??0);
   // hasVarType: per-char mode needed for animated axes or non-default static transforms
-  const hasVarType=hasVarWghtAnim||hasVarWidthAnim||hasVarSkewAnim||_hasFvsAnim||hasVarScaleXAnim||hasVarScaleYAnim||hasVarRotAnim||hasVarTrackAnim||(staticWidth!==100)||(staticSkew!==0)||(staticScaleX!==100)||(staticScaleY!==100)||(staticRot!==0);
+  const hasVarType=hasVarWghtAnim||hasVarWidthAnim||hasVarSkewAnim||_hasFvsAnim||hasVarScaleXAnim||hasVarScaleYAnim||hasVarRotAnim||hasVarTrackAnim||(staticWidth!==100)||(staticSkew!==0)||(staticScaleX!==100)||(staticScaleY!==100)||(staticRot!==0)||(staticTrack!==0);
   // Tile: render repeating background pattern, then fall through to normal text if other dists active
   if(hasTile){drawTile(ctx,layer,baseFstr,lines,t,dists);return;}
   if(hasCircle){drawCircle(ctx,layer,baseFstr,lines,t);return;}
@@ -1295,7 +1296,7 @@ function drawLayer(ctx,layer,t){
     ctx.save();ctx.translate(px,yOff);ctx.rotate(layer.rot*Math.PI/180);ctx.scale(layer.sx/100,layer.sy/100);
     let totalW=0;
     const vTracks=hasVarTrackAnim?chars.map((_,i)=>computeVariation(i,chars.length,layer.varTrackPat,layer.varTrackMin??-5,layer.varTrackMax??60,t,layer.varTrackSpd??layer.varSpd??3,layer.varTrackEase||'linear')):null;
-    const widths=chars.map((c,i)=>{const w=ctx.measureText(c).width+(hasVarTrackAnim?vTracks[i]:layer.ls);totalW+=w;return w;});
+    const widths=chars.map((c,i)=>{const w=ctx.measureText(c).width+(hasVarTrackAnim?vTracks[i]:(layer.ls+(staticTrack??0)));totalW+=w;return w;});
     let cx=-totalW/2;
     chars.forEach((ch,i)=>{
       ctx.save();
