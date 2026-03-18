@@ -197,6 +197,29 @@ const defImageLayer=(x,y)=>({
   varWghtEase:'linear',varWidthEase:'linear',varSkewEase:'linear',varSoftEase:'linear',varWonkEase:'linear',
   varScaleXEase:'linear',varScaleYEase:'linear',varRotEase:'linear',varTrackEase:'linear',
 });
+const defEyeLayer=(x,y)=>({
+  type:'eye',
+  x:x??50,y:y??50,
+  eyeSize:100,
+  irisColor:'#e5007d',
+  pupilColor:'#080808',
+  scleraColor:'#ffffff',
+  outlineColor:'#080808',
+  colorMode:'fixed',      // 'fixed' | 'palette' | 'random'
+  lookMode:'center',      // 'center' | 'wander'
+  lookX:0,lookY:0,
+  blinkMode:'none',       // 'none' | 'auto'
+  blinkSpeed:5,
+  arrangement:'single',   // 'single' | 'tile' | 'circle'
+  tileRows:3,tileCols:4,tileSpacingX:1.8,tileSpacingY:1.5,
+  circleCount:8,circleRadius:30,
+  opacity:100,blend:'source-over',visible:true,
+  rot:0,sx:100,sy:100,
+  // compat fields for serialization / layer stack
+  text:'',color:'#e5007d',size:100,font:'Roboto Flex',
+  style:'normal',bold:false,ls:2,
+  dists:['normal'],distAmt:40,distSpd:30,distSettings:{},
+});
 const T={
   bg:'#080808',bgTex:'none',texOp:12,
   accent:'none',kc:'none',glow:0,

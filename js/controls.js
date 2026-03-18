@@ -37,7 +37,9 @@ function addLayer(type) {
   if (T.layers.length >= MAX_LAYERS) { toast('Maximum 6 layers'); return; }
   const layer = type === 'image'
     ? defImageLayer(50, 50)
-    : defLayer('New Text', '#ffffff', 60, 50, 50, 'Roboto Flex');
+    : type === 'eye'
+      ? defEyeLayer(50, 50)
+      : defLayer('New Text', '#ffffff', 60, 50, 50, 'Roboto Flex');
   T.layers.push(layer);
   const lid = `l${T.layers.length}`;
   ensureLayerPane(lid);
@@ -247,11 +249,14 @@ function buildLayerStack() {
     const isHidden = !layer.visible;
     const isSoloed = soloedLayerId === lid;
     const isImg = layer.type === 'image';
-    const typeBadge = isImg ? 'IMG' : 'T';
+    const isEye = layer.type === 'eye';
+    const typeBadge = isImg ? 'IMG' : isEye ? '◉' : 'T';
     const textPrev = isImg
       ? (layer.imgSrc ? '📷 image' : '📷 no image')
-      : (layer.text.replace(/\n/g, ' ').slice(0, 24) + (layer.text.length > 24 ? '…' : '')) || '—';
-    const fontShort = isImg ? '' : (FONT_SHORT[layer.font] || layer.font);
+      : isEye
+        ? `${layer.arrangement||'single'} · ${layer.eyeSize||100}px`
+        : (layer.text.replace(/\n/g, ' ').slice(0, 24) + (layer.text.length > 24 ? '…' : '')) || '—';
+    const fontShort = (isImg || isEye) ? '' : (FONT_SHORT[layer.font] || layer.font);
     const opPct = Math.round(layer.opacity);
     const canDelete = T.layers.length > 1;
     const canMoveUp = i > 0;
@@ -366,6 +371,7 @@ function typo_shuffle(){
   T.accent=R.p(['none','bar-top','bar-bottom','corners','rule','dot','none']);
   T.layers.forEach((layer,i)=>{
     if(layer.type==='image'){layer.x=R.f(10,90);layer.y=R.f(20,85);return;}
+    if(layer.type==='eye'){layer.x=R.f(20,80);layer.y=R.f(20,80);layer.rot=R.f(-15,15);layer.irisColor=R.p([PALETTE.magenta,PALETTE.primary,PALETTE.h1,PALETTE.h2]);return;}
     layer.font=R.p(fonts);
     layer.text=R.p(R.p([COPY.display,COPY.editorial,COPY.utility]));
     layer.size=R.i(i===0?80:i===1?18:11, i===0?280:i===1?72:26);
@@ -384,7 +390,7 @@ function typo_shuffle(){
 function typo_chaos(){
   const chaosDistCombos=[['wave'],['stagger'],['explode'],['arch'],['glitch'],['mirror'],['wave','glitch'],['stagger','glitch'],['wave','mirror'],['explode','glitch'],['wave','stagger'],['arch','glitch'],['stagger','mirror'],['wave','stagger','glitch']];
   const blends=['multiply','screen','overlay','difference','color-dodge'];
-  T.layers.forEach(l=>{l.dists=R.p(chaosDistCombos);l.distAmt=R.i(60,100);l.distSpd=R.i(1,6);l.rot=R.f(-40,40);l.sx=R.f(20,380);l.sy=R.f(20,380);l.blend=Math.random()>.4?R.p(blends):'source-over';l.ls=R.f(5,60);['wave','stagger','explode','arch','tile','mirror','glitch'].forEach(d=>{if(l.distSettings?.[d])l.distSettings[d].spd=R.i(1,6);});['Wght','Width','Skew','Soft','Wonk'].forEach(a=>{l[`var${a}Spd`]=R.f(0.5,6);});});
+  T.layers.forEach(l=>{if(l.type==='eye'){l.rot=R.f(-40,40);l.sx=R.f(50,200);l.sy=R.f(50,200);l.blend=Math.random()>.4?R.p(blends):'source-over';return;}l.dists=R.p(chaosDistCombos);l.distAmt=R.i(60,100);l.distSpd=R.i(1,6);l.rot=R.f(-40,40);l.sx=R.f(20,380);l.sy=R.f(20,380);l.blend=Math.random()>.4?R.p(blends):'source-over';l.ls=R.f(5,60);['wave','stagger','explode','arch','tile','mirror','glitch'].forEach(d=>{if(l.distSettings?.[d])l.distSettings[d].spd=R.i(1,6);});['Wght','Width','Skew','Soft','Wonk'].forEach(a=>{l[`var${a}Spd`]=R.f(0.5,6);});});
   T.animating=true;document.getElementById('animOn').classList.add('active');document.getElementById('animOff').classList.remove('active');
   typo_setAnim(true,document.getElementById('animOn'));
   syncLayerUI();toast('⚡ Chaos — hit Live to animate');
@@ -396,7 +402,8 @@ function syncLayerUI(){
     const set=(id,v,u)=>{const el=get(id);if(el)el.value=v;const vl=get(id+'Val');if(vl)vl.textContent=v+u;};
     set(`${lid}-x`,Math.round(layer.x),'%');set(`${lid}-y`,Math.round(layer.y),'%');
     set(`${lid}-op`,Math.round(layer.opacity),'%');
-    if(layer.type!=='image'){
+    if(layer.type==='eye'){set(`${lid}-eyeSize`,layer.eyeSize||100,'');set(`${lid}-rot`,Math.round(layer.rot||0),'°');set(`${lid}-sx`,Math.round(layer.sx??100),'%');set(`${lid}-sy`,Math.round(layer.sy??100),'%');}
+    if(layer.type!=='image'&&layer.type!=='eye'){
       set(`${lid}-size`,Math.round(layer.size),'px');
       set(`${lid}-sx`,Math.round(layer.sx),'%');set(`${lid}-sy`,Math.round(layer.sy),'%');
       set(`${lid}-rot`,Math.round(layer.rot),'°');
@@ -416,6 +423,8 @@ function typo_resetLayer(){
   if(!layer)return;
   if(layer.type==='image'){
     T.layers[idx]=defImageLayer(50,50);
+  }else if(layer.type==='eye'){
+    T.layers[idx]=defEyeLayer(50,50);
   }else{
     T.layers[idx]=defLayer('Text','#ffffff',80,50,50,'Roboto Flex');
   }

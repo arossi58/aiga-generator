@@ -895,6 +895,18 @@ textarea.ti:focus{border-color:var(--mag);}
   font-size:6px;letter-spacing:.15em;text-transform:uppercase;
   padding:2px 6px;border:1px solid rgba(229,0,125,.3);color:var(--mag);
 }
+/* Eye layer */
+.gaze-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:3px;
+}
+.gaze-btn{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.45);padding:7px 4px;cursor:pointer;font-size:14px;
+  transition:all .12s;text-align:center;
+}
+.gaze-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.gaze-btn.active{background:rgba(229,0,125,.15);border-color:var(--mag);color:var(--mag);}
+
 .tpl-save-btn{
   background:none;border:1px solid var(--mag);color:var(--mag);
   font-size:8px;letter-spacing:.15em;text-transform:uppercase;
