@@ -49,9 +49,9 @@ function buildLayerPane(lid){
       </div>
       <div class="cg-title" style="margin-top:10px;">Animate</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px;" id="${lid}-look-modes">
-        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan'],['toward-center','→ Center']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';document.getElementById('${lid}-look-random-row').style.display='${'wander'===m?'block':'none'}';typo_render();">${lbl}</button>`).join('')}
+        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan'],['toward-center','→ Center'],['human','Human']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';document.getElementById('${lid}-look-random-row').style.display='${'wander'===m?'block':'none'}';typo_render();">${lbl}</button>`).join('')}
       </div>
-      <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan','toward-center'].includes(layer.lookMode)?'block':'none'}">
+      <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan','toward-center','human'].includes(layer.lookMode)?'block':'none'}">
         <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Speed</span>
           <div class="sl-wrap"><input type="range" min="0.1" max="10" step="0.1" value="${layer.lookSpeed??1}" id="${lid}-lookSpd" oninput="T.layers[${idx}].lookSpeed=+this.value;document.getElementById('${lid}-lookSpdVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-lookSpdVal">${layer.lookSpeed??1}</span></div>
@@ -955,6 +955,49 @@ function drawGrain(ctx,W,H,intensity,size,style){
 /* ════════════════════════════════════════════
    EYE LAYER
 ════════════════════════════════════════════ */
+
+// ── Saccade engine ───────────────────────────────────────────────────────────
+// Pure deterministic function: same (eyeIdx, spd, t) always → same result.
+// Models human saccadic eye movement: fixation → rapid ballistic jump → fixation.
+function _sr(n){const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);}
+
+function _saccadeAt(eyeIdx,spd,t){
+  // Each eye gets a unique random stream via golden-ratio seeding
+  const B=eyeIdx*137.508;
+  const sp=Math.max(0.05,spd);
+  let acc=0;
+  for(let cy=0;;cy++){
+    const s=B+cy*31.41;
+    // Fixation: 1–5 s at 60 fps, scaled by speed
+    const fix=Math.round((60+_sr(s)*240)/sp);
+    // Saccade: 2–5 frames (fast ballistic jump — humans saccade in ~20–200ms)
+    const sacc=Math.round(2+_sr(s+7)*3);
+    const len=fix+sacc;
+    if(t<acc+len){
+      const lt=t-acc;
+      // Target for this cycle
+      const ang=_sr(s+2)*Math.PI*2;
+      const dist=0.35+_sr(s+3)*0.65;
+      const tx=Math.cos(ang)*dist, ty=Math.sin(ang)*dist;
+      // Previous fixation (cycle 0 → center)
+      let px=0,py=0;
+      if(cy>0){const ps=B+(cy-1)*31.41;const pa=_sr(ps+2)*Math.PI*2;const pd=0.35+_sr(ps+3)*0.65;px=Math.cos(pa)*pd;py=Math.sin(pa)*pd;}
+      if(lt<fix){
+        // Fixation: hold + physiological micro-tremor
+        const mu=0.018;
+        return{x:px+Math.sin(t*0.17+B*2.3)*mu, y:py+Math.sin(t*0.23+B*1.7+1.4)*mu};
+      }else{
+        // Saccade: ballistic with very slight terminal overshoot
+        const p=Math.min(1,(lt-fix)/sacc);
+        const ease=p<0.75?p*p/(0.75*0.75):(1+Math.sin((p-0.75)/0.25*Math.PI)*0.07);
+        return{x:px+(tx-px)*Math.min(1,ease), y:py+(ty-py)*Math.min(1,ease)};
+      }
+    }
+    acc+=len;
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function eyePath(ctx,cx,cy,hw,hh){
   const c=hw*0.42;
   ctx.moveTo(cx-hw,cy);
@@ -982,12 +1025,15 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
     gx=cx+(smoothX*(1-rand)+chaoticX*rand)*maxOffset*amt;
     gy=cy+(smoothY*(1-rand)+chaoticY*rand)*maxOffset*amt;
   }else if(layer.lookMode==='circle'){
-    const a=t*spd*Math.PI*2+ph*Math.PI*2;
+    const a=t*spd*0.02+ph*Math.PI*2;
     gx=cx+Math.cos(a)*maxOffset*amt;gy=cy+Math.sin(a)*maxOffset*amt;
   }else if(layer.lookMode==='h-scan'){
-    gx=cx+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;gy=cy;
+    gx=cx+Math.sin(t*spd*0.02+ph*Math.PI*2)*maxOffset*amt;gy=cy;
   }else if(layer.lookMode==='v-scan'){
-    gx=cx;gy=cy+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;
+    gx=cx;gy=cy+Math.sin(t*spd*0.02+ph*Math.PI*2)*maxOffset*amt;
+  }else if(layer.lookMode==='human'){
+    const pos=_saccadeAt(eyeIdx,spd,t);
+    gx=cx+pos.x*maxOffset*amt;gy=cy+pos.y*maxOffset*amt;
   }else if(layer.lookMode==='toward-center'){
     const dx=TW/2-cx,dy=TH/2-cy;
     const dist=Math.sqrt(dx*dx+dy*dy)||1;
