@@ -1174,26 +1174,36 @@ async function initUserTemplates() {
   } catch(e) { /* no file yet — use localStorage */ }
 }
 
-function saveAsTemplate() {
+async function saveAsTemplate() {
   const name = prompt('Template name:', 'My Template');
   if (!name || !name.trim()) return;
+  const userName = prompt('Your name (optional — shown in Community):', '') ?? '';
   const snap = JSON.parse(JSON.stringify(T));
   delete snap.frame; delete snap.animating;
   snap.layers.forEach(l => delete l.img);
+  const localId = 'user-' + Date.now();
   const tpl = {
     ...snap,
-    id: 'user-' + Date.now(),
+    id: localId,
     name: name.trim(),
     cat: 'Saved',
     desc: `${TW}×${TH} · ${snap.layers.length} layer${snap.layers.length !== 1 ? 's' : ''}`,
     canvas: `${TW},${TH}`,
     user: true,
   };
+  // Save locally
   const userTemplates = getUserTemplates();
   userTemplates.unshift(tpl);
   _persistUserTemplates(userTemplates);
   buildTplCards();
   toast(`Saved: "${tpl.name}"`);
+  // Push to Supabase community
+  try {
+    await sbSaveTemplate(name.trim(), userName.trim(), snap);
+    toast(`"${name.trim()}" shared to Community`);
+  } catch(e) {
+    console.warn('Supabase save failed:', e);
+  }
 }
 
 function deleteUserTemplate(id, e) {
@@ -1264,6 +1274,84 @@ function buildTplCards() {
   }
   html += `<div class="tpl-section-label">Premade</div>` + TEMPLATES.map(builtInCard).join('');
   grid.innerHTML = html;
+}
+
+/* ── Community tab (Supabase) ─────────────── */
+let _activeTplTab = 'local';
+
+function switchTplTab(tab, btn) {
+  _activeTplTab = tab;
+  document.querySelectorAll('.tpl-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tplGrid').style.display            = tab === 'local'     ? '' : 'none';
+  document.getElementById('tplCommunityGrid').style.display   = tab === 'community' ? '' : 'none';
+  if (tab === 'community') buildCommunityCards();
+}
+
+async function buildCommunityCards() {
+  const grid   = document.getElementById('tplCommunityGrid');
+  const status = document.getElementById('tplCommunityStatus');
+  status.style.display = 'block';
+  status.textContent   = 'Loading community templates…';
+  try {
+    const rows = await sbGetTemplates();
+    if (!rows || rows.length === 0) {
+      status.textContent = 'No community templates yet — be the first to save one!';
+      return;
+    }
+    status.style.display = 'none';
+    const cards = rows.map(row => {
+      const d    = row.data || {};
+      const l0   = d.layers && d.layers[0];
+      const txt  = l0 ? (l0.text || '').replace(/\n/g,' ').substring(0, 20) : '';
+      const col  = l0 ? l0.color : '#fff';
+      const bg   = d.bg || '#111';
+      const font = l0 ? l0.font : 'Roboto Flex';
+      const serif = (font === 'Fraunces' || font === 'Playfair Display') ? 'serif' : 'sans-serif';
+      const sz   = l0 ? Math.min(Math.round(l0.size / 8), 28) : 18;
+      const date = new Date(row.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const by   = row.user_name ? `by ${row.user_name}` : '';
+      return `<div class="tpl-card" onclick="applyCommunityTemplate('${row.id}')">
+        <div class="tpl-preview" style="background:${bg};">
+          <div style="font-family:'${font}',${serif};font-size:${sz}px;color:${col};line-height:1;letter-spacing:.02em;">${txt}</div>
+        </div>
+        <div class="tpl-meta">
+          <span class="tpl-name">${row.name}</span>
+          <span class="tpl-desc">${by}</span>
+          <span class="tpl-cat">${date}</span>
+        </div>
+      </div>`;
+    });
+    grid.innerHTML = `<div id="tplCommunityStatus" style="display:none;"></div>` + cards.join('');
+  } catch(e) {
+    status.textContent = 'Could not load community templates. Check Supabase config.';
+    console.error(e);
+  }
+}
+
+async function applyCommunityTemplate(id) {
+  try {
+    const rows = await _sbFetch('GET',
+      `${SUPABASE_TABLE}?id=eq.${id}&select=data&limit=1`
+    );
+    if (!rows || !rows[0]) return;
+    const data = rows[0].data;
+    if (!data || !data.layers) return;
+    data.frame = 0; data.animating = false;
+    Object.assign(T, data);
+    // Backfill canvas
+    const canvas = document.getElementById('typeCanvas');
+    if (data.canvas) {
+      [TW, TH] = data.canvas.split(',').map(Number);
+      canvas.width = TW; canvas.height = TH;
+      const sel = document.getElementById('canvasSize');
+      [...sel.options].forEach(o => { if (o.value === data.canvas) o.selected = true; });
+    }
+    syncLayerUI(); typo_render(); typo_fitCanvas();
+    toast('Community template applied');
+  } catch(e) {
+    toast('Failed to load template'); console.error(e);
+  }
 }
 
 function applyTemplate(id) {

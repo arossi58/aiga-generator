@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:ital,opsz,wdth,wght,GRAD@0,8..144,25..151,100..900,-200..150;1,8..144,25..151,100..900,-200..150&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Recursive:wght@300..1000&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <script src="js/supabase.js"></script>
 </head>
 <body>
 <div id="toast"></div>
@@ -187,7 +188,14 @@
             <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
           </div>
         </div>
-        <div class="tpl-grid" id="tplGrid"><!-- cards injected by JS --></div>
+        <div class="tpl-tabs">
+          <button class="tpl-tab active" onclick="switchTplTab('local',this)">My Templates</button>
+          <button class="tpl-tab" onclick="switchTplTab('community',this)">Community</button>
+        </div>
+        <div id="tplGrid"><!-- cards injected by JS --></div>
+        <div id="tplCommunityGrid" style="display:none;">
+          <div id="tplCommunityStatus" style="font-size:11px;color:rgba(255,255,255,.35);padding:12px 0;">Loading…</div>
+        </div>
       </div>
     </div>
 
