@@ -496,16 +496,16 @@ function recordVideo() {
   if (recMediaRecorder && recMediaRecorder.state === 'recording') return;
 
   const d = getExportDims();
-  // Resize the live canvas to export dims
   const canvas = document.getElementById('typeCanvas');
   const origW = TW, origH = TH;
   TW = d.w; TH = d.h;
   canvas.width = d.w; canvas.height = d.h;
   typo_fitCanvas();
 
-  // Enable animation
+  // Suspend the RAF animation loop — we drive frames explicitly at exact fps
   const wasAnimating = T.animating;
-  if (!T.animating) typo_setAnim(true, document.getElementById('animOn'));
+  T.animating = false;
+  if (animId) { cancelAnimationFrame(animId); animId = null; }
 
   const btn = document.getElementById('recBtn');
   btn.disabled = true;
@@ -516,7 +516,7 @@ function recordVideo() {
   const recLabel = document.getElementById('recLabel');
   progress.classList.add('visible');
 
-  // Choose best codec
+  // Choose best codec — prefer VP9 for quality, fallback to VP8/generic
   const mimeOptions = [
     'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
@@ -524,19 +524,46 @@ function recordVideo() {
   ];
   const mime = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
 
+  // Scale bitrate: 20 Mbps baseline, higher for large/fast exports
+  const targetBitrate = Math.max(20_000_000, Math.round(d.w * d.h * EX.fps * 0.15));
+
   const stream = canvas.captureStream(EX.fps);
-  recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8000000 });
+  recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: targetBitrate });
   const chunks = [];
 
   recMediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
+  // Frame pump: drive canvas repaints at exactly the target fps.
+  // This ensures every captured frame is unique and timed correctly,
+  // rather than letting the encoder sample a passively-animated canvas.
+  let recFramePump = null;
+  const frameDuration = 1000 / EX.fps;
+  let nextFrame = performance.now() + frameDuration;
+  function pumpFrame() {
+    T.frame++; typo_render();
+    const now = performance.now();
+    const delay = Math.max(0, nextFrame - now);
+    nextFrame += frameDuration;
+    recFramePump = setTimeout(pumpFrame, delay);
+  }
+  pumpFrame();
+
   recMediaRecorder.onstop = () => {
-    // Restore canvas
+    clearTimeout(recFramePump);
+
+    // Restore canvas to original dimensions
     TW = origW; TH = origH;
     canvas.width = TW; canvas.height = TH;
     document.getElementById('canvasInfo').textContent = `${TW} × ${TH}px`;
-    typo_fitCanvas(); typo_render();
-    if (!wasAnimating) typo_setAnim(false, document.getElementById('animOff'));
+    typo_fitCanvas();
+
+    // Restore animation state
+    if (wasAnimating) {
+      typo_setAnim(true, document.getElementById('animOn'));
+    } else {
+      T.animating = false;
+      typo_render();
+    }
 
     btn.disabled = false;
     btn.textContent = '● Record & Export WebM';
@@ -553,10 +580,13 @@ function recordVideo() {
     a.href = url; a.download = `aigakc-${platSlug}-${ts}.webm`; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
     const mb = (blob.size / (1024*1024)).toFixed(1);
-    toast(`Downloaded WebM · ${mb}MB · ${EX.duration}s at ${EX.fps}fps`);
+    const mbps = Math.round(targetBitrate / 1_000_000);
+    toast(`Downloaded WebM · ${mb}MB · ${EX.duration}s · ${EX.fps}fps · ${mbps}Mbps`);
   };
 
-  recMediaRecorder.start(100); // collect data every 100ms
+  // No timeslice — collect all data at end so the encoder can optimise
+  // the full clip in one pass rather than committing bitrate chunk by chunk
+  recMediaRecorder.start();
 
   // Progress countdown
   const startTime = Date.now();
