@@ -428,14 +428,28 @@ function renderAtRes(targetW, targetH) {
     _htBgSnap = null;
   }
 
-  // Layers — scale all size/position values
+  // Layers — scale all pixel-based values proportionally
+  const sc = (sx + sy) / 2;
   const savedTW = TW, savedTH = TH;
   TW = targetW; TH = targetH;
   T.layers.forEach(layer => {
     if (!layer.visible) return;
+    // Scale per-distortion amt values (pixel-based offsets)
+    let scaledDS = layer.distSettings;
+    if (layer.distSettings) {
+      scaledDS = {};
+      for (const [k, v] of Object.entries(layer.distSettings)) {
+        scaledDS[k] = { ...v, amt: (v.amt ?? 0) * sc };
+      }
+    }
     const scaledLayer = {
       ...layer,
-      size: layer.size * ((sx + sy) / 2),
+      size:     layer.size * sc,
+      eyeSize:  (layer.eyeSize  || 100) * sc,
+      ls:       (layer.ls       || 0)   * sc,
+      distAmt:  (layer.distAmt  || 0)   * sc,
+      imgScale: (layer.imgScale ?? 100) * sc,
+      distSettings: scaledDS,
     };
     ctx.save();
     ctx.globalAlpha = scaledLayer.opacity / 100;
