@@ -75,21 +75,45 @@ function buildLayerPane(lid){
       </div>
     </div>
     <div class="cg">
-      <div class="cg-title">Color</div>
+      <div class="cg-title">Iris Color</div>
       <div class="seg" style="margin-bottom:8px;">
         <button class="seg-btn${layer.colorMode==='fixed'?' active':''}" onclick="T.layers[${idx}].colorMode='fixed';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Fixed</button>
         <button class="seg-btn${layer.colorMode==='palette'?' active':''}" onclick="T.layers[${idx}].colorMode='palette';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Palette</button>
         <button class="seg-btn${layer.colorMode==='random'?' active':''}" onclick="T.layers[${idx}].colorMode='random';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Random</button>
       </div>
-      <div class="sl-row"><span class="sl-label">Iris</span>
-        <div class="cdot-row" id="${lid}-pal-colors"></div>
-        <input type="color" value="${layer.irisColor||'#e5007d'}" style="width:26px;height:26px;border:none;cursor:pointer;background:none;padding:0;flex-shrink:0;" oninput="T.layers[${idx}].irisColor=this.value;typo_render();"></div>
-      <div class="sl-row"><span class="sl-label">Outline</span>
-        <input type="color" value="${layer.outlineColor||'#080808'}" style="width:26px;height:26px;border:none;cursor:pointer;background:none;padding:0;" oninput="T.layers[${idx}].outlineColor=this.value;typo_render();"></div>
-      <div class="sl-row"><span class="sl-label">Sclera</span>
-        <input type="color" value="${layer.scleraColor||'#ffffff'}" style="width:26px;height:26px;border:none;cursor:pointer;background:none;padding:0;" oninput="T.layers[${idx}].scleraColor=this.value;typo_render();"></div>
-      <div class="sl-row"><span class="sl-label">Pupil</span>
-        <input type="color" value="${layer.pupilColor||'#080808'}" style="width:26px;height:26px;border:none;cursor:pointer;background:none;padding:0;" oninput="T.layers[${idx}].pupilColor=this.value;typo_render();"></div>
+      <div class="palette-colors" id="${lid}-pal-colors"><span class="ps-label">From palette</span></div>
+      <div class="color-row">
+        <input type="color" class="cust-color" value="${layer.irisColor||'#e5007d'}" oninput="T.layers[${idx}].irisColor=this.value;typo_render();">
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Sclera Color</div>
+      <div class="palette-colors" id="${lid}-sclera-pal"><span class="ps-label">From palette</span></div>
+      <div class="color-row">
+        <div class="cdot" style="background:#ffffff;" onclick="T.layers[${idx}].scleraColor='#ffffff';typo_render();"></div>
+        <div class="cdot" style="background:#f4f1ea;" onclick="T.layers[${idx}].scleraColor='#f4f1ea';typo_render();"></div>
+        <div class="cdot" style="background:#080808;" onclick="T.layers[${idx}].scleraColor='#080808';typo_render();"></div>
+        <input type="color" class="cust-color" value="${layer.scleraColor||'#ffffff'}" oninput="T.layers[${idx}].scleraColor=this.value;typo_render();">
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Outline Color</div>
+      <div class="palette-colors" id="${lid}-outline-pal"><span class="ps-label">From palette</span></div>
+      <div class="color-row">
+        <div class="cdot" style="background:#080808;" onclick="T.layers[${idx}].outlineColor='#080808';typo_render();"></div>
+        <div class="cdot" style="background:#ffffff;" onclick="T.layers[${idx}].outlineColor='#ffffff';typo_render();"></div>
+        <div class="cdot" style="background:transparent;border:1px dashed rgba(255,255,255,.2);" onclick="T.layers[${idx}].outlineColor='transparent';typo_render();" title="No outline"></div>
+        <input type="color" class="cust-color" value="${layer.outlineColor&&layer.outlineColor!=='transparent'?layer.outlineColor:'#080808'}" oninput="T.layers[${idx}].outlineColor=this.value;typo_render();">
+      </div>
+    </div>
+    <div class="cg">
+      <div class="cg-title">Pupil Color</div>
+      <div class="palette-colors" id="${lid}-pupil-pal"><span class="ps-label">From palette</span></div>
+      <div class="color-row">
+        <div class="cdot" style="background:#080808;" onclick="T.layers[${idx}].pupilColor='#080808';typo_render();"></div>
+        <div class="cdot" style="background:#ffffff;" onclick="T.layers[${idx}].pupilColor='#ffffff';typo_render();"></div>
+        <input type="color" class="cust-color" value="${layer.pupilColor||'#080808'}" oninput="T.layers[${idx}].pupilColor=this.value;typo_render();">
+      </div>
     </div>
     <div class="cg">
       <div class="cg-title">Position &amp; Transform
@@ -485,21 +509,29 @@ function updatePlaygroundPaletteSwatches(){
   T.layers.forEach((layer,i)=>{
     if(layer.type==='image')return;
     const lid=`l${i+1}`;
-    const container=document.getElementById(`${lid}-pal-colors`);
-    if(!container)return;
-    container.style.display='flex';
-    container.innerHTML=`<span class="ps-label">From palette</span>`;
-    swatches.forEach(s=>{
-      const d=document.createElement('div');
-      d.className='cdot ps-swatch';d.style.background=s.c;
-      d.title=s.n+' '+s.c;
-      d.onclick=()=>{
-        if(layer.type==='eye')T.layers[i].irisColor=s.c;
-        else T.layers[i].color=s.c;
-        typo_render();
-      };
-      container.appendChild(d);
-    });
+
+    // Helper: fill any palette-colors container
+    function fillPal(id, onPick){
+      const c=document.getElementById(id);
+      if(!c)return;
+      c.style.display='flex';
+      c.innerHTML=`<span class="ps-label">From palette</span>`;
+      swatches.forEach(s=>{
+        const d=document.createElement('div');
+        d.className='cdot ps-swatch';d.style.background=s.c;d.title=s.n+' '+s.c;
+        d.onclick=()=>{onPick(s.c);typo_render();};
+        c.appendChild(d);
+      });
+    }
+
+    if(layer.type==='eye'){
+      fillPal(`${lid}-pal-colors`,  c=>T.layers[i].irisColor=c);
+      fillPal(`${lid}-sclera-pal`,  c=>T.layers[i].scleraColor=c);
+      fillPal(`${lid}-outline-pal`, c=>T.layers[i].outlineColor=c);
+      fillPal(`${lid}-pupil-pal`,   c=>T.layers[i].pupilColor=c);
+    } else {
+      fillPal(`${lid}-pal-colors`,  c=>T.layers[i].color=c);
+    }
   });
 
   // Riso ink palette
