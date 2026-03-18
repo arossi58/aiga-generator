@@ -492,115 +492,167 @@ function exportCopy() {
 }
 
 /* ── Video export ── */
-function recordVideo() {
+function _downloadRecordedBlob(chunks, mime, targetBitrate) {
+  const blob = new Blob(chunks, { type: mime });
+  const url = URL.createObjectURL(blob);
+  const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `aigakc-${p ? p.id : 'custom'}-${new Date().toISOString().slice(0,10)}.webm`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  const mb = (blob.size / (1024*1024)).toFixed(1);
+  toast(`Downloaded WebM · ${mb}MB · ${EX.duration}s · ${EX.fps}fps · ${Math.round(targetBitrate/1e6)}Mbps`);
+}
+
+async function recordVideo() {
   if (recMediaRecorder && recMediaRecorder.state === 'recording') return;
 
   const d = getExportDims();
   const canvas = document.getElementById('typeCanvas');
+  const ctx = canvas.getContext('2d');
   const origW = TW, origH = TH;
+  const startFrame = T.frame;
   TW = d.w; TH = d.h;
   canvas.width = d.w; canvas.height = d.h;
   typo_fitCanvas();
 
-  // Suspend the RAF animation loop — we drive frames explicitly at exact fps
+  // Suspend the RAF animation loop
   const wasAnimating = T.animating;
   T.animating = false;
   if (animId) { cancelAnimationFrame(animId); animId = null; }
 
   const btn = document.getElementById('recBtn');
   btn.disabled = true;
-  btn.textContent = '● Recording…';
-
   const progress = document.getElementById('rec-progress');
   const barFill = document.getElementById('recBarFill');
   const recLabel = document.getElementById('recLabel');
   progress.classList.add('visible');
 
-  // Choose best codec — prefer VP9 for quality, fallback to VP8/generic
-  const mimeOptions = [
-    'video/webm;codecs=vp9',
-    'video/webm;codecs=vp8',
-    'video/webm',
-  ];
-  const mime = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+  const totalFrames = Math.ceil(EX.duration * EX.fps);
+  const frameDuration = 1000 / EX.fps;
 
-  // Scale bitrate: 20 Mbps baseline, higher for large/fast exports
+  // Codec + bitrate
+  const mimeOptions = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+  const mime = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
   const targetBitrate = Math.max(20_000_000, Math.round(d.w * d.h * EX.fps * 0.15));
 
-  const stream = canvas.captureStream(EX.fps);
-  recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: targetBitrate });
-  const chunks = [];
-
-  recMediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-
-  // Frame pump: drive canvas repaints at exactly the target fps.
-  // This ensures every captured frame is unique and timed correctly,
-  // rather than letting the encoder sample a passively-animated canvas.
-  let recFramePump = null;
-  const frameDuration = 1000 / EX.fps;
-  let nextFrame = performance.now() + frameDuration;
-  function pumpFrame() {
-    T.frame++; typo_render();
-    const now = performance.now();
-    const delay = Math.max(0, nextFrame - now);
-    nextFrame += frameDuration;
-    recFramePump = setTimeout(pumpFrame, delay);
-  }
-  pumpFrame();
-
-  recMediaRecorder.onstop = () => {
-    clearTimeout(recFramePump);
-
-    // Restore canvas to original dimensions
+  // Shared restore function
+  function restore(pumpHandle) {
+    clearTimeout(pumpHandle);
+    clearInterval(recTimer);
     TW = origW; TH = origH;
     canvas.width = TW; canvas.height = TH;
     document.getElementById('canvasInfo').textContent = `${TW} × ${TH}px`;
     typo_fitCanvas();
-
-    // Restore animation state
-    if (wasAnimating) {
-      typo_setAnim(true, document.getElementById('animOn'));
-    } else {
-      T.animating = false;
-      typo_render();
-    }
-
+    if (wasAnimating) typo_setAnim(true, document.getElementById('animOn'));
+    else { T.animating = false; typo_render(); }
     btn.disabled = false;
     btn.textContent = '● Record & Export WebM';
     progress.classList.remove('visible');
     barFill.style.width = '0%';
-    clearInterval(recTimer);
+  }
 
-    const blob = new Blob(chunks, { type: mime });
-    const url = URL.createObjectURL(blob);
-    const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
-    const platSlug = p ? p.id : 'custom';
-    const ts = new Date().toISOString().slice(0,10);
-    const a = document.createElement('a');
-    a.href = url; a.download = `aigakc-${platSlug}-${ts}.webm`; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-    const mb = (blob.size / (1024*1024)).toFixed(1);
-    const mbps = Math.round(targetBitrate / 1_000_000);
-    toast(`Downloaded WebM · ${mb}MB · ${EX.duration}s · ${EX.fps}fps · ${mbps}Mbps`);
-  };
+  // ── Phase 1: Pre-render all frames as GPU-resident ImageBitmaps ──────────
+  // Rendering and encoding are fully decoupled: slow renders don't affect
+  // the encoder's frame timing, so the output is always perfectly smooth.
+  btn.textContent = '● Rendering…';
+  const frames = [];
+  let preRenderOk = true;
 
-  // No timeslice — collect all data at end so the encoder can optimise
-  // the full clip in one pass rather than committing bitrate chunk by chunk
-  recMediaRecorder.start();
-
-  // Progress countdown
-  const startTime = Date.now();
-  const totalMs = EX.duration * 1000;
-  recTimer = setInterval(() => {
-    const elapsed = Date.now() - startTime;
-    const pct = Math.min(100, (elapsed / totalMs) * 100);
-    barFill.style.width = pct + '%';
-    recLabel.textContent = `Recording… ${(elapsed/1000).toFixed(1)}s / ${EX.duration}s`;
-    if (elapsed >= totalMs) {
-      clearInterval(recTimer);
-      recMediaRecorder.stop();
+  for (let i = 0; i < totalFrames; i++) {
+    T.frame = startFrame + i;
+    typo_render();
+    try {
+      // createImageBitmap takes a GPU snapshot of the canvas — near-zero cost
+      // to draw back later, completely independent of scene complexity
+      frames.push(await createImageBitmap(canvas));
+    } catch (_) {
+      // Out of GPU memory — fall back to live pump
+      preRenderOk = false;
+      break;
     }
-  }, 60);
+    barFill.style.width = ((i + 1) / totalFrames * 50) + '%';
+    recLabel.textContent = `Rendering… ${i + 1} / ${totalFrames}`;
+    // Yield every 4 frames so the browser stays responsive
+    if (i % 4 === 3) await new Promise(r => setTimeout(r, 0));
+  }
+
+  if (!preRenderOk) {
+    // Release any partial bitmaps and fall through to live pump
+    frames.forEach(b => b.close?.());
+    frames.length = 0;
+  }
+
+  // ── Phase 2a: Perfect playback from pre-rendered frames ──────────────────
+  if (frames.length === totalFrames) {
+    btn.textContent = '● Encoding…';
+
+    // captureStream(0) = manual frame control; we call requestFrame() ourselves
+    // so the encoder receives exactly one frame per render, at exact intervals
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    const chunks = [];
+    let pump = null;
+
+    recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: targetBitrate });
+    recMediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recMediaRecorder.onstop = () => {
+      restore(pump);
+      frames.forEach(b => b.close?.());
+      _downloadRecordedBlob(chunks, mime, targetBitrate);
+    };
+    recMediaRecorder.start();
+
+    let fi = 0;
+    let nextT = performance.now();
+    function encodeFrame() {
+      if (fi >= frames.length) { recMediaRecorder.stop(); return; }
+      // drawImage from ImageBitmap is a GPU→GPU blit — takes < 1 ms
+      ctx.drawImage(frames[fi], 0, 0);
+      track.requestFrame(); // submit this exact canvas state to the encoder now
+      barFill.style.width = (50 + (fi + 1) / frames.length * 50) + '%';
+      recLabel.textContent = `Encoding… ${fi + 1} / ${frames.length}`;
+      fi++;
+      nextT += frameDuration;
+      pump = setTimeout(encodeFrame, Math.max(0, nextT - performance.now()));
+    }
+    nextT = performance.now();
+    encodeFrame();
+
+  // ── Phase 2b: Fallback — live frame pump (pre-render OOM'd) ──────────────
+  } else {
+    btn.textContent = '● Recording…';
+
+    const stream = canvas.captureStream(EX.fps);
+    const chunks = [];
+    let pump = null;
+
+    recMediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: targetBitrate });
+    recMediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recMediaRecorder.onstop = () => {
+      restore(pump);
+      _downloadRecordedBlob(chunks, mime, targetBitrate);
+    };
+    recMediaRecorder.start();
+
+    let nextF = performance.now() + frameDuration;
+    function pumpFrame() {
+      T.frame++; typo_render();
+      nextF += frameDuration;
+      pump = setTimeout(pumpFrame, Math.max(0, nextF - performance.now()));
+    }
+    pumpFrame();
+
+    const startTime = Date.now();
+    const totalMs = EX.duration * 1000;
+    recTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      barFill.style.width = Math.min(100, elapsed / totalMs * 100) + '%';
+      recLabel.textContent = `Recording… ${(elapsed/1000).toFixed(1)}s / ${EX.duration}s`;
+      if (elapsed >= totalMs) { clearInterval(recTimer); recMediaRecorder.stop(); }
+    }, 60);
+  }
 }
 
 /* ════════════════════════════════════════════
