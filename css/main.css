@@ -776,7 +776,7 @@ textarea.ti:focus{border-color:var(--mag);}
 /* Canvas stage */
 #stage{position:relative;z-index:1;box-shadow:0 0 0 1px rgba(229,0,125,.18),0 20px 60px rgba(0,0,0,.6);}
 #typeCanvas{display:block;}
-#safeZoneBtn.active{background:rgba(80,220,130,.15);border-color:rgba(80,220,130,.6);color:rgba(80,220,130,.95);}
+#safeZoneBtn.on{background:rgba(80,220,130,.15);border-color:rgba(80,220,130,.6);color:rgba(80,220,130,.95);}
 #canvas-info-bar{
   position:relative;z-index:1;
   display:flex;align-items:center;gap:8px;margin-top:10px;

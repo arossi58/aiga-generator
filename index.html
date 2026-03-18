@@ -437,7 +437,6 @@
       </div>
       <div id="canvas-info-bar">
         <span class="c-info" id="canvasInfo">800 × 800px</span>
-        <button class="tb-btn" id="safeZoneBtn" onclick="toggleSafeZone(this)">Safe Zone</button>
         <button class="tb-btn" onclick="typo_resetLayer()">Reset Layer</button>
         <button class="tb-btn mag" style="margin-left:4px;" onclick="openExport()">↓ Export</button>
       </div>
@@ -446,6 +445,12 @@
     <!-- Right panel: accents + kc mark -->
     <div id="type-rpanel">
 
+      <div class="cg">
+        <div class="cg-title">Safe Zone
+          <button class="align-btn" id="safeZoneBtn" onclick="toggleSafeZone(this)">Off</button>
+        </div>
+        <p style="font-size:9px;color:rgba(255,255,255,.28);line-height:1.5;margin:0;">Shows platform UI overlay zones on canvas. Uses the Export platform setting.</p>
+      </div>
 
       <div class="cg">
         <div class="cg-title">AIGA Logo</div>

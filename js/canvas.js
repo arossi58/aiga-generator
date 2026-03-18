@@ -1617,14 +1617,15 @@ let _safeZoneOn = false;
 
 function toggleSafeZone(btn) {
   _safeZoneOn = !_safeZoneOn;
-  btn.classList.toggle('active', _safeZoneOn);
+  btn.classList.toggle('on', _safeZoneOn);
+  btn.textContent = _safeZoneOn ? 'On' : 'Off';
   updateSafeZone();
 }
 
 function updateSafeZone() {
   const overlay = document.getElementById('safeZoneOverlay');
   if (!overlay) return;
-  if (!_safeZoneOn) { overlay.style.display = 'none'; return; }
+  if (!_safeZoneOn) { overlay.style.cssText = 'display:none;position:absolute;top:0;left:0;pointer-events:none;z-index:10;'; return; }
 
   const platform = (typeof EX !== 'undefined' ? EX.platform : null) || 'custom';
   const def = SAFE_ZONE_DEFS[platform] || SAFE_ZONE_DEFS['custom'];
@@ -1687,11 +1688,10 @@ function updateSafeZone() {
       fill="rgba(255,255,255,0.35)">${def.name} · ${def.hint}</text>
   `;
 
+  overlay.style.cssText = `display:block;position:absolute;top:0;left:0;width:${W}px;height:${H}px;pointer-events:none;z-index:10;`;
   overlay.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"
-    style="position:absolute;inset:0;width:100%;height:100%;display:block;">
+    viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;">
     ${defs}${zonesHTML}${safeHTML}${platLabel}
   </svg>`;
-  overlay.style.display = 'block';
 }
 
