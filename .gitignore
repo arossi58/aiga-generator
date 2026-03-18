@@ -1,0 +1,5 @@
+# Local credentials — never commit
+js/config.js
+
+# macOS
+.DS_Store

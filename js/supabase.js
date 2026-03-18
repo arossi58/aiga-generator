@@ -3,8 +3,8 @@
    Replace SUPABASE_URL and SUPABASE_ANON_KEY with
    your values from Project Settings → API
 ════════════════════════════════════════════ */
-const SUPABASE_URL      = 'https://danukrioxidctbbapscj.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_lDEueyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhbnVrcmlveGlkY3RiYmFwc2NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MDM0ODMsImV4cCI6MjA4OTM3OTQ4M30.MqPR9WIqbvMb17FcIXSTpP6TAAypn09zkmckJ3127V09RjuS3OzTl5ZdRGnkg__Uvd9P7k';
+const SUPABASE_URL      = CONFIG.SUPABASE_URL;
+const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
 const SUPABASE_TABLE    = 'templates';
 
 /* ── Thin REST client (no npm needed) ──────── */
