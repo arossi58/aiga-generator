@@ -562,10 +562,21 @@ async function recordVideo() {
 
   for (let i = 0; i < totalFrames; i++) {
     T.frame = startFrame + i;
+
+    // T.animating must be true so grain and gradient-grain caches regenerate
+    // each frame exactly as they do during live playback — without this, every
+    // pre-rendered frame would have identical static grain.
+    T.animating = true;
     typo_render();
+    T.animating = false;
+
+    // Await one animation frame before snapshotting.
+    // On hardware-accelerated canvas the GPU rasterisation pipeline is async;
+    // RAF fires after the browser has flushed and composited the current frame,
+    // guaranteeing createImageBitmap captures a fully-completed render.
+    await new Promise(r => requestAnimationFrame(r));
+
     try {
-      // createImageBitmap takes a GPU snapshot of the canvas — near-zero cost
-      // to draw back later, completely independent of scene complexity
       frames.push(await createImageBitmap(canvas));
     } catch (_) {
       // Out of GPU memory — fall back to live pump
@@ -574,12 +585,9 @@ async function recordVideo() {
     }
     barFill.style.width = ((i + 1) / totalFrames * 50) + '%';
     recLabel.textContent = `Rendering… ${i + 1} / ${totalFrames}`;
-    // Yield every 4 frames so the browser stays responsive
-    if (i % 4 === 3) await new Promise(r => setTimeout(r, 0));
   }
 
   if (!preRenderOk) {
-    // Release any partial bitmaps and fall through to live pump
     frames.forEach(b => b.close?.());
     frames.length = 0;
   }
@@ -588,9 +596,11 @@ async function recordVideo() {
   if (frames.length === totalFrames) {
     btn.textContent = '● Encoding…';
 
-    // captureStream(0) = manual frame control; we call requestFrame() ourselves
-    // so the encoder receives exactly one frame per render, at exact intervals
-    const stream = canvas.captureStream(0);
+    // captureStream(EX.fps) embeds correct fps metadata in the stream so players
+    // know the exact playback rate. requestFrame() still gives us explicit
+    // per-frame control: each drawImage+requestFrame pair submits exactly one
+    // frame to the encoder, with proper timestamps.
+    const stream = canvas.captureStream(EX.fps);
     const track = stream.getVideoTracks()[0];
     const chunks = [];
     let pump = null;
