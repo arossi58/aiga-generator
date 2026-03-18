@@ -479,6 +479,69 @@ function renderAtRes(targetW, targetH) {
   return off;
 }
 
+/* ── Render a template thumbnail (offscreen, does not disturb main canvas) ── */
+function renderTplThumb(tplData, thumbW, thumbH) {
+  // Save all globals touched by renderAtRes
+  const savedT           = JSON.parse(JSON.stringify(T));
+  const savedTW          = TW, savedTH = TH;
+  const savedGrainCanvas = _grainCanvas;
+  const savedGradOC      = _gradOC;
+  const savedGradGrainC  = _gradGrainC;
+  const savedHtBgSnap    = _htBgSnap;
+
+  try {
+    // Apply template data into T (mirrors applyTemplate)
+    T.bg          = tplData.bg          ?? '#111';
+    T.bgTex       = tplData.bgTex       ?? 'none';
+    T.texOp       = tplData.texOp       ?? 12;
+    T.accent      = tplData.accent      ?? 'none';
+    T.kc          = tplData.kc          ?? 'none';
+    T.glow        = tplData.glow        ?? 0;
+    T.grad        = tplData.grad        ?? 'none';
+    T.gradC1      = tplData.gradC1      ?? '#e5007d';
+    T.gradC2      = tplData.gradC2      ?? '#002fa7';
+    T.gradC3      = tplData.gradC3      ?? '#8800cc';
+    T.gradC4      = tplData.gradC4      ?? T.gradC1;
+    T.gradC5      = tplData.gradC5      ?? T.gradC2;
+    T.gradAngle   = tplData.gradAngle   ?? 135;
+    T.gradOpacity = tplData.gradOpacity ?? 80;
+    T.gradMid     = tplData.gradMid     ?? 50;
+    T.gradGrain   = tplData.gradGrain   ?? 0;
+    T.gradBlobs   = tplData.gradBlobs   ?? 4;
+    T.grain       = tplData.grain       ?? 0;
+    T.grainSize   = tplData.grainSize   ?? 1;
+    T.grainStyle  = tplData.grainStyle  ?? 'overlay';
+    T.grainColor  = tplData.grainColor  ?? '#ec008c';
+    T.htMode      = tplData.htMode      ?? 'none';
+    T.htBg        = tplData.htBg        ?? true;
+    T.riso        = tplData.riso        ?? 0;
+    T.frame       = 0; // static preview
+    T.layers      = (tplData.layers || []).map(l => ({...l}));
+
+    // Set native dims so renderAtRes scales correctly
+    const [cw, ch] = (tplData.canvas || '800,800').split(',').map(Number);
+    TW = cw; TH = ch;
+
+    // Clear caches so they regenerate at thumb size
+    _grainCanvas = null; _gradOC = null; _gradGrainC = null;
+
+    const off = renderAtRes(thumbW, thumbH);
+    return off.toDataURL('image/jpeg', 0.8);
+  } catch(e) {
+    console.warn('renderTplThumb error:', e);
+    return '';
+  } finally {
+    // Restore everything
+    for (const k in T) delete T[k];
+    Object.assign(T, savedT);
+    TW = savedTW; TH = savedTH;
+    _grainCanvas = savedGrainCanvas;
+    _gradOC      = savedGradOC;
+    _gradGrainC  = savedGradGrainC;
+    _htBgSnap    = savedHtBgSnap;
+  }
+}
+
 /* ── Image export ── */
 function exportImage() {
   const d = getExportDims();

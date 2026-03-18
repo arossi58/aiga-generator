@@ -1211,69 +1211,75 @@ function deleteUserTemplate(id, e) {
   const filtered = getUserTemplates().filter(t => t.id !== id);
   _persistUserTemplates(filtered);
   if (activeTplId === id) activeTplId = null;
+  delete _tplThumbCache[id]; delete _tplThumbSource[id];
   buildTplCards();
   toast('Template deleted');
 }
+
+/* ── Template thumbnail rendering ─────────── */
+const _tplThumbCache  = {}; // id → dataUrl
+const _tplThumbSource = {}; // id → template data
 
 function buildTplCards() {
   const grid = document.getElementById('tplGrid');
   const userTpls = getUserTemplates();
 
-  function userCard(tpl) {
-    const [cw, ch] = tpl.canvas.split(',');
-    const ratio = parseInt(cw) > parseInt(ch) ? '16:9' : parseInt(cw) < parseInt(ch) ? '9:16' : '1:1';
-    const l0 = tpl.layers && tpl.layers[0];
-    const txt = l0 ? l0.text.replace(/\n/g,' ').substring(0, 20) : '';
-    const col = l0 ? l0.color : '#fff';
-    const sz = l0 ? Math.min(Math.round(l0.size / 8), 28) : 18;
-    const font = l0 ? l0.font : 'Roboto Flex';
-    const serif = (font === 'Fraunces' || font === 'Playfair Display') ? 'serif' : 'sans-serif';
-    const gradOverlay = tpl.grad && tpl.grad !== 'none'
-      ? `<div style="position:absolute;inset:0;background:linear-gradient(135deg,${tpl.gradC1}66,${tpl.gradC2}66);pointer-events:none;"></div>` : '';
+  function thumbCard(tpl, opts = {}) {
+    const [cw, ch] = (tpl.canvas || '800,800').split(',').map(Number);
+    const ratio = cw > ch ? '16:9' : cw < ch ? '9:16' : '1:1';
+    const cat   = opts.cat   ?? 'Saved';
+    const extra = opts.extra ?? '';
+    _tplThumbSource[tpl.id] = tpl;
     return `<div class="tpl-card${activeTplId === tpl.id ? ' active-tpl' : ''}" onclick="applyTemplate('${tpl.id}')" data-tpl="${tpl.id}">
-      <button class="tpl-user-delete" onclick="deleteUserTemplate('${tpl.id}',event)" title="Delete">✕</button>
-      <div class="tpl-preview" style="background:${tpl.bg};">
-        ${gradOverlay}
-        <div style="font-family:'${font}',${serif};font-size:${sz}px;line-height:1;color:${col};position:relative;">${txt}</div>
+      ${extra}
+      <div class="tpl-preview" style="background:${tpl.bg || '#111'};">
+        <img class="tpl-thumb" data-thumb-id="${tpl.id}" alt="">
       </div>
       <div class="tpl-meta">
         <span class="tpl-name">${tpl.name}</span>
-        <span class="tpl-desc">${tpl.desc}</span>
-        <span class="tpl-cat">Saved · ${ratio}</span>
-      </div>
-    </div>`;
-  }
-
-  function builtInCard(tpl) {
-    const p = tpl.preview;
-    const barHTML = p.barTop
-      ? `<div style="position:absolute;top:0;left:0;right:0;height:2.5px;background:#e5007d;"></div>` : '';
-    const cornerHTML = p.corners
-      ? `<div style="position:absolute;top:5px;left:5px;width:8px;height:8px;border-top:1px solid rgba(229,0,125,0.55);border-left:1px solid rgba(229,0,125,0.55);"></div>
-         <div style="position:absolute;bottom:5px;right:5px;width:8px;height:8px;border-bottom:1px solid rgba(229,0,125,0.55);border-right:1px solid rgba(229,0,125,0.55);"></div>` : '';
-    const [cw, ch] = tpl.canvas.split(',');
-    const ratio = parseInt(cw) > parseInt(ch) ? '16:9' : parseInt(cw) < parseInt(ch) ? '9:16' : '1:1';
-    return `<div class="tpl-card${activeTplId === tpl.id ? ' active-tpl' : ''}" onclick="applyTemplate('${tpl.id}')" data-tpl="${tpl.id}">
-      <div class="tpl-preview" style="background:${p.bg};">
-        ${barHTML}${cornerHTML}
-        <div class="tp-ey" style="color:${p.eyebrow.color};font-size:${p.eyebrow.size}px;">${p.eyebrow.text}</div>
-        <div style="font-family:'${p.h1.font}',${p.h1.font==='Fraunces'?'serif':'sans-serif'};font-size:${p.h1.size}px;line-height:.95;letter-spacing:.02em;color:${p.h1.color};">${p.h1.text.replace(/\n/g,'<br>')}</div>
-        <div style="font-size:${p.sub.size}px;letter-spacing:.12em;text-transform:uppercase;color:${p.sub.color};margin-top:4px;font-family:'DM Mono',monospace;">${p.sub.text}</div>
-      </div>
-      <div class="tpl-meta">
-        <span class="tpl-name">${tpl.name}</span>
-        <span class="tpl-desc">${tpl.desc}</span>
-        <span class="tpl-cat">${tpl.cat} · ${ratio}</span>
+        <span class="tpl-desc">${tpl.desc || ''}</span>
+        <span class="tpl-cat">${cat} · ${ratio}</span>
       </div>
     </div>`;
   }
 
   let html = '';
   if (userTpls.length > 0) {
-    html += `<div class="tpl-section-label">Saved</div>` + userTpls.map(userCard).join('');
+    const deleteBtn = (id) => `<button class="tpl-user-delete" onclick="deleteUserTemplate('${id}',event)" title="Delete">✕</button>`;
+    html += `<div class="tpl-section-label">Saved</div>` +
+      userTpls.map(t => thumbCard(t, { cat: 'Saved', extra: deleteBtn(t.id) })).join('');
   }
-  html += `<div class="tpl-section-label">Premade</div>` + TEMPLATES.map(builtInCard).join('');
+  html += `<div class="tpl-section-label">Premade</div>` +
+    TEMPLATES.map(t => thumbCard(t, { cat: t.cat })).join('');
   grid.innerHTML = html;
+  _scheduleThumbRender(grid);
+}
+
+function _scheduleThumbRender(gridEl) {
+  const imgs = Array.from((gridEl || document).querySelectorAll('.tpl-thumb[data-thumb-id]'));
+  let i = 0;
+  function next() {
+    if (i >= imgs.length) return;
+    const img = imgs[i++];
+    const id  = img.dataset.thumbId;
+    if (_tplThumbCache[id]) {
+      img.src = _tplThumbCache[id];
+      img.classList.add('loaded');
+      next();
+    } else {
+      setTimeout(() => {
+        const data = _tplThumbSource[id];
+        if (data) {
+          const url = renderTplThumb(data, 240, 150);
+          _tplThumbCache[id] = url;
+          img.src = url;
+          img.classList.add('loaded');
+        }
+        next();
+      }, 16); // one frame between renders to keep UI responsive
+    }
+  }
+  next();
 }
 
 /* ── Community tab (Supabase) ─────────────── */
@@ -1302,18 +1308,14 @@ async function buildCommunityCards() {
     status.style.display = 'none';
     const cards = rows.map(row => {
       const d    = row.data || {};
-      const l0   = d.layers && d.layers[0];
-      const txt  = l0 ? (l0.text || '').replace(/\n/g,' ').substring(0, 20) : '';
-      const col  = l0 ? l0.color : '#fff';
       const bg   = d.bg || '#111';
-      const font = l0 ? l0.font : 'Roboto Flex';
-      const serif = (font === 'Fraunces' || font === 'Playfair Display') ? 'serif' : 'sans-serif';
-      const sz   = l0 ? Math.min(Math.round(l0.size / 8), 28) : 18;
+      const thumbId = 'comm-' + row.id;
       const date = new Date(row.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
       const by   = row.user_name ? `by ${row.user_name}` : '';
+      _tplThumbSource[thumbId] = d;
       return `<div class="tpl-card" onclick="applyCommunityTemplate('${row.id}')">
         <div class="tpl-preview" style="background:${bg};">
-          <div style="font-family:'${font}',${serif};font-size:${sz}px;color:${col};line-height:1;letter-spacing:.02em;">${txt}</div>
+          <img class="tpl-thumb" data-thumb-id="${thumbId}" alt="">
         </div>
         <div class="tpl-meta">
           <span class="tpl-name">${row.name}</span>
@@ -1323,6 +1325,7 @@ async function buildCommunityCards() {
       </div>`;
     });
     grid.innerHTML = `<div id="tplCommunityStatus" style="display:none;"></div>` + cards.join('');
+    _scheduleThumbRender(grid);
   } catch(e) {
     status.textContent = 'Could not load community templates. Check Supabase config.';
     console.error(e);
