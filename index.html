@@ -150,6 +150,17 @@
           <button id="animOn" onclick="typo_setAnim(true,this)">Live</button>
         </div>
       </div>
+      <div class="tb-item" id="tb-phys-controls" style="display:none;">
+        <span class="tb-label">Physics</span>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-size:10px;color:rgba(255,255,255,.4);white-space:nowrap;">Gravity ↓</span>
+          <input type="range" min="-5" max="5" step="0.1" value="1" id="physGravY" style="width:54px;"
+            oninput="physSetGravity(0,+this.value);document.getElementById('physGravYVal').textContent=(+this.value).toFixed(1);">
+          <span style="font-size:10px;width:22px;color:rgba(255,255,255,.5);" id="physGravYVal">1.0</span>
+          <button class="tb-btn" style="font-size:11px;padding:3px 7px;" onclick="physScatter()">⚡</button>
+          <button class="tb-btn" style="font-size:11px;padding:3px 7px;" onclick="physReset()">↩</button>
+        </div>
+      </div>
       <div class="tb-item">
         <button class="tb-btn" id="tplToggleBtn" onclick="toggleTplDrawer()">☰ Templates</button>
       </div>
@@ -635,9 +646,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <script src="js/supabase.js"></script>
 <script src="js/color.js"></script>
 <script src="js/canvas.js"></script>
+<script src="js/physics.js"></script>
 <script src="js/controls.js"></script>
 <script src="js/app.js"></script>
 <script src="js/palette.js"></script>

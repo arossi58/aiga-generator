@@ -3,7 +3,7 @@ function typo_resize(){
   [TW,TH]=v.split(',').map(Number);
   const c=document.getElementById('typeCanvas');c.width=TW;c.height=TH;
   document.getElementById('canvasInfo').textContent=`${TW} × ${TH}px`;
-  typo_fitCanvas();typo_render();
+  typo_fitCanvas();physOnResize();typo_render();
   updateSafeZone();
   // Sync export preset to match canvas size
   if(typeof PLATFORMS_DEF!=='undefined'&&typeof EX!=='undefined'){
@@ -366,7 +366,7 @@ function selCtrl(btn,groupId){
 function typo_setAnim(on,btn){
   document.querySelectorAll('.tb-toggle button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');T.animating=on;
-  if(on){if(animId)cancelAnimationFrame(animId);(function loop(){T.frame++;typo_render();if(T.animating)animId=requestAnimationFrame(loop);})();}
+  if(on){if(animId)cancelAnimationFrame(animId);(function loop(){T.frame++;physStep();typo_render();if(T.animating)animId=requestAnimationFrame(loop);})();}
   else{if(animId){cancelAnimationFrame(animId);animId=null;}typo_render();}
 }
 

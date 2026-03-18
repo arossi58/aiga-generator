@@ -177,6 +177,7 @@ const defLayer=(text,color,size,x,y,font)=>({
   varRotPat:'none',varRotMin:-45,varRotMax:45,varRotSpd:3,varRotEase:'linear',
   varTrackPat:'none',varTrackMin:-5,varTrackMax:60,varTrackSpd:3,varTrackEase:'linear',
   varSpd:3,
+  phys:false,physRestitution:0.4,physFriction:0.1,physFrictionAir:0.01,physDensity:0.001,
 });
 const defImageLayer=(x,y)=>({
   type:'image',
@@ -196,6 +197,7 @@ const defImageLayer=(x,y)=>({
   varScaleXSpd:3,varScaleYSpd:3,varRotSpd:3,varTrackSpd:3,
   varWghtEase:'linear',varWidthEase:'linear',varSkewEase:'linear',varSoftEase:'linear',varWonkEase:'linear',
   varScaleXEase:'linear',varScaleYEase:'linear',varRotEase:'linear',varTrackEase:'linear',
+  phys:false,physRestitution:0.4,physFriction:0.1,physFrictionAir:0.01,physDensity:0.001,
 });
 const defEyeLayer=(x,y)=>({
   type:'eye',
@@ -221,6 +223,7 @@ const defEyeLayer=(x,y)=>({
   text:'',color:'#e5007d',size:100,font:'Roboto Flex',
   style:'normal',bold:false,ls:2,
   dists:['normal'],distAmt:40,distSpd:30,distSettings:{},
+  phys:false,physRestitution:0.4,physFriction:0.1,physFrictionAir:0.01,physDensity:0.001,
 });
 const T={
   bg:'#080808',bgTex:'none',texOp:12,

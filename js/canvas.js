@@ -150,7 +150,8 @@ function buildLayerPane(lid){
       <div class="sl-row" style="margin-top:8px;"><span class="sl-label">FX</span>
         <button class="seg-btn${layer.excludeFromFX?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].excludeFromFX=!T.layers[${idx}].excludeFromFX;this.classList.toggle('active',T.layers[${idx}].excludeFromFX);typo_render();">Above Effects</button>
       </div>
-    </div>`;
+    </div>
+    ${physPanelHTML(lid,idx,layer)}`;
     updatePlaygroundPaletteSwatches();
     return;
   }
@@ -221,7 +222,8 @@ function buildLayerPane(lid){
       <div class="sl-row" style="margin-top:8px;"><span class="sl-label">FX</span>
         <button class="seg-btn${layer.excludeFromFX?' active':''}" style="margin-left:auto;" onclick="T.layers[${idx}].excludeFromFX=!T.layers[${idx}].excludeFromFX;this.classList.toggle('active',T.layers[${idx}].excludeFromFX);typo_render();">Above Effects</button>
       </div>
-    </div>`;
+    </div>
+    ${physPanelHTML(lid,idx,layer)}`;
     return;
   }
   const dotColors=['#e5007d','#4a9fff','#00c896','#d4af37','#ffffff','#f4f1ea'];
@@ -317,7 +319,8 @@ function buildLayerPane(lid){
       ${varAxisRow(lid,idx,'varScaleY','Scale Y',10,400,100,50,150,3,1,layer)}
       ${varAxisRow(lid,idx,'varRot','Rotate',-180,180,0,-45,45,3,1,layer)}
       ${varAxisRow(lid,idx,'varTrack','Track',-20,120,0,-5,60,3,1,layer)}
-    </div>`;
+    </div>
+    ${physPanelHTML(lid,idx,layer)}`;
 }
 
 function toggleDist(idx,d,lid){

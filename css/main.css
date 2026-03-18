@@ -1369,3 +1369,27 @@ footer{
   letter-spacing:.04em;
 }
 .exp-note strong{color:rgba(255,255,255,.6);}
+
+/* ════════════════════════════════════════
+   PHYSICS PANEL
+════════════════════════════════════════ */
+.phys-toggle-btn{
+  width:100%;padding:7px 12px;border-radius:4px;cursor:pointer;font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600;transition:all .15s;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.45);
+}
+.phys-toggle-btn:hover{border-color:var(--mag);color:var(--mag);}
+.phys-toggle-btn.active{
+  background:rgba(229,0,125,.12);border-color:var(--mag);color:var(--mag);
+}
+.phys-props{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);}
+.phys-kick-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;
+}
+.phys-kick-btn{
+  padding:5px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:3px;color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;
+  letter-spacing:.05em;transition:all .12s;
+}
+.phys-kick-btn:hover{border-color:var(--mag);color:var(--mag);background:rgba(229,0,125,.08);}
