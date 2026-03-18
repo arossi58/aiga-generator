@@ -271,15 +271,17 @@ const EX = {
   duration: 4,
   fps: 30,
   loop: 'loop',
+  vidScale: 1,
 };
 
 let recTimer = null;
 let recMediaRecorder = null;
 
-function getExportDims() {
+function getExportDims(forVideo = false) {
+  const scale = forVideo ? EX.vidScale : EX.scale;
   const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
-  if (!p || p.w === null) return { w: TW * EX.scale, h: TH * EX.scale };
-  return { w: p.w, h: p.h };
+  if (!p || p.w === null) return { w: Math.round(TW * scale), h: Math.round(TH * scale) };
+  return { w: Math.round(p.w * scale), h: Math.round(p.h * scale) };
 }
 
 function openExport() {
@@ -308,6 +310,7 @@ function selPlatform(id, btn) {
   document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   updateExpSummary();
+  updateSafeZone();
 }
 
 function switchExpTab(tab, btn) {
@@ -324,6 +327,7 @@ function selExpSeg(btn, groupId) {
 
 function updateExpSummary() {
   const d = getExportDims();
+  const dv = getExportDims(true);
   // Image summary
   document.getElementById('sumW').textContent = d.w.toLocaleString();
   document.getElementById('sumH').textContent = d.h.toLocaleString();
@@ -336,8 +340,8 @@ function updateExpSummary() {
   document.getElementById('qualityNote').style.display = isPNG ? 'inline' : 'none';
   document.getElementById('qualitySlider').style.opacity = isPNG ? '.3' : '1';
   // Video summary
-  document.getElementById('vidSumW').textContent = d.w.toLocaleString();
-  document.getElementById('vidSumH').textContent = d.h.toLocaleString();
+  document.getElementById('vidSumW').textContent = dv.w.toLocaleString();
+  document.getElementById('vidSumH').textContent = dv.h.toLocaleString();
   document.getElementById('vidSumDur').textContent = EX.duration + 's';
   document.getElementById('vidSumFps').textContent = EX.fps;
 }
@@ -508,7 +512,7 @@ function _downloadRecordedBlob(chunks, mime, targetBitrate) {
 async function recordVideo() {
   if (recMediaRecorder && recMediaRecorder.state === 'recording') return;
 
-  const d = getExportDims();
+  const d = getExportDims(true);
   const canvas = document.getElementById('typeCanvas');
   const ctx = canvas.getContext('2d');
   const origW = TW, origH = TH;

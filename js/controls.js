@@ -4,6 +4,7 @@ function typo_resize(){
   const c=document.getElementById('typeCanvas');c.width=TW;c.height=TH;
   document.getElementById('canvasInfo').textContent=`${TW} × ${TH}px`;
   typo_fitCanvas();typo_render();
+  updateSafeZone();
 }
 
 /* ── Tab switching ── */

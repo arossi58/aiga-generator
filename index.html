@@ -431,9 +431,13 @@
 
     <!-- Canvas area -->
     <div id="type-canvas-area">
-      <div id="stage"><canvas id="typeCanvas" width="800" height="800"></canvas></div>
+      <div id="stage">
+        <canvas id="typeCanvas" width="800" height="800"></canvas>
+        <div id="safeZoneOverlay" style="display:none;position:absolute;inset:0;pointer-events:none;z-index:10;"></div>
+      </div>
       <div id="canvas-info-bar">
         <span class="c-info" id="canvasInfo">800 × 800px</span>
+        <button class="tb-btn" id="safeZoneBtn" onclick="toggleSafeZone(this)">Safe Zone</button>
         <button class="tb-btn" onclick="typo_resetLayer()">Reset Layer</button>
         <button class="tb-btn mag" style="margin-left:4px;" onclick="openExport()">↓ Export</button>
       </div>
@@ -574,6 +578,14 @@
         <div class="exp-segs" id="expLoopSegs">
           <button class="exp-seg active" data-v="loop" onclick="selExpSeg(this,'expLoopSegs');EX.loop='loop';">Loop</button>
           <button class="exp-seg" data-v="once" onclick="selExpSeg(this,'expLoopSegs');EX.loop='once';">Play Once</button>
+        </div>
+      </div>
+
+      <div class="exp-field" style="margin-bottom:14px;">
+        <div class="exp-field-label">Resolution</div>
+        <div class="exp-segs" id="expVidScaleSegs">
+          <button class="exp-seg active" data-v="1" onclick="selExpSeg(this,'expVidScaleSegs');EX.vidScale=+this.dataset.v;updateExpSummary();">1× Native</button>
+          <button class="exp-seg" data-v="2" onclick="selExpSeg(this,'expVidScaleSegs');EX.vidScale=+this.dataset.v;updateExpSummary();">2× HiRes</button>
         </div>
       </div>
 

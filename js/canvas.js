@@ -1558,3 +1558,140 @@ function typo_fitCanvas(){
 }
 window.addEventListener('resize',typo_fitCanvas);
 
+/* ════════════════════════════════════════════
+   SAFE ZONE OVERLAY
+════════════════════════════════════════════ */
+const SAFE_ZONE_DEFS = {
+  'ig-post': {
+    name: 'Instagram Post', hint: '1:1',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+  'ig-story': {
+    name: 'Instagram Story / Reel', hint: '9:16',
+    zones: [
+      { label:'Progress Bar + Profile', x:0, y:0,   w:1, h:.13 },
+      { label:'Engagement + Reply Zone',  x:0, y:.65, w:1, h:.35 },
+    ],
+    safe: { x:.06, y:.13, w:.88, h:.52 },
+  },
+  'tiktok': {
+    name: 'TikTok', hint: '9:16',
+    zones: [
+      { label:'Top Bar',                x:0,   y:0,   w:1,   h:.08 },
+      { label:'Action Buttons',         x:.85, y:.18, w:.15, h:.57 },
+      { label:'Caption + Audio + Nav',  x:0,   y:.75, w:1,   h:.25 },
+    ],
+    safe: { x:.06, y:.08, w:.79, h:.67 },
+  },
+  'twitter': {
+    name: 'X / Twitter', hint: '16:9',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+  'linkedin': {
+    name: 'LinkedIn', hint: '~1.91:1',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+  'facebook': {
+    name: 'Facebook', hint: '~1.91:1',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+  'youtube': {
+    name: 'YouTube Thumbnail', hint: '16:9',
+    zones: [
+      { label:'Title Overlay Area', x:0, y:.78, w:1, h:.22 },
+    ],
+    safe: { x:.05, y:.05, w:.90, h:.73 },
+  },
+  'custom': {
+    name: 'Custom Canvas', hint: 'current size',
+    zones: [],
+    safe: { x:.05, y:.05, w:.90, h:.90 },
+  },
+};
+
+let _safeZoneOn = false;
+
+function toggleSafeZone(btn) {
+  _safeZoneOn = !_safeZoneOn;
+  btn.classList.toggle('active', _safeZoneOn);
+  updateSafeZone();
+}
+
+function updateSafeZone() {
+  const overlay = document.getElementById('safeZoneOverlay');
+  if (!overlay) return;
+  if (!_safeZoneOn) { overlay.style.display = 'none'; return; }
+
+  const platform = (typeof EX !== 'undefined' ? EX.platform : null) || 'custom';
+  const def = SAFE_ZONE_DEFS[platform] || SAFE_ZONE_DEFS['custom'];
+  const W = TW, H = TH;
+  const fs = Math.round(Math.max(10, Math.min(18, Math.min(W, H) * 0.022)));
+  const sw = Math.max(1.5, W * 0.002); // stroke width
+
+  // Unique hatch pattern id per render
+  const pid = 'szH' + Date.now();
+
+  const defs = `<defs>
+    <pattern id="${pid}" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="rgba(229,0,125,0.5)" stroke-width="3"/>
+    </pattern>
+  </defs>`;
+
+  // Blocked zones
+  let zonesHTML = def.zones.map(z => {
+    const x = z.x * W, y = z.y * H, zw = z.w * W, zh = z.h * H;
+    const lx = x + zw / 2, ly = y + zh / 2;
+    const pillW = Math.min(zw * 0.9, z.label.length * fs * 0.58 + 20);
+    const pillH = fs + 10;
+    // Only show label if zone is tall/wide enough
+    const showLabel = zh > fs * 2.5 && zw > fs * 4;
+    return `
+      <rect x="${x}" y="${y}" width="${zw}" height="${zh}" fill="url(#${pid})"/>
+      <rect x="${x}" y="${y}" width="${zw}" height="${zh}" fill="rgba(229,0,125,0.18)"/>
+      ${showLabel ? `
+        <rect x="${lx - pillW/2}" y="${ly - pillH/2}" width="${pillW}" height="${pillH}"
+          fill="rgba(20,8,16,0.75)" rx="${pillH/2}"/>
+        <text x="${lx}" y="${ly + 1}" text-anchor="middle" dominant-baseline="middle"
+          font-family="'DM Mono',monospace" font-size="${fs}" font-weight="500"
+          fill="rgba(255,255,255,0.85)">${z.label}</text>
+      ` : ''}
+    `;
+  }).join('');
+
+  // Safe zone rectangle
+  const s = def.safe;
+  const sx = s.x * W, sy = s.y * H, ssw = s.w * W, ssh = s.h * H;
+  const dash = `${Math.round(W * 0.012)},${Math.round(W * 0.006)}`;
+  const tagW = fs * 5.5, tagH = fs + 8;
+
+  const safeHTML = `
+    <rect x="${sx}" y="${sy}" width="${ssw}" height="${ssh}"
+      fill="none" stroke="rgba(80,220,130,0.9)" stroke-width="${sw}"
+      stroke-dasharray="${dash}"/>
+    <rect x="${sx}" y="${sy}" width="${tagW}" height="${tagH}"
+      fill="rgba(80,220,130,0.9)" rx="2"/>
+    <text x="${sx + tagW/2}" y="${sy + tagH/2 + 1}" text-anchor="middle" dominant-baseline="middle"
+      font-family="'DM Mono',monospace" font-size="${fs - 1}" font-weight="700"
+      letter-spacing="0.08em" fill="rgba(10,30,15,0.95)">SAFE ZONE</text>
+  `;
+
+  // Platform label — bottom center, outside safe zone
+  const labelY = Math.min(H - 6, sy + ssh + fs * 1.6);
+  const platLabel = `
+    <text x="${W/2}" y="${labelY}" text-anchor="middle"
+      font-family="'DM Mono',monospace" font-size="${fs * 0.8}"
+      fill="rgba(255,255,255,0.35)">${def.name} · ${def.hint}</text>
+  `;
+
+  overlay.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"
+    style="position:absolute;inset:0;width:100%;height:100%;display:block;">
+    ${defs}${zonesHTML}${safeHTML}${platLabel}
+  </svg>`;
+  overlay.style.display = 'block';
+}
+
