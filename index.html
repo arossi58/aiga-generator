@@ -183,13 +183,16 @@
         <div class="tpl-drawer-header">
           <span class="tpl-drawer-title">Templates</span>
           <div style="display:flex;align-items:center;gap:8px;">
-            <button class="tpl-save-btn" onclick="saveAsTemplate()">+ Save Current</button>
+            <button class="tpl-save-btn" onclick="downloadTemplate()">↓ Download</button>
             <button class="tpl-close" onclick="toggleTplDrawer()">✕</button>
           </div>
         </div>
-        <div class="tpl-tabs">
-          <button class="tpl-tab active" onclick="switchTplTab('local',this)">My Templates</button>
-          <button class="tpl-tab" onclick="switchTplTab('community',this)">Community</button>
+        <div class="tpl-tabs-row">
+          <div class="tpl-tabs">
+            <button class="tpl-tab active" onclick="switchTplTab('local',this)">My Templates</button>
+            <button class="tpl-tab" onclick="switchTplTab('community',this)">Community</button>
+          </div>
+          <button id="tplActionBtn" class="tpl-action-btn" onclick="saveToMyTemplates()">+ Save to My Templates</button>
         </div>
         <div id="tplGrid" class="tpl-grid"><!-- cards injected by JS --></div>
         <div id="tplCommunityGrid" class="tpl-grid" style="display:none;">

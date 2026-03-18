@@ -914,7 +914,21 @@ textarea.ti:focus{border-color:var(--mag);}
   transition:background .15s, color .15s;
 }
 .tpl-save-btn:hover{background:var(--mag);color:#fff;}
-.tpl-tabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:2px;}
+.tpl-tabs-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:0 12px;
+}
+.tpl-tabs{display:flex;gap:2px;padding:8px 0 0;margin-bottom:0;}
+.tpl-action-btn{
+  background:none;border:1.5px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.55);
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  font-family:'DM Mono',monospace;cursor:pointer;
+  padding:4px 10px 5px;margin-bottom:4px;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.tpl-action-btn:hover{border-color:var(--mag);color:#fff;background:rgba(229,0,125,.1);}
 .tpl-tab{
   background:none;border:none;color:rgba(255,255,255,.35);
   font-size:11px;letter-spacing:.15em;text-transform:uppercase;

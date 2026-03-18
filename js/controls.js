@@ -1174,13 +1174,32 @@ async function initUserTemplates() {
   } catch(e) { /* no file yet — use localStorage */ }
 }
 
-async function saveAsTemplate() {
-  const name = prompt('Template name:', 'My Template');
-  if (!name || !name.trim()) return;
-  const userName = prompt('Your name (optional — shown in Community):', '') ?? '';
+function _snapState() {
   const snap = JSON.parse(JSON.stringify(T));
   delete snap.frame; delete snap.animating;
   snap.layers.forEach(l => delete l.img);
+  snap.canvas = `${TW},${TH}`;
+  return snap;
+}
+
+function downloadTemplate() {
+  const name = prompt('Template name:', 'My Design');
+  if (!name || !name.trim()) return;
+  const snap = _snapState();
+  snap.name = name.trim();
+  const slug = name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `aigakc-${slug}.json`; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  toast('Template downloaded');
+}
+
+function saveToMyTemplates() {
+  const name = prompt('Template name:', 'My Design');
+  if (!name || !name.trim()) return;
+  const snap    = _snapState();
   const localId = 'user-' + Date.now();
   const tpl = {
     ...snap,
@@ -1188,21 +1207,27 @@ async function saveAsTemplate() {
     name: name.trim(),
     cat: 'Saved',
     desc: `${TW}×${TH} · ${snap.layers.length} layer${snap.layers.length !== 1 ? 's' : ''}`,
-    canvas: `${TW},${TH}`,
     user: true,
   };
-  // Save locally
   const userTemplates = getUserTemplates();
   userTemplates.unshift(tpl);
   _persistUserTemplates(userTemplates);
   buildTplCards();
-  toast(`Saved: "${tpl.name}"`);
-  // Push to Supabase community
+  toast(`Saved to My Templates: "${tpl.name}"`);
+}
+
+async function shareToCommunity() {
+  const name = prompt('Template name:', 'My Design');
+  if (!name || !name.trim()) return;
+  const userName = prompt('Your name (optional):', '') ?? '';
+  const snap = _snapState();
   try {
     await sbSaveTemplate(name.trim(), userName.trim(), snap);
     toast(`"${name.trim()}" shared to Community`);
+    buildCommunityCards();
   } catch(e) {
-    console.warn('Supabase save failed:', e);
+    toast('Share failed — check console');
+    console.warn('Share to community failed:', e);
   }
 }
 
@@ -1289,9 +1314,17 @@ function switchTplTab(tab, btn) {
   _activeTplTab = tab;
   document.querySelectorAll('.tpl-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tplGrid').style.display            = tab === 'local'     ? '' : 'none';
-  document.getElementById('tplCommunityGrid').style.display   = tab === 'community' ? '' : 'none';
-  if (tab === 'community') buildCommunityCards();
+  document.getElementById('tplGrid').style.display          = tab === 'local'     ? '' : 'none';
+  document.getElementById('tplCommunityGrid').style.display = tab === 'community' ? '' : 'none';
+  const actionBtn = document.getElementById('tplActionBtn');
+  if (tab === 'local') {
+    actionBtn.textContent = '+ Save to My Templates';
+    actionBtn.onclick     = saveToMyTemplates;
+  } else {
+    actionBtn.textContent = '↑ Share to Community';
+    actionBtn.onclick     = shareToCommunity;
+    buildCommunityCards();
+  }
 }
 
 async function buildCommunityCards() {
