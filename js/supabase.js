@@ -7,13 +7,18 @@ const SUPABASE_URL      = CONFIG.SUPABASE_URL;
 const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
 const SUPABASE_TABLE    = 'templates';
 
+/* ── Extract raw JWT from new sb_publishable_ key format if needed ── */
+const _ANON_JWT = SUPABASE_ANON_KEY.startsWith('sb_')
+  ? SUPABASE_ANON_KEY.slice(SUPABASE_ANON_KEY.indexOf('eyJ'))
+  : SUPABASE_ANON_KEY;
+
 /* ── Thin REST client (no npm needed) ──────── */
 async function _sbFetch(method, path, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     method,
     headers: {
-      'apikey':        SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'apikey':        _ANON_JWT,
+      'Authorization': `Bearer ${_ANON_JWT}`,
       'Content-Type':  'application/json',
       'Prefer':        method === 'POST' ? 'return=representation' : '',
     },
