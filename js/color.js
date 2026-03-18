@@ -206,7 +206,7 @@ const defEyeLayer=(x,y)=>({
   scleraColor:'#ffffff',
   outlineColor:'#080808',
   colorMode:'fixed',      // 'fixed' | 'palette' | 'random'
-  lookMode:'center',      // 'center' | 'wander' | 'circle' | 'h-scan' | 'v-scan'
+  lookMode:'center',      // 'center' | 'wander' | 'circle' | 'h-scan' | 'v-scan' | 'toward-center'
   lookX:0,lookY:0,
   lookSpeed:1,
   lookAmt:1,

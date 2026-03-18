@@ -21,10 +21,10 @@ function buildLayerPane(lid){
         <span class="sl-val" id="${lid}-eyeSizeVal">${layer.eyeSize||100}</span></div>
       <div id="${lid}-tile-opts" style="display:${layer.arrangement==='tile'?'block':'none'}">
         <div class="sl-row"><span class="sl-label">Rows</span>
-          <div class="sl-wrap"><input type="range" min="1" max="8" value="${layer.tileRows||3}" id="${lid}-tileRows" oninput="T.layers[${idx}].tileRows=+this.value;document.getElementById('${lid}-tileRowsVal').textContent=this.value;typo_render();"></div>
+          <div class="sl-wrap"><input type="range" min="1" max="20" value="${layer.tileRows||3}" id="${lid}-tileRows" oninput="T.layers[${idx}].tileRows=+this.value;document.getElementById('${lid}-tileRowsVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-tileRowsVal">${layer.tileRows||3}</span></div>
         <div class="sl-row"><span class="sl-label">Cols</span>
-          <div class="sl-wrap"><input type="range" min="1" max="10" value="${layer.tileCols||4}" id="${lid}-tileCols" oninput="T.layers[${idx}].tileCols=+this.value;document.getElementById('${lid}-tileColsVal').textContent=this.value;typo_render();"></div>
+          <div class="sl-wrap"><input type="range" min="1" max="20" value="${layer.tileCols||4}" id="${lid}-tileCols" oninput="T.layers[${idx}].tileCols=+this.value;document.getElementById('${lid}-tileColsVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-tileColsVal">${layer.tileCols||4}</span></div>
         <div class="sl-row"><span class="sl-label">Gap X</span>
           <div class="sl-wrap"><input type="range" min="100" max="400" value="${Math.round((layer.tileSpacingX||1.8)*100)}" id="${lid}-tileSpX" oninput="T.layers[${idx}].tileSpacingX=+this.value/100;document.getElementById('${lid}-tileSpXVal').textContent=this.value+'%';typo_render();"></div>
@@ -49,11 +49,11 @@ function buildLayerPane(lid){
       </div>
       <div class="cg-title" style="margin-top:10px;">Animate</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px;" id="${lid}-look-modes">
-        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';typo_render();">${lbl}</button>`).join('')}
+        ${[['wander','Wander'],['circle','Circle'],['h-scan','H·Scan'],['v-scan','V·Scan'],['toward-center','→ Center']].map(([m,lbl])=>`<button class="seg-btn${layer.lookMode===m?' active':''}" onclick="T.layers[${idx}].lookMode='${m}';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-gaze').querySelectorAll('.gaze-btn').forEach(b=>b.classList.remove('active'));document.getElementById('${lid}-look-anim').style.display='block';typo_render();">${lbl}</button>`).join('')}
       </div>
-      <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan'].includes(layer.lookMode)?'block':'none'}">
+      <div id="${lid}-look-anim" style="display:${['wander','circle','h-scan','v-scan','toward-center'].includes(layer.lookMode)?'block':'none'}">
         <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Speed</span>
-          <div class="sl-wrap"><input type="range" min="0.1" max="5" step="0.1" value="${layer.lookSpeed??1}" id="${lid}-lookSpd" oninput="T.layers[${idx}].lookSpeed=+this.value;document.getElementById('${lid}-lookSpdVal').textContent=this.value;typo_render();"></div>
+          <div class="sl-wrap"><input type="range" min="0.1" max="10" step="0.1" value="${layer.lookSpeed??1}" id="${lid}-lookSpd" oninput="T.layers[${idx}].lookSpeed=+this.value;document.getElementById('${lid}-lookSpdVal').textContent=this.value;typo_render();"></div>
           <span class="sl-val" id="${lid}-lookSpdVal">${layer.lookSpeed??1}</span></div>
         <div class="sl-row"><span class="sl-label">Amount</span>
           <div class="sl-wrap"><input type="range" min="0" max="1" step="0.05" value="${layer.lookAmt??1}" id="${lid}-lookAmt" oninput="T.layers[${idx}].lookAmt=+this.value;document.getElementById('${lid}-lookAmtVal').textContent=Math.round(this.value*100)+'%';typo_render();"></div>
@@ -961,13 +961,18 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
     gx=cx+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;gy=cy;
   }else if(layer.lookMode==='v-scan'){
     gx=cx;gy=cy+Math.sin(t*spd*Math.PI*2+ph*Math.PI*2)*maxOffset*amt;
+  }else if(layer.lookMode==='toward-center'){
+    const dx=TW/2-cx,dy=TH/2-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy)||1;
+    gx=cx+(dx/dist)*maxOffset*amt;gy=cy+(dy/dist)*maxOffset*amt;
   }else{
     gx=cx+(layer.lookX||0)*maxOffset;gy=cy+(layer.lookY||0)*maxOffset;
   }
-  const palCols=[PALETTE.magenta,PALETTE.primary,PALETTE.h1,PALETTE.h2,PALETTE.muted,PALETTE.surface];
+  const allPalCols=[PALETTE.magenta,PALETTE.primary,PALETTE.h1,PALETTE.h2,PALETTE.muted,PALETTE.surface];
+  const palCols=allPalCols.filter(c=>lightness(c)<=75);
   let irisColor;
-  if(layer.colorMode==='palette'){irisColor=palCols[eyeIdx%palCols.length];}
-  else if(layer.colorMode==='random'){irisColor=palCols[Math.abs(Math.floor(eyeIdx*2.618))%palCols.length];}
+  if(layer.colorMode==='palette'){irisColor=palCols[eyeIdx%palCols.length]||PALETTE.magenta;}
+  else if(layer.colorMode==='random'){irisColor=palCols[Math.abs(Math.floor(eyeIdx*2.618))%palCols.length]||PALETTE.magenta;}
   else{irisColor=layer.irisColor||'#e5007d';}
   const outlineColor=layer.outlineColor||'#080808';
   const scleraColor=layer.scleraColor||'#ffffff';
