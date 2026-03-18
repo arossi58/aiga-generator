@@ -132,7 +132,7 @@ function physKick(idx, vx, vy) {
 }
 
 function physScatter() {
-  T.layers.forEach((layer, idx) => {
+  T.layers.forEach((layer) => {
     if (!layer.phys) return;
     const body = PHYS.bodies[_physGetId(layer)];
     if (!body) return;

@@ -652,6 +652,7 @@ async function recordVideo() {
     // (typo_render uses raw layer.size which is unscaled).
     // T.animating = true ensures grain/gradient-grain regenerate each frame.
     T.animating = true;
+    physStep();
     const off = renderAtRes(d.w, d.h);
     ctx.clearRect(0, 0, d.w, d.h);
     ctx.drawImage(off, 0, 0);
@@ -736,6 +737,7 @@ async function recordVideo() {
     let nextF = performance.now() + frameDuration;
     function pumpFrame() {
       T.frame++;
+      physStep();
       const off = renderAtRes(d.w, d.h);
       ctx.clearRect(0, 0, d.w, d.h);
       ctx.drawImage(off, 0, 0);
