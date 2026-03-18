@@ -1,56 +1,38 @@
 /* ════════════════════════════════════════════
    SUPABASE — Community Templates
-   Replace SUPABASE_URL and SUPABASE_ANON_KEY with
-   your values from Project Settings → API
+   Uses the official Supabase JS SDK (loaded via CDN in index.html)
+   which handles the sb_publishable_ key format natively.
 ════════════════════════════════════════════ */
-const SUPABASE_URL      = CONFIG.SUPABASE_URL;
-const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
-const SUPABASE_TABLE    = 'templates';
 
-/* ── Extract raw JWT from new sb_publishable_ key format if needed ── */
-const _ANON_JWT = SUPABASE_ANON_KEY.startsWith('sb_')
-  ? SUPABASE_ANON_KEY.slice(SUPABASE_ANON_KEY.indexOf('eyJ'))
-  : SUPABASE_ANON_KEY;
+const SUPABASE_TABLE = 'templates';
 
-/* ── Thin REST client (no npm needed) ──────── */
-async function _sbFetch(method, path, body) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method,
-    headers: {
-      'apikey':        _ANON_JWT,
-      'Authorization': `Bearer ${_ANON_JWT}`,
-      'Content-Type':  'application/json',
-      'Prefer':        method === 'POST' ? 'return=representation' : '',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Supabase ${method} ${path}: ${err}`);
-  }
-  return res.status === 204 ? null : res.json();
-}
+/* ── Init official client ─────────────────── */
+const _sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
 /* ── Public API ─────────────────────────────── */
 
 /** Fetch all community templates, newest first */
 async function sbGetTemplates() {
-  return _sbFetch('GET',
-    `${SUPABASE_TABLE}?select=id,name,user_name,created_at,data&order=created_at.desc`
-  );
+  const { data, error } = await _sb
+    .from(SUPABASE_TABLE)
+    .select('id, name, user_name, created_at, data')
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(`sbGetTemplates: ${error.message}`);
+  return data;
 }
 
 /** Save a template to Supabase */
 async function sbSaveTemplate(name, userName, data) {
-  const rows = await _sbFetch('POST', SUPABASE_TABLE, {
-    name,
-    user_name: userName || null,
-    data,
-  });
+  const { data: rows, error } = await _sb
+    .from(SUPABASE_TABLE)
+    .insert({ name, user_name: userName || null, data })
+    .select();
+  if (error) throw new Error(`sbSaveTemplate: ${error.message}`);
   return rows && rows[0];
 }
 
 /** Delete a template by id (only works if RLS allows it) */
 async function sbDeleteTemplate(id) {
-  return _sbFetch('DELETE', `${SUPABASE_TABLE}?id=eq.${id}`);
+  const { error } = await _sb.from(SUPABASE_TABLE).delete().eq('id', id);
+  if (error) throw new Error(`sbDeleteTemplate: ${error.message}`);
 }
