@@ -112,6 +112,9 @@ function restoreFromStorage() {
 document.addEventListener('DOMContentLoaded',()=>{
   const wasRestored = restoreFromStorage();
 
+  // Load saved user templates from data/user-templates.json (if served via HTTP)
+  initUserTemplates().then(() => buildTplCards());
+
   // Remove any stale extra panes
   for(let i=2;i<=6;i++){const p=document.getElementById(`pane-l${i}`);if(p)p.remove();}
   T.layers.forEach((_,i)=>buildLayerPane(`l${i+1}`));

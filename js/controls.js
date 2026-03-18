@@ -1131,6 +1131,49 @@ function getUserTemplates() {
   try { return JSON.parse(localStorage.getItem('aigakc_userTemplates') || '[]'); } catch(e) { return []; }
 }
 
+async function _persistUserTemplates(list) {
+  localStorage.setItem('aigakc_userTemplates', JSON.stringify(list));
+  const json = JSON.stringify(list, null, 2);
+  // File System Access API — write directly into the repo when available
+  if (window._userTplFileHandle) {
+    try {
+      const w = await window._userTplFileHandle.createWritable();
+      await w.write(json); await w.close(); return;
+    } catch(e) { window._userTplFileHandle = null; }
+  }
+  // Fallback: prompt user to pick the file location (first save)
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'user-templates.json',
+        startIn: 'documents',
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+      });
+      window._userTplFileHandle = handle;
+      const w = await handle.createWritable();
+      await w.write(json); await w.close(); return;
+    } catch(e) { /* cancelled — fall through to download */ }
+  }
+  // Last resort: trigger a download
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'user-templates.json';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+async function initUserTemplates() {
+  try {
+    const res = await fetch('./data/user-templates.json?t=' + Date.now());
+    if (res.ok) {
+      const list = await res.json();
+      if (Array.isArray(list) && list.length) {
+        localStorage.setItem('aigakc_userTemplates', JSON.stringify(list));
+      }
+    }
+  } catch(e) { /* no file yet — use localStorage */ }
+}
+
 function saveAsTemplate() {
   const name = prompt('Template name:', 'My Template');
   if (!name || !name.trim()) return;
@@ -1148,7 +1191,7 @@ function saveAsTemplate() {
   };
   const userTemplates = getUserTemplates();
   userTemplates.unshift(tpl);
-  localStorage.setItem('aigakc_userTemplates', JSON.stringify(userTemplates));
+  _persistUserTemplates(userTemplates);
   buildTplCards();
   toast(`Saved: "${tpl.name}"`);
 }
@@ -1156,7 +1199,7 @@ function saveAsTemplate() {
 function deleteUserTemplate(id, e) {
   e.stopPropagation();
   const filtered = getUserTemplates().filter(t => t.id !== id);
-  localStorage.setItem('aigakc_userTemplates', JSON.stringify(filtered));
+  _persistUserTemplates(filtered);
   if (activeTplId === id) activeTplId = null;
   buildTplCards();
   toast('Template deleted');
