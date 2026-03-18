@@ -1334,11 +1334,9 @@ async function buildCommunityCards() {
 
 async function applyCommunityTemplate(id) {
   try {
-    const rows = await _sbFetch('GET',
-      `${SUPABASE_TABLE}?id=eq.${id}&select=data&limit=1`
-    );
-    if (!rows || !rows[0]) return;
-    const data = rows[0].data;
+    const row = await sbGetTemplate(id);
+    if (!row) return;
+    const data = row.data;
     if (!data || !data.layers) return;
     data.frame = 0; data.animating = false;
     Object.assign(T, data);
