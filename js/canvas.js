@@ -1012,7 +1012,7 @@ function eyePath(ctx,cx,cy,hw,hh){
   ctx.closePath();
 }
 function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
-  const hh=hw*0.595;
+  const hh=hw*0.68;
   const hwi=hw*0.886;
   const hhi=hh*0.834;
   const irisR=hw*0.363;
@@ -1079,7 +1079,7 @@ function drawEyeLayer(ctx,layer,t){
   if(layer.arrangement==='tile'){
     const rows=layer.tileRows||3,cols=layer.tileCols||4;
     const spX=hw*2*(layer.tileSpacingX||1.8);
-    const spY=hw*2*0.595*(layer.tileSpacingY||1.5);
+    const spY=hw*2*0.68*(layer.tileSpacingY||1.5);
     const totalW=(cols-1)*spX,totalH=(rows-1)*spY;
     let idx=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){

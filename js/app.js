@@ -255,10 +255,10 @@ function quickFX(type) {
 // Export presets mirror the canvas size presets 1:1.
 // canvasVal links each preset to the matching canvas dropdown option.
 const PLATFORMS_DEF = [
-  { id:'square',       sub:'Square 1:1',       icon:'⬛', w:1080, h:1080, canvasVal:'800,800'   },
-  { id:'landscape',    sub:'Landscape 1.91:1', icon:'▬',  w:1200, h:628,  canvasVal:'1080,566'  },
-  { id:'portrait-45',  sub:'Portrait 4:5',     icon:'▮',  w:1080, h:1350, canvasVal:'800,1000'  },
-  { id:'story-reel',   sub:'Story / Reel 9:16',icon:'📱', w:1080, h:1920, canvasVal:'630,1120'  },
+  { id:'square',       sub:'Square 1:1',       icon:'⬛', w:1080, h:1080, canvasVal:'1080,1080' },
+  { id:'landscape',    sub:'Landscape 1.91:1', icon:'▬',  w:1200, h:628,  canvasVal:'1200,628'  },
+  { id:'portrait-45',  sub:'Portrait 4:5',     icon:'▮',  w:1080, h:1350, canvasVal:'1080,1350' },
+  { id:'story-reel',   sub:'Story / Reel 9:16',icon:'📱', w:1080, h:1920, canvasVal:'1080,1920' },
   { id:'youtube',      sub:'YouTube 16:9',     icon:'▶',  w:1280, h:720,  canvasVal:'1280,720'  },
   { id:'banner',       sub:'Banner 8:3',       icon:'▬',  w:1200, h:450,  canvasVal:'1200,450'  },
   { id:'custom',       sub:'Current size',     icon:'⬜', w:null, h:null, canvasVal:null        },
