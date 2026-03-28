@@ -166,7 +166,6 @@ const defLayer=(text,color,size,x,y,font)=>({
   opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
   dists:['normal'],distAmt:40,distSpd:30,
   distSettings:{wave:{amt:40,spd:30},stagger:{amt:40,spd:30},explode:{amt:40,spd:30},arch:{amt:40,spd:30},tile:{amt:40,spd:30},mirror:{amt:40,spd:30},glitch:{amt:40,spd:30},circle:{amt:35,spd:20}},
-  tileGapX:0,tileGapY:0,
   circleRings:1,circleOrient:'tangent',
   varWghtPat:'none',varWghtMin:200,varWghtMax:800,varWghtSpd:3,varWghtEase:'linear',
   varWidthPat:'none',varWidthMin:60,varWidthMax:140,varWidthSpd:3,varWidthEase:'linear',

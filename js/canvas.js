@@ -411,14 +411,6 @@ function buildDistControls(lid,layer){
     }
     const s=layer.distSettings?.[d]||{amt:layer.distAmt||40,spd:layer.distSpd||30};
     const tileExtra=d==='tile'?`
-  <div class="sl-row"><span class="sl-label">Offset X</span>
-    <div class="sl-wrap"><input type="range" min="-1000" max="1000" value="${layer.tileOffX??0}" oninput="T.layers[${idx}].tileOffX=+this.value;document.getElementById('${lid}-tile-offXVal').textContent=this.value+'px';typo_render();"></div>
-    <span class="sl-val" id="${lid}-tile-offXVal">${layer.tileOffX??0}px</span>
-  </div>
-  <div class="sl-row"><span class="sl-label">Offset Y</span>
-    <div class="sl-wrap"><input type="range" min="-1000" max="1000" value="${layer.tileOffY??0}" oninput="T.layers[${idx}].tileOffY=+this.value;document.getElementById('${lid}-tile-offYVal').textContent=this.value+'px';typo_render();"></div>
-    <span class="sl-val" id="${lid}-tile-offYVal">${layer.tileOffY??0}px</span>
-  </div>
   <div class="sl-row"><span class="sl-label">Gap X</span>
     <div class="sl-wrap"><input type="range" min="-100" max="500" value="${layer.tileGapX??0}" oninput="T.layers[${idx}].tileGapX=+this.value;document.getElementById('${lid}-tile-gapXVal').textContent=this.value+'px';typo_render();"></div>
     <span class="sl-val" id="${lid}-tile-gapXVal">${layer.tileGapX??0}px</span>
@@ -1487,8 +1479,9 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
       cx+=charW[i]+layer.ls;
     });
   };
-  ctx.save();ctx.rotate(layer.rot*Math.PI/180);
-  ctx.translate(layer.tileOffX??0,layer.tileOffY??0);
+  ctx.save();
+  ctx.translate(((layer.x??50)/100-0.5)*TW,((layer.y??50)/100-0.5)*TH);
+  ctx.rotate(layer.rot*Math.PI/180);
   const rows=Math.ceil(TH/Math.max(1,rowH))+2;
   const cols=Math.ceil(TW/tw)+2;
   for(let r=-1;r<rows;r++){
