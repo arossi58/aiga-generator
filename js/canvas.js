@@ -1479,8 +1479,10 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
       cx+=charW[i]+layer.ls;
     });
   };
+  // Phase offsets: wrap layer.x/y into a single tile period so the pattern shifts without gaps
+  const xPhase=(((layer.x??50)/100-0.5)*TW%tw+tw)%tw;
+  const yPhase=(((layer.y??50)/100-0.5)*TH%rowH+rowH)%rowH;
   ctx.save();
-  ctx.translate(((layer.x??50)/100-0.5)*TW,((layer.y??50)/100-0.5)*TH);
   ctx.rotate(layer.rot*Math.PI/180);
   const rows=Math.ceil(TH/Math.max(1,rowH))+2;
   const cols=Math.ceil(TW/tw)+2;
@@ -1492,7 +1494,7 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
       if(tHasWave){const wT=t*tWSpd;offY+=Math.sin(wT*2+r*.8+c*.3)*(tWAmt/100)*th*.5;}
       if(tHasStagger)offY+=(r%2===0?1:-1)*(tStAmt/100)*th*.4;
       if(tHasExplode){const exT=t*tExSpd;const sd=r*7.3+c*3.1;offX+=Math.sin(exT*.7+sd)*(tExAmt/100)*tw*.2;offY+=Math.cos(exT*.5+sd*1.3)*(tExAmt/100)*th*.3;}
-      ctx.translate(c*tw-offset+offX,r*rowH+(c%2===0?0:rowStagger)+offY);
+      ctx.translate(c*tw-offset+xPhase+offX,r*rowH+yPhase+(c%2===0?0:rowStagger)+offY);
       ctx.scale(scaleX,scaleY);
       if(tHasGlitch){
         const glT=t*tGlSpd;const ga=(tGlAmt/100)*rawW*.04,gx=Math.sin(glT*3+r*2.1)*ga;
