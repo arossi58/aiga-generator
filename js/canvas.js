@@ -410,6 +410,15 @@ function buildDistControls(lid,layer){
 </div>`;
     }
     const s=layer.distSettings?.[d]||{amt:layer.distAmt||40,spd:layer.distSpd||30};
+    const tileExtra=d==='tile'?`
+  <div class="sl-row"><span class="sl-label">Gap X</span>
+    <div class="sl-wrap"><input type="range" min="-100" max="500" value="${layer.tileGapX??0}" oninput="T.layers[${idx}].tileGapX=+this.value;document.getElementById('${lid}-tile-gapXVal').textContent=this.value+'px';typo_render();"></div>
+    <span class="sl-val" id="${lid}-tile-gapXVal">${layer.tileGapX??0}px</span>
+  </div>
+  <div class="sl-row"><span class="sl-label">Gap Y</span>
+    <div class="sl-wrap"><input type="range" min="-100" max="500" value="${layer.tileGapY??0}" oninput="T.layers[${idx}].tileGapY=+this.value;document.getElementById('${lid}-tile-gapYVal').textContent=this.value+'px';typo_render();"></div>
+    <span class="sl-val" id="${lid}-tile-gapYVal">${layer.tileGapY??0}px</span>
+  </div>`:'';
     return `<div style="margin-bottom:8px;">
   <div style="font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">${_distLabels[d]||d}</div>
   <div class="sl-row"><span class="sl-label">Amount</span>
@@ -419,7 +428,7 @@ function buildDistControls(lid,layer){
   <div class="sl-row"><span class="sl-label">Speed</span>
     <div class="sl-wrap"><input type="range" min="0" max="100" value="${s.spd}" oninput="setDistParam(${idx},'${d}','spd',+this.value);document.getElementById('${lid}-${d}-spdVal').textContent=this.value;typo_render();"></div>
     <span class="sl-val" id="${lid}-${d}-spdVal">${s.spd}</span>
-  </div></div>`;
+  </div>${tileExtra}</div>`;
   }).join('');
 }
 function setDistParam(idx,dist,param,val){
@@ -1395,9 +1404,9 @@ function drawTile(ctx,layer,fstr,lines,t,dists){
   const charW=chars.map(c=>ctx.measureText(c).width);
   const rawW=charW.reduce((s,w)=>s+w,0)+layer.ls*Math.max(0,chars.length-1);
   // Grid spacing respects scale
-  const tw=Math.max(1,rawW*scaleX);
+  const tw=Math.max(1,rawW*scaleX+(layer.tileGapX??0));
   const th=layer.size*scaleY;
-  const rowH=th*1.6;const rowStagger=th*.8;
+  const rowH=th*1.6+(layer.tileGapY??0);const rowStagger=th*.8;
   const tHasWave=dists.includes('wave');
   const tHasStagger=dists.includes('stagger');
   const tHasExplode=dists.includes('explode');
