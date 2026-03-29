@@ -162,7 +162,7 @@ const R={
 const defLayer=(text,color,size,x,y,font)=>({
   type:'text',
   text,color,size,x,y,font:font||'Roboto Flex',
-  style:'normal',bold:false,sx:100,sy:100,rot:0,ls:2,
+  style:'normal',bold:false,align:'center',sx:100,sy:100,rot:0,ls:2,
   opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
   dists:['normal'],distAmt:40,distSpd:30,
   distSettings:{wave:{amt:40,spd:30},stagger:{amt:40,spd:30},explode:{amt:40,spd:30},arch:{amt:40,spd:30},tile:{amt:40,spd:30},mirror:{amt:40,spd:30},glitch:{amt:40,spd:30},circle:{amt:35,spd:20}},

@@ -256,6 +256,14 @@ function buildLayerPane(lid){
       </div>
     </div>
     <div class="cg">
+      <div class="cg-title">Alignment</div>
+      <div class="seg">
+        <button class="seg-btn${(layer.align||'center')==='left'?' active':''}" onclick="T.layers[${idx}].align='left';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Left</button>
+        <button class="seg-btn${(layer.align||'center')==='center'?' active':''}" onclick="T.layers[${idx}].align='center';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Center</button>
+        <button class="seg-btn${(layer.align||'center')==='right'?' active':''}" onclick="T.layers[${idx}].align='right';this.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');typo_render();">Right</button>
+      </div>
+    </div>
+    <div class="cg">
       <div class="cg-title">Color</div>
       <div class="palette-colors" id="${lid}-pal-colors"><span class="ps-label">From palette</span></div>
       <div class="color-row">
@@ -1292,12 +1300,14 @@ function drawLayer(ctx,layer,t){
   // Fast path: only 'normal' or 'tile', no effects, no var type
   const hasEffects=hasGlitch||hasMirror;
   const hasMotion=hasArch||hasWave||hasStagger||hasExplode;
+  const align=layer.align||'center';
+  const alignOffset=(tw)=>align==='left'?0:align==='right'?-tw:-tw/2;
   if(!hasMotion&&!hasEffects&&!hasVarType){
     lines.forEach(line=>{
       ctx.save();ctx.translate(px,yOff);ctx.rotate(layer.rot*Math.PI/180);ctx.scale(layer.sx/100,layer.sy/100);
       ctx.font=baseFstr;
       const tw=ctx.measureText(line).width+(line.length-1)*layer.ls;
-      ctx.fillText(line,-tw/2,0);ctx.restore();
+      ctx.fillText(line,alignOffset(tw),0);ctx.restore();
       yOff+=lineH;
     });
     return;
@@ -1309,7 +1319,7 @@ function drawLayer(ctx,layer,t){
     let totalW=0;
     const vTracks=hasVarTrackAnim?chars.map((_,i)=>computeVariation(i,chars.length,layer.varTrackPat,layer.varTrackMin??-5,layer.varTrackMax??60,t,layer.varTrackSpd??layer.varSpd??3,layer.varTrackEase||'linear')):null;
     const widths=chars.map((c,i)=>{const w=ctx.measureText(c).width+(hasVarTrackAnim?vTracks[i]:(layer.ls+(staticTrack??0)));totalW+=w;return w;});
-    let cx=-totalW/2;
+    let cx=alignOffset(totalW);
     chars.forEach((ch,i)=>{
       ctx.save();
       // Per-char axis values — animated or static fallback
