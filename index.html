@@ -142,7 +142,14 @@
           <option value="1280,720">YouTube 16:9</option>
           <option value="1920,1080">Slide 16:9</option>
           <option value="1200,450">Banner 8:3</option>
+          <option value="custom">Custom…</option>
         </select>
+        <div id="customSizeInputs" style="display:none;align-items:center;gap:4px;margin-top:4px;">
+          <input type="number" id="customW" min="100" max="8000" value="1200" style="width:54px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;padding:2px 4px;font-size:11px;border-radius:3px;" placeholder="W">
+          <span style="font-size:10px;color:rgba(255,255,255,.35);">×</span>
+          <input type="number" id="customH" min="100" max="8000" value="800" style="width:54px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;padding:2px 4px;font-size:11px;border-radius:3px;" placeholder="H">
+          <button onclick="typo_applyCustomSize()" style="font-size:10px;padding:2px 6px;background:var(--mag);border:none;color:#fff;border-radius:3px;cursor:pointer;">Apply</button>
+        </div>
       </div>
       <div class="tb-item">
         <span class="tb-label">Animate</span>
@@ -247,6 +254,7 @@
           <div class="cg">
             <div class="cg-title">Background Color</div>
             <div class="color-row" id="bg-colors">
+              <div class="cdot" data-c="transparent" title="Transparent" onclick="setBG(this)" style="background:linear-gradient(45deg,#888 25%,transparent 25%,transparent 75%,#888 75%),linear-gradient(45deg,#888 25%,#ccc 25%,#ccc 75%,#888 75%);background-size:8px 8px;background-position:0 0,4px 4px;"></div>
               <div class="cdot active" style="background:#000000;" data-c="#000000" onclick="setBG(this)"></div>
               <div class="cdot" style="background:#FCFCFC;" data-c="#FCFCFC" onclick="setBG(this)"></div>
               <div class="cdot" style="background:#EC008C;" data-c="#EC008C" onclick="setBG(this)"></div>

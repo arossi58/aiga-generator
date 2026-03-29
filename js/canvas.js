@@ -661,7 +661,12 @@ function typo_render(){
   ctx.clearRect(0,0,TW,TH);
 
   // BG solid
-  ctx.fillStyle=T.bg;ctx.fillRect(0,0,TW,TH);
+  if(T.bg!=='transparent'){ctx.fillStyle=T.bg;ctx.fillRect(0,0,TW,TH);}
+  // Checkerboard visual indicator for transparent bg (editor only, not exported)
+  const stage=document.getElementById('stage');
+  if(stage)stage.style.backgroundImage=T.bg==='transparent'?'linear-gradient(45deg,#666 25%,transparent 25%,transparent 75%,#666 75%),linear-gradient(45deg,#666 25%,#999 25%,#999 75%,#666 75%)':'none';
+  if(stage)stage.style.backgroundSize=T.bg==='transparent'?'16px 16px':'auto';
+  if(stage)stage.style.backgroundPosition=T.bg==='transparent'?'0 0,8px 8px':'auto';
 
   // Gradient overlay
   if(T.grad!=='none'){

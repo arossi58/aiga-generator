@@ -369,7 +369,7 @@ function renderAtRes(targetW, targetH) {
   const sy = targetH / TH;
 
   // Background
-  if (!EX.transparentBG) { ctx.fillStyle = T.bg; ctx.fillRect(0, 0, targetW, targetH); }
+  if (!EX.transparentBG && T.bg !== 'transparent') { ctx.fillStyle = T.bg; ctx.fillRect(0, 0, targetW, targetH); }
 
   // Gradient
   if (T.grad !== 'none') {
