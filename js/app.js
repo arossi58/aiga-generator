@@ -276,6 +276,7 @@ const EX = {
   fps: 30,
   loop: 'loop',
   vidScale: 1,
+  transparentBG: false,
 };
 
 let recTimer = null;
@@ -368,7 +369,7 @@ function renderAtRes(targetW, targetH) {
   const sy = targetH / TH;
 
   // Background
-  ctx.fillStyle = T.bg; ctx.fillRect(0, 0, targetW, targetH);
+  if (!EX.transparentBG) { ctx.fillStyle = T.bg; ctx.fillRect(0, 0, targetW, targetH); }
 
   // Gradient
   if (T.grad !== 'none') {

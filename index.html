@@ -550,6 +550,14 @@
         </div>
       </div>
 
+      <div class="exp-field">
+        <div class="exp-field-label">Background</div>
+        <div class="exp-segs" id="expBgSegs">
+          <button class="exp-seg active" onclick="selExpSeg(this,'expBgSegs');EX.transparentBG=false;">Solid</button>
+          <button class="exp-seg" onclick="selExpSeg(this,'expBgSegs');EX.transparentBG=true;if(EX.format!=='png'){EX.format='png';selExpSeg(document.querySelector('#expFmtSegs [data-v=png]'),'expFmtSegs');updateExpSummary();}">Transparent (PNG only)</button>
+        </div>
+      </div>
+
       <div class="exp-field" id="qualityField">
         <div class="exp-field-label">Quality <span id="qualityNote" style="color:rgba(255,255,255,.2);font-size:11px;"> — PNG is lossless, quality not applicable</span></div>
         <div class="exp-quality-row">
