@@ -175,24 +175,7 @@
       <div class="tb-item">
         <button class="tb-btn" onclick="typo_reset()">Reset All</button>
       </div>
-      <!-- Quick FX -->
-      <div class="tb-item" style="gap:3px;">
-        <span class="tb-label">Quick FX</span>
-        <div style="display:flex;gap:3px;flex-wrap:wrap;">
-          <button class="tb-btn" title="Film Grain" onclick="quickFX('grain')" style="font-size:11px;padding:3px 6px;">⬛ Grain</button>
-          <button class="tb-btn" title="Gradient overlay" onclick="quickFX('gradient')" style="font-size:11px;padding:3px 6px;">🎨 Grad</button>
-          <button class="tb-btn" title="Paper texture" onclick="quickFX('paper')" style="font-size:11px;padding:3px 6px;">📄 Paper</button>
-          <button class="tb-btn" title="Halftone dots" onclick="quickFX('halftone')" style="font-size:11px;padding:3px 6px;">◉ HT</button>
-          <button class="tb-btn" title="Risograph" onclick="quickFX('riso')" style="font-size:11px;padding:3px 6px;">⊕ Riso</button>
-          <button class="tb-btn" title="Noise overlay" onclick="quickFX('noise')" style="font-size:11px;padding:3px 6px;">📡 Noise</button>
-          <button class="tb-btn mag" title="Clear all FX" onclick="quickFX('clear')" style="font-size:11px;padding:3px 6px;">✕ Clear</button>
-        </div>
-      </div>
-      <!-- Palette sync strip -->
-      <div id="palette-sync-strip">
-        <span class="ps-label">↳ Palette:</span>
-        <!-- swatches injected here by JS -->
-      </div>
+      <div id="palette-sync-strip" style="display:none;"></div>
     </div><!-- /#type-tb -->
 
     <!-- Template Drawer -->
