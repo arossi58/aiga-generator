@@ -311,7 +311,7 @@ function selectGradSlot(n) {
   document.getElementById('gradSlot3').classList.toggle('active', n === 3);
   const s4 = document.getElementById('gradSlot4'); if (s4) s4.classList.toggle('active', n === 4);
   const s5 = document.getElementById('gradSlot5'); if (s5) s5.classList.toggle('active', n === 5);
-  const hex = n === 1 ? T.gradC1 : n === 3 ? (T.gradC3||'#8800cc') : n === 4 ? (T.gradC4||'#ff6600') : n === 5 ? (T.gradC5||'#00c878') : T.gradC2;
+  const hex = n === 1 ? T.gradC1 : n === 3 ? (T.gradC3||'#FCB900') : n === 4 ? (T.gradC4||'#A5D21E') : n === 5 ? (T.gradC5||'#FCFCFC') : T.gradC2;
   const hexInput = document.getElementById('gradHexInput');
   if (hexInput) hexInput.value = hex.toUpperCase();
   updateGradPaletteApplied();
@@ -387,7 +387,7 @@ function updateGradPreviewStrip() {
 }
 
 function updateGradPaletteApplied() {
-  const activeHex = (_activeGradSlot === 1 ? T.gradC1 : _activeGradSlot === 3 ? (T.gradC3||'#8800cc') : _activeGradSlot === 4 ? (T.gradC4||'#ff6600') : _activeGradSlot === 5 ? (T.gradC5||'#00c878') : T.gradC2).toLowerCase();
+  const activeHex = (_activeGradSlot === 1 ? T.gradC1 : _activeGradSlot === 3 ? (T.gradC3||'#FCB900') : _activeGradSlot === 4 ? (T.gradC4||'#A5D21E') : _activeGradSlot === 5 ? (T.gradC5||'#FCFCFC') : T.gradC2).toLowerCase();
   document.querySelectorAll('#gradPaletteRow .grad-pal-dot').forEach(dot => {
     dot.classList.toggle('applied', dot.dataset.c.toLowerCase() === activeHex);
   });
@@ -474,9 +474,9 @@ function syncGradSlotsFromState() {
   const s3 = document.getElementById('gradSlot3Swatch');
   const s4 = document.getElementById('gradSlot4Swatch');
   const s5 = document.getElementById('gradSlot5Swatch');
-  const c3 = T.gradC3 || '#8800cc';
-  const c4 = T.gradC4 || '#ff6600';
-  const c5 = T.gradC5 || '#00c878';
+  const c3 = T.gradC3 || '#FCB900';
+  const c4 = T.gradC4 || '#A5D21E';
+  const c5 = T.gradC5 || '#FCFCFC';
   if (s1) s1.style.background = T.gradC1;
   if (s2) s2.style.background = T.gradC2;
   if (s3) s3.style.background = c3;

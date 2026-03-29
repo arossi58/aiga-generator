@@ -498,9 +498,9 @@ function renderTplThumb(tplData, thumbW, thumbH) {
     T.kc          = tplData.kc          ?? 'none';
     T.glow        = tplData.glow        ?? 0;
     T.grad        = tplData.grad        ?? 'none';
-    T.gradC1      = tplData.gradC1      ?? '#e5007d';
-    T.gradC2      = tplData.gradC2      ?? '#002fa7';
-    T.gradC3      = tplData.gradC3      ?? '#8800cc';
+    T.gradC1      = tplData.gradC1      ?? '#EC008C';
+    T.gradC2      = tplData.gradC2      ?? '#0693E3';
+    T.gradC3      = tplData.gradC3      ?? '#FCB900';
     T.gradC4      = tplData.gradC4      ?? T.gradC1;
     T.gradC5      = tplData.gradC5      ?? T.gradC2;
     T.gradAngle   = tplData.gradAngle   ?? 135;
@@ -511,7 +511,7 @@ function renderTplThumb(tplData, thumbW, thumbH) {
     T.grain       = tplData.grain       ?? 0;
     T.grainSize   = tplData.grainSize   ?? 1;
     T.grainStyle  = tplData.grainStyle  ?? 'overlay';
-    T.grainColor  = tplData.grainColor  ?? '#ec008c';
+    T.grainColor  = tplData.grainColor  ?? '#EC008C';
     T.htMode      = tplData.htMode      ?? 'none';
     T.htBg        = tplData.htBg        ?? true;
     T.riso        = tplData.riso        ?? 0;

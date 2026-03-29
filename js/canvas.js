@@ -226,7 +226,7 @@ function buildLayerPane(lid){
     ${physPanelHTML(lid,idx,layer)}`;
     return;
   }
-  const dotColors=['#e5007d','#4a9fff','#00c896','#d4af37','#ffffff','#f4f1ea'];
+  const dotColors=['#EC008C','#000000','#FCFCFC','#0693E3','#FCB900','#A5D21E'];
   const distItems=[
     {d:'normal',i:'Aa',l:'Normal'},{d:'wave',i:'∿',l:'Wave'},
     {d:'stagger',i:'↕',l:'Stagger'},{d:'explode',i:'✳',l:'Explode'},
@@ -635,8 +635,8 @@ function drawLogo(ctx,W,H){
   const logoW=180;
   const logoH=logoW*(207/604);
   const dock=T.logoDock||'tr';
-  const x=dock==='tr'?W-pad-logoW:pad;
-  const y=dock==='tr'?pad:H-pad-logoH;
+  const x=(dock==='tr'||dock==='br')?W-pad-logoW:pad;
+  const y=(dock==='tr'||dock==='tl')?pad:H-pad-logoH;
   ctx.save();
   ctx.drawImage(img,x,y,logoW,logoH);
   ctx.restore();

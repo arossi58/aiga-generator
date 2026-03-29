@@ -247,13 +247,13 @@
           <div class="cg">
             <div class="cg-title">Background Color</div>
             <div class="color-row" id="bg-colors">
-              <div class="cdot active" style="background:#080808;" data-c="#080808" onclick="setBG(this)"></div>
-              <div class="cdot" style="background:#f4f1ea;" data-c="#f4f1ea" onclick="setBG(this)"></div>
-              <div class="cdot" style="background:#e5007d;" data-c="#e5007d" onclick="setBG(this)"></div>
-              <div class="cdot" style="background:#002fa7;" data-c="#002fa7" onclick="setBG(this)"></div>
-              <div class="cdot" style="background:#00a878;" data-c="#00a878" onclick="setBG(this)"></div>
-              <div class="cdot" style="background:#1a0830;" data-c="#1a0830" onclick="setBG(this)"></div>
-              <input type="color" class="cust-color" value="#080808" oninput="T.bg=this.value;typo_render();">
+              <div class="cdot active" style="background:#000000;" data-c="#000000" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#FCFCFC;" data-c="#FCFCFC" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#EC008C;" data-c="#EC008C" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#0693E3;" data-c="#0693E3" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#FCB900;" data-c="#FCB900" onclick="setBG(this)"></div>
+              <div class="cdot" style="background:#A5D21E;" data-c="#A5D21E" onclick="setBG(this)"></div>
+              <input type="color" class="cust-color" value="#000000" oninput="T.bg=this.value;typo_render();">
             </div>
             <!-- palette colors injected here -->
             <div class="palette-colors" id="bg-palette-colors">
@@ -427,12 +427,12 @@
             <div class="sl-row" style="align-items:flex-start;flex-direction:column;gap:6px;">
               <span class="sl-label">Ink Color</span>
               <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
-                <div class="cdot active" data-riso-preset="#e5007d" style="background:#e5007d;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#e5007d',this)"></div>
-                <div class="cdot" data-riso-preset="#002fa7" style="background:#002fa7;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#002fa7',this)"></div>
-                <div class="cdot" data-riso-preset="#00a878" style="background:#00a878;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#00a878',this)"></div>
-                <div class="cdot" data-riso-preset="#ff6b1a" style="background:#ff6b1a;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#ff6b1a',this)"></div>
-                <div class="cdot" data-riso-preset="#ffd600" style="background:#ffd600;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#ffd600',this)"></div>
-                <div class="cdot" data-riso-preset="#7b2fff" style="background:#7b2fff;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#7b2fff',this)"></div>
+                <div class="cdot active" data-riso-preset="#EC008C" style="background:#EC008C;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#EC008C',this)"></div>
+                <div class="cdot" data-riso-preset="#000000" style="background:#000000;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#000000',this)"></div>
+                <div class="cdot" data-riso-preset="#FCFCFC" style="background:#FCFCFC;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#FCFCFC',this)"></div>
+                <div class="cdot" data-riso-preset="#0693E3" style="background:#0693E3;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#0693E3',this)"></div>
+                <div class="cdot" data-riso-preset="#FCB900" style="background:#FCB900;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#FCB900',this)"></div>
+                <div class="cdot" data-riso-preset="#A5D21E" style="background:#A5D21E;width:16px;height:16px;cursor:pointer;" onclick="setRisoColor('#A5D21E',this)"></div>
                 <input type="color" id="risoC1Pick" class="cust-color" value="#e5007d" oninput="setRisoColor(this.value,null);typo_render();" style="margin-left:2px;">
               </div>
               <div id="riso-pal-colors" class="palette-colors" style="width:100%;margin-bottom:0;padding:6px 8px;">
@@ -484,6 +484,8 @@
         <div id="logoControls" style="margin-top:8px;display:none;flex-direction:column;gap:8px;">
           <div class="bg-opts-col" id="logoDockOpts">
             <div class="bg-opt active" data-dock="tr" onclick="setLogoDock(this,'tr')"><span class="sw" style="display:flex;align-items:flex-start;justify-content:flex-end;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Top Right</div>
+            <div class="bg-opt" data-dock="tl" onclick="setLogoDock(this,'tl')"><span class="sw" style="display:flex;align-items:flex-start;justify-content:flex-start;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Top Left</div>
+            <div class="bg-opt" data-dock="br" onclick="setLogoDock(this,'br')"><span class="sw" style="display:flex;align-items:flex-end;justify-content:flex-end;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Bottom Right</div>
             <div class="bg-opt" data-dock="bl" onclick="setLogoDock(this,'bl')"><span class="sw" style="display:flex;align-items:flex-end;justify-content:flex-start;"><span style="width:6px;height:4px;background:rgba(255,255,255,.5);border-radius:1px;margin:1px;"></span></span>Bottom Left</div>
           </div>
         </div>

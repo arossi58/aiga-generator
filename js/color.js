@@ -2,14 +2,14 @@
    SHARED PALETTE STATE — the bridge
 ════════════════════════════════════════════ */
 const PALETTE = {
-  magenta: '#e5007d',
-  primary: '#002fa7',
-  deep:    '#080f20',
-  dark:    '#0d1a35',
-  surface: '#e8f0fe',
-  muted:   '#6b8ecf',
-  h1:      '#a86fa7',
-  h2:      '#7fb3e8',
+  magenta: '#EC008C',
+  primary: '#0693E3',
+  deep:    '#000000',
+  dark:    '#000000',
+  surface: '#FCFCFC',
+  muted:   '#FCB900',
+  h1:      '#FCB900',
+  h2:      '#A5D21E',
 };
 
 function firePaletteChange() {
@@ -229,12 +229,12 @@ const T={
   bg:'#080808',bgTex:'none',texOp:12,
   accent:'none',kc:'none',glow:0,
   // Gradient
-  grad:'none', gradC1:'#e5007d', gradC2:'#002fa7', gradC3:'#8800cc', gradC4:'#ff6600', gradC5:'#00c878',
+  grad:'none', gradC1:'#EC008C', gradC2:'#0693E3', gradC3:'#FCB900', gradC4:'#A5D21E', gradC5:'#FCFCFC',
   gradAngle:135, gradOpacity:80, gradMid:50, gradGrain:0, gradBlobs:4,
   // Grain
-  grain:0, grainSize:1, grainAnim:true, grainColor:'#ec008c',
+  grain:0, grainSize:1, grainAnim:true, grainColor:'#EC008C',
   htMode:'none', htSpacing:8, htAngle:45, htBg:true,
-  riso:0, risoOffset:3, risoC1:'#e5007d',
+  riso:0, risoOffset:3, risoC1:'#EC008C',
   // Logo
   logo:'none', logoDock:'tr', logoSize:28, logoOpacity:100,
   frame:0,animating:false,

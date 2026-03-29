@@ -441,11 +441,11 @@ function typo_resetLayer(){
 }
 function typo_reset(){
   T.bg='#080808';T.bgTex='none';T.texOp=12;T.accent='none';T.kc='none';T.glow=0;
-  T.grad='none';T.gradC1='#e5007d';T.gradC2='#002fa7';T.gradC3='#8800cc';T.gradC4='#ff6600';T.gradC5='#00c878';T.gradAngle=135;T.gradOpacity=80;T.gradMid=50;T.gradGrain=0;T.gradBlobs=4;
-  T.grain=0;T.grainSize=1;T.grainStyle='overlay';T.grainAnim=true;T.grainColor='#ec008c';
+  T.grad='none';T.gradC1='#EC008C';T.gradC2='#0693E3';T.gradC3='#FCB900';T.gradC4='#A5D21E';T.gradC5='#FCFCFC';T.gradAngle=135;T.gradOpacity=80;T.gradMid=50;T.gradGrain=0;T.gradBlobs=4;
+  T.grain=0;T.grainSize=1;T.grainStyle='overlay';T.grainAnim=true;T.grainColor='#EC008C';
   const grAnimB=document.getElementById('grainAnimToggle');if(grAnimB){grAnimB.classList.add('on');grAnimB.textContent='Animated';}
   const gcpR=document.getElementById('grainColorPaletteRow');if(gcpR)gcpR.style.display='none';
-  const gcSw=document.getElementById('grainColorSw');if(gcSw)gcSw.style.background='#ec008c';
+  const gcSw=document.getElementById('grainColorSw');if(gcSw)gcSw.style.background='#EC008C';
   T.htMode='none';T.htBg=true;T.htSpacing=8;T.htAngle=45;_htBgSnap=null;
   const htBgB=document.getElementById('htBgToggle');if(htBgB){htBgB.classList.remove('on');htBgB.textContent='All';}
   T.logo='none';T.logoDock='tr';T.logoSize=28;T.logoOpacity=100;
@@ -833,9 +833,9 @@ function applyTemplate(id) {
   T.glow = tpl.glow;
   // Gradient
   T.grad = tpl.grad ?? 'none';
-  T.gradC1 = tpl.gradC1 ?? '#e5007d';
-  T.gradC2 = tpl.gradC2 ?? '#002fa7';
-  T.gradC3 = tpl.gradC3 ?? '#8800cc';
+  T.gradC1 = tpl.gradC1 ?? '#EC008C';
+  T.gradC2 = tpl.gradC2 ?? '#0693E3';
+  T.gradC3 = tpl.gradC3 ?? '#FCB900';
   T.gradAngle = tpl.gradAngle ?? 135;
   T.gradOpacity = tpl.gradOpacity ?? 80;
   T.gradMid = tpl.gradMid ?? 50;
@@ -846,7 +846,7 @@ function applyTemplate(id) {
   T.grain = tpl.grain ?? 0;
   T.grainSize = tpl.grainSize ?? 1;
   T.grainStyle = tpl.grainStyle ?? 'overlay';
-  T.grainColor = tpl.grainColor ?? '#ec008c';
+  T.grainColor = tpl.grainColor ?? '#EC008C';
   _grainCanvas = null; // reset grain cache
   _gradOC = null; _gradGrainC = null; // reset gradient caches
 
