@@ -713,6 +713,8 @@ function typo_render(){
 
   // AIGA Logo — always last, unaffected by any FX
   drawLogo(ctx,TW,TH);
+  drawAccent(ctx,TW,TH);
+  drawKC(ctx,TW,TH);
 }
 
 function setHTMode(el,mode){
