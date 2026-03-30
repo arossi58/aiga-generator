@@ -36,6 +36,7 @@ function _flushSave() {
     delete tData.frame; delete tData.animating;
     tData.layers.forEach(l => { delete l.img; }); // Image objects aren't serialisable; imgSrc is kept
     localStorage.setItem('aigakc_T', JSON.stringify(tData));
+    localStorage.setItem('aigakc_canvas', `${TW},${TH}`);
     const hex = document.getElementById('colorHex')?.value || '#002FA7';
     localStorage.setItem('aigakc_palette', JSON.stringify({ hex, harmonyMode, PALETTE: {...PALETTE} }));
   } catch(e) { /* quota exceeded or private mode — silently skip */ }
@@ -105,6 +106,33 @@ function restoreFromStorage() {
       }
     });
     Object.assign(T, data);
+    // Restore canvas dimensions
+    const canvasStr = localStorage.getItem('aigakc_canvas') || data.canvas;
+    if (canvasStr) {
+      const [cw, ch] = canvasStr.split(',').map(Number);
+      if (!isNaN(cw) && cw > 0 && !isNaN(ch) && ch > 0) {
+        TW = cw; TH = ch;
+        const cv = document.getElementById('typeCanvas');
+        if (cv) { cv.width = TW; cv.height = TH; }
+        const info = document.getElementById('canvasInfo');
+        if (info) info.textContent = `${TW} × ${TH}px`;
+        const sel = document.getElementById('canvasSize');
+        if (sel) {
+          const match = [...sel.options].find(o => o.value === canvasStr);
+          if (match) { match.selected = true; }
+          else {
+            const co = [...sel.options].find(o => o.value === 'custom');
+            if (co) co.selected = true;
+            const ci = document.getElementById('customSizeInputs');
+            if (ci) { ci.style.display = 'flex'; }
+            const cwinput = document.getElementById('customW');
+            const chinput = document.getElementById('customH');
+            if (cwinput) cwinput.value = TW;
+            if (chinput) chinput.value = TH;
+          }
+        }
+      }
+    }
     return true;
   } catch(e) { return false; }
 }
@@ -284,14 +312,11 @@ let recMediaRecorder = null;
 
 function getExportDims(forVideo = false) {
   const scale = forVideo ? EX.vidScale : EX.scale;
-  const p = PLATFORMS_DEF.find(x => x.id === EX.platform);
-  if (!p || p.w === null) return { w: Math.round(TW * scale), h: Math.round(TH * scale) };
-  return { w: Math.round(p.w * scale), h: Math.round(p.h * scale) };
+  return { w: Math.round(TW * scale), h: Math.round(TH * scale) };
 }
 
 function openExport() {
   document.getElementById('export-overlay').classList.add('open');
-  buildPlatformGrid();
   updateExpSummary();
 }
 function closeExport() {
@@ -457,12 +482,6 @@ function renderAtRes(targetW, targetH) {
     ctx.restore();
   });
   TW = savedTW; TH = savedTH;
-
-  // Accents at target dims
-  const savedAccentTW = TW, savedAccentTH = TH;
-  TW = targetW; TH = targetH;
-  drawAccent(ctx, targetW, targetH);
-  TW = savedAccentTW; TH = savedAccentTH;
 
   // Post FX — halftone + riso (mirrors typo_render pipeline)
   const savedTW2 = TW, savedTH2 = TH;

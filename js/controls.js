@@ -1,3 +1,19 @@
+function _setCanvasStr(str){
+  const [w,h]=str.split(',').map(Number);
+  if(!w||!h||isNaN(w)||isNaN(h))return;
+  TW=w;TH=h;
+  const cv=document.getElementById('typeCanvas');cv.width=TW;cv.height=TH;
+  document.getElementById('canvasInfo').textContent=`${TW} × ${TH}px`;
+  const sel=document.getElementById('canvasSize');
+  const match=[...sel.options].find(o=>o.value===str);
+  const ci=document.getElementById('customSizeInputs');
+  if(match){match.selected=true;if(ci)ci.style.display='none';}
+  else{
+    const co=[...sel.options].find(o=>o.value==='custom');if(co)co.selected=true;
+    if(ci){ci.style.display='flex';const cw=document.getElementById('customW');const ch=document.getElementById('customH');if(cw)cw.value=TW;if(ch)ch.value=TH;}
+  }
+  typo_fitCanvas();physOnResize();updateSafeZone();
+}
 function typo_resize(){
   const v=document.getElementById('canvasSize').value;
   const customInputs=document.getElementById('customSizeInputs');
@@ -816,14 +832,7 @@ async function applyCommunityTemplate(id) {
     if (!data || !data.layers) return;
     data.frame = 0; data.animating = false;
     Object.assign(T, data);
-    // Backfill canvas
-    const canvas = document.getElementById('typeCanvas');
-    if (data.canvas) {
-      [TW, TH] = data.canvas.split(',').map(Number);
-      canvas.width = TW; canvas.height = TH;
-      const sel = document.getElementById('canvasSize');
-      [...sel.options].forEach(o => { if (o.value === data.canvas) o.selected = true; });
-    }
+    if (data.canvas) _setCanvasStr(data.canvas);
     syncLayerUI(); typo_render(); typo_fitCanvas();
     toast('Community template applied');
   } catch(e) {
@@ -838,12 +847,7 @@ function applyTemplate(id) {
   activeTplId = id;
 
   // Apply canvas size
-  const sel = document.getElementById('canvasSize');
-  [...sel.options].forEach(o => { if (o.value === tpl.canvas) o.selected = true; });
-  [TW, TH] = tpl.canvas.split(',').map(Number);
-  const canvas = document.getElementById('typeCanvas');
-  canvas.width = TW; canvas.height = TH;
-  document.getElementById('canvasInfo').textContent = `${TW} × ${TH}px`;
+  _setCanvasStr(tpl.canvas || '800,800');
 
   // Apply global state
   T.bg = tpl.bg;
