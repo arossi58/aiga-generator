@@ -214,9 +214,10 @@ const defEyeLayer=(x,y)=>({
   lookAmt:1,
   lookStagger:true,
   wanderRandom:0,
-  arrangement:'single',   // 'single' | 'tile' | 'circle'
+  arrangement:'single',   // 'single' | 'tile' | 'circle' | 'scatter'
   tileRows:3,tileCols:4,tileSpacingX:1.8,tileSpacingY:1.5,
   circleCount:8,circleRadius:30,
+  scatterCount:20,scatterSizeMin:40,scatterSizeMax:120,scatterRotRange:45,scatterSeed:42,
   opacity:100,blend:'source-over',visible:true,excludeFromFX:false,
   rot:0,sx:100,sy:100,
   // compat fields for serialization / layer stack

@@ -12,9 +12,10 @@ function buildLayerPane(lid){
     <div class="cg">
       <div class="cg-title">Eye</div>
       <div class="bg-opts-col" id="${lid}-arr">
-        <div class="bg-opt${layer.arrangement==='single'?' active':''}" onclick="T.layers[${idx}].arrangement='single';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='none';document.getElementById('${lid}-circ-opts').style.display='none';typo_render();">● Single</div>
-        <div class="bg-opt${layer.arrangement==='tile'?' active':''}" onclick="T.layers[${idx}].arrangement='tile';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='block';document.getElementById('${lid}-circ-opts').style.display='none';typo_render();">▦ Tile</div>
-        <div class="bg-opt${layer.arrangement==='circle'?' active':''}" onclick="T.layers[${idx}].arrangement='circle';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='none';document.getElementById('${lid}-circ-opts').style.display='block';typo_render();">◯ Ring</div>
+        <div class="bg-opt${layer.arrangement==='single'?' active':''}" onclick="T.layers[${idx}].arrangement='single';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='none';document.getElementById('${lid}-circ-opts').style.display='none';document.getElementById('${lid}-scatter-opts').style.display='none';typo_render();">● Single</div>
+        <div class="bg-opt${layer.arrangement==='tile'?' active':''}" onclick="T.layers[${idx}].arrangement='tile';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='block';document.getElementById('${lid}-circ-opts').style.display='none';document.getElementById('${lid}-scatter-opts').style.display='none';typo_render();">▦ Tile</div>
+        <div class="bg-opt${layer.arrangement==='circle'?' active':''}" onclick="T.layers[${idx}].arrangement='circle';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='none';document.getElementById('${lid}-circ-opts').style.display='block';document.getElementById('${lid}-scatter-opts').style.display='none';typo_render();">◯ Ring</div>
+        <div class="bg-opt${layer.arrangement==='scatter'?' active':''}" onclick="T.layers[${idx}].arrangement='scatter';this.closest('.bg-opts-col').querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('active'));this.classList.add('active');document.getElementById('${lid}-tile-opts').style.display='none';document.getElementById('${lid}-circ-opts').style.display='none';document.getElementById('${lid}-scatter-opts').style.display='block';typo_render();">⠿ Scatter</div>
       </div>
       <div class="sl-row" style="margin-top:8px;"><span class="sl-label">Size</span>
         <div class="sl-wrap"><input type="range" min="10" max="400" value="${layer.eyeSize||100}" id="${lid}-eyeSize" oninput="T.layers[${idx}].eyeSize=+this.value;document.getElementById('${lid}-eyeSizeVal').textContent=this.value;typo_render();"></div>
@@ -46,6 +47,24 @@ function buildLayerPane(lid){
         <div class="sl-row"><span class="sl-label">Ring Gap</span>
           <div class="sl-wrap"><input type="range" min="10" max="100" value="${layer.eyeRingGap||30}" id="${lid}-eyeRingGap" oninput="T.layers[${idx}].eyeRingGap=+this.value;document.getElementById('${lid}-eyeRingGapVal').textContent=this.value+'%';typo_render();"></div>
           <span class="sl-val" id="${lid}-eyeRingGapVal">${layer.eyeRingGap||30}%</span></div>
+      </div>
+      <div id="${lid}-scatter-opts" style="display:${layer.arrangement==='scatter'?'block':'none'}">
+        <div class="sl-row"><span class="sl-label">Count</span>
+          <div class="sl-wrap"><input type="range" min="1" max="200" value="${layer.scatterCount||20}" id="${lid}-scatterCount" oninput="T.layers[${idx}].scatterCount=+this.value;document.getElementById('${lid}-scatterCountVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-scatterCountVal">${layer.scatterCount||20}</span></div>
+        <div class="sl-row"><span class="sl-label">Size Min</span>
+          <div class="sl-wrap"><input type="range" min="10" max="400" value="${layer.scatterSizeMin||40}" id="${lid}-scatterSizeMin" oninput="T.layers[${idx}].scatterSizeMin=+this.value;document.getElementById('${lid}-scatterSizeMinVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-scatterSizeMinVal">${layer.scatterSizeMin||40}</span></div>
+        <div class="sl-row"><span class="sl-label">Size Max</span>
+          <div class="sl-wrap"><input type="range" min="10" max="400" value="${layer.scatterSizeMax||120}" id="${lid}-scatterSizeMax" oninput="T.layers[${idx}].scatterSizeMax=+this.value;document.getElementById('${lid}-scatterSizeMaxVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-scatterSizeMaxVal">${layer.scatterSizeMax||120}</span></div>
+        <div class="sl-row"><span class="sl-label">Rot Range</span>
+          <div class="sl-wrap"><input type="range" min="0" max="180" value="${layer.scatterRotRange??45}" id="${lid}-scatterRotRange" oninput="T.layers[${idx}].scatterRotRange=+this.value;document.getElementById('${lid}-scatterRotRangeVal').textContent=this.value+'°';typo_render();"></div>
+          <span class="sl-val" id="${lid}-scatterRotRangeVal">${layer.scatterRotRange??45}°</span></div>
+        <div class="sl-row"><span class="sl-label">Seed</span>
+          <div class="sl-wrap"><input type="range" min="1" max="9999" value="${layer.scatterSeed||42}" id="${lid}-scatterSeed" oninput="T.layers[${idx}].scatterSeed=+this.value;document.getElementById('${lid}-scatterSeedVal').textContent=this.value;typo_render();"></div>
+          <span class="sl-val" id="${lid}-scatterSeedVal">${layer.scatterSeed||42}</span></div>
+        <button class="cg-mini-btn" style="margin-top:6px;width:100%;" onclick="T.layers[${idx}].scatterSeed=Math.floor(Math.random()*9999)+1;document.getElementById('${lid}-scatterSeed').value=T.layers[${idx}].scatterSeed;document.getElementById('${lid}-scatterSeedVal').textContent=T.layers[${idx}].scatterSeed;typo_render();">↻ Re-roll Scatter</button>
       </div>
     </div>
     <div class="cg">
@@ -1147,6 +1166,10 @@ function drawEye(ctx,cx,cy,hw,layer,eyeIdx,t){
   ctx.beginPath();eyePath(ctx,cx,cy,hw,hh);eyePath(ctx,cx,cy,hwi,hhi);
   ctx.fillStyle=outlineColor;ctx.fill('evenodd');
 }
+function _seededRng(seed){
+  let s=(seed>>>0)||1;
+  return ()=>{s=Math.imul(s^s>>>15,1|s);s^=s+Math.imul(s^s>>>7,61|s);return((s^s>>>14)>>>0)/4294967296;};
+}
 function drawEyeLayer(ctx,layer,t){
   const cx=(layer.x/100)*TW;
   const cy=(layer.y/100)*TH;
@@ -1183,6 +1206,20 @@ function drawEyeLayer(ctx,layer,t){
         drawEye(ctx,ex,ey,hw,layer,eyeIdx++,t);
         ctx.restore();
       }
+    }
+  }else if(layer.arrangement==='scatter'){
+    const count=layer.scatterCount||20;
+    const sMin=layer.scatterSizeMin||40;
+    const sMax=Math.max(sMin,layer.scatterSizeMax||120);
+    const rotRange=(layer.scatterRotRange??45)*Math.PI/180;
+    const rng=_seededRng(layer.scatterSeed||42);
+    for(let i=0;i<count;i++){
+      const ex=rng()*TW,ey=rng()*TH;
+      const sz=sMin+rng()*(sMax-sMin);
+      const rot=(rng()-0.5)*2*rotRange;
+      ctx.save();ctx.translate(ex,ey);ctx.rotate(rot);ctx.translate(-ex,-ey);
+      drawEye(ctx,ex,ey,sz,layer,i,t);
+      ctx.restore();
     }
   }else{
     drawEye(ctx,cx,cy,hw,layer,0,t);
