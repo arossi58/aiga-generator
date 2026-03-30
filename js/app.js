@@ -364,6 +364,9 @@ function updateExpSummary() {
 function renderAtRes(targetW, targetH) {
   const off = document.createElement('canvas');
   off.width = targetW; off.height = targetH;
+  // Must be in DOM for font-variation-settings (e.g. SOFT, WONK) to take effect on canvas text
+  off.style.cssText='position:fixed;top:-99999px;left:-99999px;visibility:hidden;pointer-events:none;';
+  document.body.appendChild(off);
   const ctx = off.getContext('2d');
   const sx = targetW / TW;
   const sy = targetH / TH;
@@ -477,6 +480,7 @@ function renderAtRes(targetW, targetH) {
   // AIGA Logo — always last, unaffected by any FX
   drawLogo(ctx, targetW, targetH);
 
+  document.body.removeChild(off);
   return off;
 }
 
